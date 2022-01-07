@@ -1,0 +1,6 @@
+{
+  "extends": "@ibcarr/ibcarr/typescript.cjs",
+  "parserOptions": {
+    "project": "tsconfig.json"
+  }
+}

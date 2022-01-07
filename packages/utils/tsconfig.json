@@ -1,0 +1,4 @@
+{
+  "extends": "@ibcarr/tsconfig/base.json",
+  "exclude": ["node_modules", "dist"]
+}

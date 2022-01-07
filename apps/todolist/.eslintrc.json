@@ -1,0 +1,6 @@
+{
+  "extends": "@ibcarr/ibcarr/next.cjs",
+  "parserOptions": {
+    "project": "tsconfig.json"
+  }
+}

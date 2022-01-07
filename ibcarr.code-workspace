@@ -1,0 +1,52 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "eslint.alwaysShowStatus": true,
+    "eslint.workingDirectories": [
+      "apps/games",
+      "apps/todolist",
+      "packages/eslint-config-ibcarr",
+      "packages/ui",
+      "packages/tsconfig",
+      "packages/utils"
+    ],
+    "peacock.affectStatusBar": true,
+    "peacock.color": "#492b64",
+    "sortJSON.orderOverride": [
+      "name",
+      "version",
+      "description",
+      "author",
+      "license",
+      "private",
+      "main",
+      "module",
+      "types",
+      "sideEffects",
+      "files",
+      "type",
+      "repository",
+      "bugs",
+      "homepage",
+      "scripts",
+      "dependencies",
+      "devDependencies"
+    ],
+    "workbench.colorCustomizations": {
+      "sash.hoverBorder": "#633a88",
+      "statusBar.background": "#492b64",
+      "statusBar.foreground": "#e7e7e7",
+      "statusBarItem.hoverBackground": "#633a88",
+      "statusBarItem.remoteBackground": "#492b64",
+      "statusBarItem.remoteForeground": "#e7e7e7",
+      "titleBar.activeBackground": "#492b64",
+      "titleBar.activeForeground": "#e7e7e7",
+      "titleBar.inactiveBackground": "#492b6499",
+      "titleBar.inactiveForeground": "#e7e7e799"
+    }
+  }
+}

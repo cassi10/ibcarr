@@ -1,0 +1,9 @@
+{
+  "name": "@ibcarr/tsconfig",
+  "version": "1.0.0",
+  "description": "TSConfigs for this monorepo",
+  "author": "cassi10 <67207048+cassi10@users.noreply.github.com> (https://www.ibcarr.com/)",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {}
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@ibcarr/utils",
+  "version": "1.0.0",
+  "description": "Utils for this monorepo",
+  "author": "cassi10 <67207048+cassi10@users.noreply.github.com> (https://www.ibcarr.com/)",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint . --ext .ts --format=pretty",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@ibcarr/eslint-config-ibcarr": "file:packages/eslint-config-ibcarr",
+    "@types/node": "^17.0.8",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "tsup": "^5.11.10"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "incremental": true,
+    "jsx": "preserve",
+    "downlevelIteration": true
+  },
+  "display": "Next.JS",
+  "extends": "./react.json"
+}
