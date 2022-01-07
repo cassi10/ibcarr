@@ -14,8 +14,21 @@
       "packages/tsconfig",
       "packages/utils"
     ],
+    "peacock.affectActivityBar": true,
+    "peacock.affectEditorGroupBorder": true,
+    "peacock.affectPanelBorder": true,
+    "peacock.affectSashHover": true,
+    "peacock.affectSideBarBorder": true,
+    "peacock.affectStatusAndTitleBorders": true,
     "peacock.affectStatusBar": true,
+    "peacock.affectTabActiveBorder": true,
+    "peacock.affectTitleBar": true,
     "peacock.color": "#492b64",
+    "peacock.elementAdjustments": {
+      "activityBar": "none",
+      "statusBar": "none",
+      "titleBar": "none"
+    },
     "sortJSON.orderOverride": [
       "name",
       "version",
@@ -37,14 +50,27 @@
       "devDependencies"
     ],
     "workbench.colorCustomizations": {
-      "sash.hoverBorder": "#633a88",
+      "activityBar.activeBackground": "#492b64",
+      "activityBar.activeBorder": "#86623a",
+      "activityBar.background": "#492b64",
+      "activityBar.foreground": "#e7e7e7",
+      "activityBar.inactiveForeground": "#e7e7e799",
+      "activityBarBadge.background": "#86623a",
+      "activityBarBadge.foreground": "#e7e7e7",
+      "editorGroup.border": "#492b64",
+      "panel.border": "#492b64",
+      "sash.hoverBorder": "#492b64",
+      "sideBar.border": "#492b64",
       "statusBar.background": "#492b64",
+      "statusBar.border": "#492b64",
       "statusBar.foreground": "#e7e7e7",
       "statusBarItem.hoverBackground": "#633a88",
       "statusBarItem.remoteBackground": "#492b64",
       "statusBarItem.remoteForeground": "#e7e7e7",
+      "tab.activeBorder": "#492b64",
       "titleBar.activeBackground": "#492b64",
       "titleBar.activeForeground": "#e7e7e7",
+      "titleBar.border": "#492b64",
       "titleBar.inactiveBackground": "#492b6499",
       "titleBar.inactiveForeground": "#e7e7e799"
     }
