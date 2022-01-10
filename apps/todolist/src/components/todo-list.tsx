@@ -13,6 +13,7 @@ import {
 import { User } from "firebase/auth";
 import {
   collection,
+  DocumentData,
   orderBy,
   query,
   QueryDocumentSnapshot,
@@ -21,18 +22,18 @@ import {
   where
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
-import firebase, { firestore } from "../firebase/client-app";
+import { database } from "../firebase";
 import { Todo, Toast, Colors } from "../types";
 import TodoItem from "./todo-item";
 
-interface ITodoList {
+interface ITodoListProperties {
   user: User;
   colorMode: ColorMode;
   toast: Toast;
 }
 
 const TodoConverter = {
-  toFirestore(todo: Todo): firebase.firestore.DocumentData {
+  toFirestore(todo: Todo): DocumentData {
     return { ...todo };
   },
   fromFirestore(
@@ -51,8 +52,12 @@ const TodoConverter = {
   }
 };
 
-const TodoList: React.FC<ITodoList> = ({ user, colorMode, toast }) => {
-  const todosReference = collection(firestore, "todos").withConverter<Todo>(
+const TodoList: React.FC<ITodoListProperties> = ({
+  user,
+  colorMode,
+  toast
+}) => {
+  const todosReference = collection(database, "todos").withConverter<Todo>(
     TodoConverter
   );
   const queryConstraints = [
@@ -96,8 +101,7 @@ const TodoList: React.FC<ITodoList> = ({ user, colorMode, toast }) => {
           <Spinner size="xl" />
         </SimpleGrid>
       )}
-
-      {!todos || todos.docs.length <= 0 ? (
+      {todos === undefined || todos.docs.length <= 0 ? (
         <Text alignSelf="center" fontSize="2xl">
           Try adding some tasks!
         </Text>

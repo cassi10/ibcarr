@@ -3,12 +3,12 @@ import NextLink from "next/link";
 import { Button, useBreakpointValue } from "@chakra-ui/react";
 import { Game } from "../types";
 
-interface IGameLink {
+interface IGameLinkProperties {
   game: Game;
   index: number;
 }
 
-const GameLink: React.FC<IGameLink> = ({ game, index }) => {
+const GameLink: React.FC<IGameLinkProperties> = ({ game, index }) => {
   const [color, setColor] = useState<string>("gray");
 
   useEffect(() => {

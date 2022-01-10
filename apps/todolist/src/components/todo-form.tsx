@@ -22,17 +22,21 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
-import { firestore } from "../firebase/client-app";
+import { database } from "../firebase";
 import { Colors, Toast } from "../types";
 import DatePicker from "./date-picker";
 
-interface ITodoForm {
+interface ITodoFormProperties {
   user: User;
   toast: Toast;
   colorMode: ColorMode;
 }
 
-const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
+const TodoForm: React.FC<ITodoFormProperties> = ({
+  user,
+  toast,
+  colorMode
+}) => {
   const colors: Colors[] = [
     "gray",
     "red",
@@ -70,7 +74,7 @@ const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
       todoToAdd.dueDate = todoDate;
     }
 
-    addDoc(collection(firestore, "todos"), todoToAdd).catch((error) => {
+    addDoc(collection(database, "todos"), todoToAdd).catch((error) => {
       throw error;
     });
   };
@@ -91,6 +95,8 @@ const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
       addTodoToFirestore();
 
       setTodoInput("");
+      // setTodoColor("gray");
+      // setTodoDate(undefined);
     }
   };
 
@@ -148,9 +154,9 @@ const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
       >
         <Grid gridRowGap={2}>
           <Box>
-            <DatePicker onSaveClick={handleTodoDateChange} />
+            <DatePicker updateDate={handleTodoDateChange} date={todoDate} />
           </Box>
-          <Accordion allowMultiple border={0}>
+          <Accordion allowToggle border={0}>
             <AccordionItem border={0}>
               <Tooltip hasArrow label="Change color" placement="right">
                 <AccordionButton

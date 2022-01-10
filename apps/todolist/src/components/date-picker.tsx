@@ -12,24 +12,42 @@ import {
   ModalOverlay,
   Text,
   Tooltip,
+  useColorMode,
   useDisclosure
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { getIconComponent } from "@ibcarr/ui";
+import { getIconComponent, fromColorMode } from "@ibcarr/ui";
 
-interface IDatePicker {
-  onSaveClick: (date: Date | undefined) => void;
+interface IDatePickerProperties {
+  updateDate: (date: Date | undefined) => void;
+  date: Date | undefined;
 }
 
-const DatePicker: React.FC<IDatePicker> = ({ onSaveClick }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const DatePicker: React.FC<IDatePickerProperties> = ({ updateDate, date }) => {
+  const { colorMode } = useColorMode();
 
-  const [date, setDate] = useState<Date>(new Date());
+  const todaysDate = new Date();
+
+  const [currentDate, setDate] = useState<Date | undefined>(date);
 
   const [viewDate, setViewDate] = useState<Date>(
-    new Date(date.getFullYear(), date.getMonth(), 1)
+    currentDate !== undefined
+      ? new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+      : new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1)
   );
   const [monthGap, setMonthGap] = useState<number[]>([]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure({
+    onOpen: () => {
+      setViewDate(
+        currentDate !== undefined
+          ? new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+          : new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1)
+      );
+    }
+  });
+
+  useEffect(() => setDate(date), [date]);
 
   useEffect(() => {
     setMonthGap([
@@ -87,12 +105,14 @@ const DatePicker: React.FC<IDatePicker> = ({ onSaveClick }) => {
   const onNextYearButtonClick = (): void =>
     setViewDate(new Date(viewDate.getFullYear() + 1, 0, 1));
 
-  const onSaveButtonClick = (type: string): void => {
-    if (type === "save") {
-      onSaveClick(date);
-    } else if (type === "clear") {
-      onSaveClick(undefined);
-    }
+  const onClearButtonClick = (): void => {
+    updateDate(undefined);
+    onClose();
+  };
+
+  const onSaveButtonClick = (): void => {
+    updateDate(currentDate);
+    onClose();
   };
 
   return (
@@ -122,7 +142,6 @@ const DatePicker: React.FC<IDatePicker> = ({ onSaveClick }) => {
               <Flex
                 direction="row"
                 alignContent="center"
-                justifyContent="space-between"
                 alignItems="center"
                 pb={2}
               >
@@ -144,7 +163,7 @@ const DatePicker: React.FC<IDatePicker> = ({ onSaveClick }) => {
                   icon={getIconComponent("left")}
                   onClick={onPreviousMonthButtonClick}
                 />
-                <Text fontSize="lg">
+                <Text fontSize="lg" flex={1} align="center">
                   {months[viewDate.getMonth()]} {viewDate.getFullYear()}
                 </Text>
                 <IconButton
@@ -173,12 +192,22 @@ const DatePicker: React.FC<IDatePicker> = ({ onSaveClick }) => {
                 alignItems="center"
               >
                 {daysShort.map((day) => (
-                  <Text key={day} py={2} color="gray.300" fontWeight="500">
+                  <Text key={day} py={2} fontWeight="500">
                     {day}
                   </Text>
                 ))}
                 {monthGap.length > 0 &&
-                  monthGap.map((day) => <Text key={day} />)}
+                  monthGap.map((day) => (
+                    <Box
+                      key={day}
+                      minW={10}
+                      maxW={10}
+                      h={10}
+                      p={0}
+                      rounded="md"
+                      bg={fromColorMode("gray.50", "whiteAlpha.50", colorMode)}
+                    />
+                  ))}
                 {days.map((day) => (
                   <Button
                     key={day}
@@ -188,14 +217,16 @@ const DatePicker: React.FC<IDatePicker> = ({ onSaveClick }) => {
                     p={0}
                     justifyContent="center"
                     alignItems="center"
+                    shadow="sm"
                     onClick={(): void => onDayButtonClick(day)}
                     colorScheme={
-                      date.toLocaleDateString("en-GB") ===
-                      new Date(
-                        viewDate.getFullYear(),
-                        viewDate.getMonth(),
-                        day
-                      ).toLocaleDateString("en-GB")
+                      currentDate !== undefined &&
+                      currentDate.toLocaleDateString("en-GB") ===
+                        new Date(
+                          viewDate.getFullYear(),
+                          viewDate.getMonth(),
+                          day
+                        ).toLocaleDateString("en-GB")
                         ? "blue"
                         : "gray"
                     }
@@ -222,13 +253,7 @@ const DatePicker: React.FC<IDatePicker> = ({ onSaveClick }) => {
                 </Tooltip>
                 <HStack spacing={6}>
                   <Tooltip hasArrow label="Clear the date" placement="bottom">
-                    <Button
-                      variant="link"
-                      onClick={(): void => {
-                        onSaveButtonClick("clear");
-                        onClose();
-                      }}
-                    >
+                    <Button variant="link" onClick={onClearButtonClick}>
                       Clear
                     </Button>
                   </Tooltip>
@@ -238,10 +263,7 @@ const DatePicker: React.FC<IDatePicker> = ({ onSaveClick }) => {
                     icon={getIconComponent("tick")}
                     colorScheme="green"
                     size="sm"
-                    onClick={(): void => {
-                      onSaveButtonClick("save");
-                      onClose();
-                    }}
+                    onClick={onSaveButtonClick}
                   />
                 </HStack>
               </Flex>

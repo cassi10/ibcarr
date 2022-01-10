@@ -29,17 +29,21 @@ import {
   deleteField
 } from "firebase/firestore";
 import { useState } from "react";
-import { firestore } from "../firebase/client-app";
+import { database } from "../firebase";
 import { Toast, Colors, Todo } from "../types";
 import DatePicker from "./date-picker";
 
-interface ITodoItem {
+interface ITodoItemProperties {
   todo: QueryDocumentSnapshot<Todo>;
   colorMode: ColorMode;
   toast: Toast;
 }
 
-const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
+const TodoItem: React.FC<ITodoItemProperties> = ({
+  todo,
+  colorMode,
+  toast
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { body, color, dueDate } = todo.data();
@@ -81,7 +85,7 @@ const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
         dueDate: todoDate || deleteField()
       };
 
-      updateDoc(doc(firestore, "todos", id), updatedTodo)
+      updateDoc(doc(database, "todos", id), updatedTodo)
         .then((): void => onClose())
         .catch((error) => {
           onClose();
@@ -91,13 +95,12 @@ const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
   };
 
   const handleDeleteTodoClick = (id: string): void => {
-    deleteDoc(doc(firestore, "todos", id))
+    deleteDoc(doc(database, "todos", id))
       .then(() => {
-        toast({
-          title: "Successfully deleted todo!",
+        return toast({
+          title: "Todo deleted!",
           status: "success"
         });
-        return onClose();
       })
       .catch((error) => {
         throw error;
@@ -250,7 +253,10 @@ const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
                 gridRowGap={2}
               >
                 <Flex flex={1} gridRowGap={2} direction="column">
-                  <DatePicker onSaveClick={handleTodoDateChange} />
+                  <DatePicker
+                    updateDate={handleTodoDateChange}
+                    date={todoDate}
+                  />
                   <Accordion allowMultiple border={0}>
                     <AccordionItem border={0}>
                       <Tooltip hasArrow label="Change color" placement="right">
