@@ -15,8 +15,11 @@ import { ChangeEvent, useState } from "react";
  * ! https://github.com/cure53/DOMPurify
  * ! https://firebase.google.com/docs/reference/js/auth.md#fetchsigninmethodsforemail
  *   .test("email-in-use", "That email us already in use", (value) => fetchSignInMethodsForEmail(value) === null)
- * TODO: If logged in route away from /auth
- * TODO: Work out how to link Formik, Yup and ChakraUI without making styling hell to deal with
+ *
+ * TODO If logged in route away from /auth
+ * TODO Work out how to link Formik, Yup and ChakraUI without making styling hell to deal with
+ * TODO Add "Remember Me" checkbox to form to switch between `local` persistense and `session` persistence
+ * TODO Start using new FormData() to make life easier when dealing with form data
  *
  * On `Next` button click check if user exists
  *   if yes

@@ -23,6 +23,11 @@ interface IDatePickerProperties {
   date: Date | undefined;
 }
 
+/**
+ * TODO Add previous month numbers to start of month calendar which are also selectable and maybe on click switch the view month to the previous
+ * TODO Pull some of this logic out from the component and into a separate file
+ */
+
 const DatePicker: React.FC<IDatePickerProperties> = ({ updateDate, date }) => {
   const { colorMode } = useColorMode();
 

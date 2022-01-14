@@ -95,8 +95,8 @@ const TodoForm: React.FC<ITodoFormProperties> = ({
       addTodoToFirestore();
 
       setTodoInput("");
-      // setTodoColor("gray");
-      // setTodoDate(undefined);
+      setTodoColor("gray");
+      setTodoDate(undefined);
     }
   };
 
