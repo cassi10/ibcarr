@@ -29,7 +29,7 @@ import {
   deleteField
 } from "firebase/firestore";
 import { useState } from "react";
-import { firestore } from "../firebase/client-app";
+import { firestore } from "../firebase";
 import { Toast, Colors, Todo } from "../types";
 import DatePicker from "./date-picker";
 

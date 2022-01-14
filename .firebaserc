@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "ibcarr"
+  },
+  "targets": {
+    "ibcarr": {
+      "hosting": {
+        "games": [
+          "ibcarr"
+        ],
+        "todolist": [
+          "ibcarr-todolist"
+        ]
+      }
+    }
+  }
+}

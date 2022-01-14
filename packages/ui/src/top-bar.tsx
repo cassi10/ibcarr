@@ -35,7 +35,6 @@ export const TopBar: React.FC<TopBarProperties> = ({ colorMode }) => {
     >
       <Flex align="center" direction="row" justify="start">
         <Text>Made by Isaac Barnes-Carr</Text>
-
         <TopBarItem
           icon="github"
           link="https://github.com/cassi10/"

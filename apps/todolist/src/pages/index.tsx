@@ -8,18 +8,17 @@ import {
   useToast,
   useColorMode,
   Icon,
-  Link,
   IconButton
 } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from "next/dist/client/router";
 import Head from "next/head";
-import { getIcon, fromColorMode } from "@ibcarr/ui";
+import { getIcon, fromColorMode, TopBar } from "@ibcarr/ui";
+import { useRouter } from "next/router";
 import TodoList from "../components/todo-list";
 import TodoForm from "../components/todo-form";
-import { auth } from "../firebase/client-app";
+import { auth } from "../firebase";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -43,40 +42,19 @@ const Home: NextPage = () => {
       });
   });
 
+  const onSignOutClick = (): void => {
+    auth.signOut().catch((error) => {
+      throw error;
+    });
+  };
+
   return (
     <>
       <Head>
         <title>TodoList</title>
         <meta name="description" content="A simple todolist!" />
       </Head>
-      <Box
-        mb={12}
-        p={1}
-        px={4}
-        bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
-      >
-        <Flex align="center" direction="row" justify="start">
-          <Text>Made by Isaac Barnes-Carr</Text>
-          <Icon as={getIcon("dot")} p={0} h={6} w={6} />
-          <Icon as={getIcon("github")} mr={1} />
-          <Link href="https://github.com/cassi10/" isExternal>
-            GitHub
-          </Link>
-          <Icon as={getIcon("dot")} p={0} h={6} w={6} />
-          <Icon as={getIcon("linkedIn")} mr={1} />
-          <Link
-            href="https://www.linkedin.com/in/isaac-barnes-carr/"
-            isExternal
-          >
-            LinkedIn
-          </Link>
-          <Icon as={getIcon("dot")} p={0} h={6} w={6} />
-          <Icon as={getIcon("games")} mr={1} />
-          <Link href="https://games.ibcarr.com" isExternal>
-            Games
-          </Link>
-        </Flex>
-      </Box>
+      <TopBar colorMode={colorMode} />
       <Container maxW="8xl" pb={4}>
         {user && (
           <Flex flexDirection="column" justify="center">
@@ -119,7 +97,7 @@ const Home: NextPage = () => {
                   <Button
                     variant="ghost"
                     colorScheme="red"
-                    onClick={(): Promise<void> => auth.signOut()} // TODO: Extract to function
+                    onClick={onSignOutClick}
                   >
                     Signout
                   </Button>

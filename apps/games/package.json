@@ -9,13 +9,15 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint --format=pretty",
-    "start": "next start"
+    "start": "next start",
+    "export": "next export"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.7.4",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@ibcarr/ui": "file:packages/ui",
+    "firebase": "^9.6.3",
     "framer-motion": "^5.5.5",
     "next": "^12.0.7",
     "react": "^17.0.2",

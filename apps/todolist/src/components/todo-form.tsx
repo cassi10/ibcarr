@@ -22,7 +22,7 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
-import { firestore } from "../firebase/client-app";
+import { firestore } from "../firebase";
 import { Colors, Toast } from "../types";
 import DatePicker from "./date-picker";
 

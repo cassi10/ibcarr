@@ -21,7 +21,7 @@ import {
   where
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
-import firebase, { firestore } from "../firebase/client-app";
+import firebase, { firestore } from "../firebase";
 import { Todo, Toast, Colors } from "../types";
 import TodoItem from "./todo-item";
 

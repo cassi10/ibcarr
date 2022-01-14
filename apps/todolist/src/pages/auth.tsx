@@ -3,7 +3,7 @@ import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import { Props } from "react-firebaseui";
 import { Grid } from "@chakra-ui/react";
 import Head from "next/head";
-import { auth, providers } from "../firebase/client-app";
+import { auth, providers } from "../firebase";
 
 const uiConfig: Props["uiConfig"] = {
   signInSuccessUrl: "/",
