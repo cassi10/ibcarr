@@ -73,6 +73,13 @@
       "titleBar.border": "#492b64",
       "titleBar.inactiveBackground": "#492b6499",
       "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "todo-tree.highlights.defaultHighlight": {
+      "iconColour": "#FFFFFF",
+      "gutterIcon": true,
+      "foreground": "#FFFFFF",
+      "type": "tag",
+      "borderRadius": "0"
     }
   }
 }
