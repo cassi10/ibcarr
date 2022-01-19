@@ -18,7 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
 
-interface IDatePickerProperties {
+interface DatePickerProperties {
   updateDate: (date: Date | undefined) => void;
   date: Date | undefined;
 }
@@ -28,7 +28,7 @@ interface IDatePickerProperties {
  * TODO Pull some of this logic out from the component and into a separate file
  */
 
-const DatePicker: React.FC<IDatePickerProperties> = ({ updateDate, date }) => {
+const DatePicker: React.FC<DatePickerProperties> = ({ updateDate, date }) => {
   const { colorMode } = useColorMode();
 
   const todaysDate = new Date();

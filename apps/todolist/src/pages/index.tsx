@@ -36,14 +36,14 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!user && !userLoading)
-      router.push("/auth").catch((error) => {
-        throw error;
+      router.push("/auth").catch((error: unknown) => {
+        throw new Error(JSON.stringify(error));
       });
   });
 
   const onSignOutClick = (): void => {
-    auth.signOut().catch((error) => {
-      throw error;
+    auth.signOut().catch((error: unknown) => {
+      throw new Error(JSON.stringify(error));
     });
   };
 

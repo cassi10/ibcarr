@@ -26,7 +26,7 @@ import { database } from "../firebase";
 import { Todo, Toast, Colors } from "../types";
 import TodoItem from "./todo-item";
 
-interface ITodoListProperties {
+interface TodoListProperties {
   user: User;
   colorMode: ColorMode;
   toast: Toast;
@@ -52,11 +52,7 @@ const TodoConverter = {
   }
 };
 
-const TodoList: React.FC<ITodoListProperties> = ({
-  user,
-  colorMode,
-  toast
-}) => {
+const TodoList: React.FC<TodoListProperties> = ({ user, colorMode, toast }) => {
   const todosReference = collection(database, "todos").withConverter<Todo>(
     TodoConverter
   );

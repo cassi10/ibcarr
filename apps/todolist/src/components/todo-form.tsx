@@ -26,17 +26,13 @@ import { database } from "../firebase";
 import { Colors, Toast } from "../types";
 import DatePicker from "./date-picker";
 
-interface ITodoFormProperties {
+interface TodoFormProperties {
   user: User;
   toast: Toast;
   colorMode: ColorMode;
 }
 
-const TodoForm: React.FC<ITodoFormProperties> = ({
-  user,
-  toast,
-  colorMode
-}) => {
+const TodoForm: React.FC<TodoFormProperties> = ({ user, toast, colorMode }) => {
   const colors: Colors[] = [
     "gray",
     "red",
@@ -74,8 +70,8 @@ const TodoForm: React.FC<ITodoFormProperties> = ({
       todoToAdd.dueDate = todoDate;
     }
 
-    addDoc(collection(database, "todos"), todoToAdd).catch((error) => {
-      throw error;
+    addDoc(collection(database, "todos"), todoToAdd).catch((error: unknown) => {
+      throw new Error(JSON.stringify(error));
     });
   };
 

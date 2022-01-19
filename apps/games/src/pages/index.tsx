@@ -7,8 +7,8 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/hangman").catch((error) => {
-      throw error;
+    router.push("/hangman").catch((error: unknown) => {
+      throw new Error(JSON.stringify(error));
     });
   }, [router]);
 

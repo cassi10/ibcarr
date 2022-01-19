@@ -6,7 +6,6 @@ module.exports = {
   ],
   ignorePatterns: ["dist", ".next", "next-env.d.ts"],
   rules: {
-    "@typescript-eslint/explicit-function-return-type": "error",
-    "prettier/prettier": "error"
+    "@typescript-eslint/explicit-function-return-type": "error"
   }
 };

@@ -33,17 +33,13 @@ import { database } from "../firebase";
 import { Toast, Colors, Todo } from "../types";
 import DatePicker from "./date-picker";
 
-interface ITodoItemProperties {
+interface TodoItemProperties {
   todo: QueryDocumentSnapshot<Todo>;
   colorMode: ColorMode;
   toast: Toast;
 }
 
-const TodoItem: React.FC<ITodoItemProperties> = ({
-  todo,
-  colorMode,
-  toast
-}) => {
+const TodoItem: React.FC<TodoItemProperties> = ({ todo, colorMode, toast }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { body, color, dueDate } = todo.data();
@@ -87,9 +83,9 @@ const TodoItem: React.FC<ITodoItemProperties> = ({
 
       updateDoc(doc(database, "todos", id), updatedTodo)
         .then((): void => onClose())
-        .catch((error) => {
+        .catch((error: unknown) => {
           onClose();
-          throw error;
+          throw new Error(JSON.stringify(error));
         });
     }
   };
@@ -102,8 +98,8 @@ const TodoItem: React.FC<ITodoItemProperties> = ({
           status: "success"
         });
       })
-      .catch((error) => {
-        throw error;
+      .catch((error: unknown) => {
+        throw new Error(JSON.stringify(error));
       });
   };
 

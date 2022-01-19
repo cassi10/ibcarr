@@ -7,6 +7,14 @@
   "htmlWhitespaceSensitivity": "css",
   "insertPragma": false,
   "jsxSingleQuote": false,
+  "overrides": [
+    {
+      "files": ["*.code-workspace"],
+      "options": {
+        "parser": "json"
+      }
+    }
+  ],
   "printWidth": 80,
   "proseWrap": "preserve",
   "quoteProps": "consistent",
@@ -16,11 +24,5 @@
   "tabWidth": 2,
   "trailingComma": "none",
   "useTabs": false,
-  "vueIndentScriptAndStyle": false,
-  "overrides": [
-    {
-      "files": [".prettierrc", "*.code-workspace"],
-      "options": { "parser": "json" }
-    }
-  ]
+  "vueIndentScriptAndStyle": false
 }
