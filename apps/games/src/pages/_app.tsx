@@ -1,5 +1,5 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import { AppProps } from "next/dist/shared/lib/router/router";
+import type { AppProps } from "next/app";
 import Layout from "../components/layout";
 
 const App = ({ Component, pageProps }: AppProps): JSX.Element => (

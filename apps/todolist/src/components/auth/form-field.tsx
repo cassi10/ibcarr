@@ -15,13 +15,13 @@ type FormFieldProperties = {
   label: string;
 };
 
-const FormField: React.FC<FormFieldProperties> = ({
+const FormField = ({
   name,
   id,
   placeholder = "",
   type,
   label
-}) => (
+}: FormFieldProperties): JSX.Element => (
   <Field name={name}>
     {({
       field,
@@ -50,7 +50,7 @@ const FormField: React.FC<FormFieldProperties> = ({
   </Field>
 );
 
-export const EmailField: React.FC = () => (
+const EmailField = (): JSX.Element => (
   <FormField
     name="email"
     id="email"
@@ -60,7 +60,7 @@ export const EmailField: React.FC = () => (
   />
 );
 
-export const UsernameField: React.FC = () => (
+const UsernameField = (): JSX.Element => (
   <FormField
     name="username"
     id="username"
@@ -70,11 +70,11 @@ export const UsernameField: React.FC = () => (
   />
 );
 
-export const PasswordField: React.FC = () => (
+const PasswordField = (): JSX.Element => (
   <FormField name="password" id="password" type="password" label="Password" />
 );
 
-export const ChoosePasswordField: React.FC = () => (
+const ChoosePasswordField = (): JSX.Element => (
   <FormField
     name="password"
     id="password"
@@ -82,3 +82,5 @@ export const ChoosePasswordField: React.FC = () => (
     label="Choose Password"
   />
 );
+
+export { EmailField, UsernameField, PasswordField, ChoosePasswordField };

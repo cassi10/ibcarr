@@ -17,12 +17,15 @@ import {
 } from "./form-field";
 import { EmailSchema, SignInSchema, SignUpSchema } from "./validation";
 
-interface FormButtonProperties {
+type FormButtonProperties = {
   text: string;
   isSubmitting: boolean;
-}
+};
 
-const FormButton: React.FC<FormButtonProperties> = ({ text, isSubmitting }) => (
+const FormButton = ({
+  text,
+  isSubmitting
+}: FormButtonProperties): JSX.Element => (
   <Button
     alignSelf="flex-end"
     colorScheme="blue"
@@ -35,11 +38,11 @@ const FormButton: React.FC<FormButtonProperties> = ({ text, isSubmitting }) => (
   </Button>
 );
 
-interface EmailFormProperties {
+type EmailFormProperties = {
   setStep: Dispatch<SetStateAction<"enterEmail" | "signIn" | "signUp">>;
-}
+};
 
-const EmailForm: React.FC<EmailFormProperties> = ({ setStep }) => (
+const EmailForm = ({ setStep }: EmailFormProperties): JSX.Element => (
   <>
     <Heading size="md" alignSelf="flex-start" mb={4}>
       Sign in with Email
@@ -72,7 +75,7 @@ const EmailForm: React.FC<EmailFormProperties> = ({ setStep }) => (
   </>
 );
 
-const SignInForm: React.FC = () => (
+const SignInForm = (): JSX.Element => (
   <>
     <Heading size="md" alignSelf="flex-start" mb={4}>
       Sign in with Email
@@ -104,7 +107,7 @@ const SignInForm: React.FC = () => (
   </>
 );
 
-const SignUpForm: React.FC = () => (
+const SignUpForm = (): JSX.Element => (
   <>
     <Heading size="md" alignSelf="flex-start" mb={4}>
       Create Account

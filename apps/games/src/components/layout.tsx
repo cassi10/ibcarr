@@ -7,7 +7,6 @@ import {
   useColorMode
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { ReactNode } from "react";
 import { TopBar } from "@ibcarr/ui";
 import GameLink from "./game-link";
 import { Game } from "../types";
@@ -45,7 +44,11 @@ const Navbar = (): JSX.Element => {
   );
 };
 
-const Layout = ({ children }: { children: ReactNode }): JSX.Element => {
+type LayoutProperties = {
+  children: JSX.Element;
+};
+
+const Layout = ({ children }: LayoutProperties): JSX.Element => {
   const { colorMode } = useColorMode();
 
   return (

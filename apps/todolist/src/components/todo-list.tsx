@@ -26,11 +26,11 @@ import { database } from "../firebase";
 import { Todo, Toast, Colors } from "../types";
 import TodoItem from "./todo-item";
 
-interface TodoListProperties {
+type TodoListProperties = {
   user: User;
   colorMode: ColorMode;
   toast: Toast;
-}
+};
 
 const TodoConverter = {
   toFirestore(todo: Todo): DocumentData {
@@ -52,14 +52,20 @@ const TodoConverter = {
   }
 };
 
-const TodoList: React.FC<TodoListProperties> = ({ user, colorMode, toast }) => {
+const TodoList = ({
+  user,
+  colorMode,
+  toast
+}: TodoListProperties): JSX.Element => {
   const todosReference = collection(database, "todos").withConverter<Todo>(
     TodoConverter
   );
+
   const queryConstraints = [
     orderBy("createdAt", "desc"),
     where("ownerUID", "==", !user ? "" : user.uid)
   ];
+
   const todosQuery = query(todosReference, ...queryConstraints).withConverter(
     TodoConverter
   );

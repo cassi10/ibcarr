@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { auth } from "../../firebase";
 import { EmailForm, SignInForm, SignUpForm } from "./form-steps";
 
-const AuthForm: React.FC = () => {
+const AuthForm = (): JSX.Element => {
   const router = useRouter();
 
   useEffect(() => {

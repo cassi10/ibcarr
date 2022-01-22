@@ -40,14 +40,16 @@ const Icons = {
   sun: BsSunFill
 };
 
-export type IconsType = keyof typeof Icons;
+type IconsType = keyof typeof Icons;
 
 // const getIcon = (icon: keyof typeof Icons, props?: unknown) => (
 //   <Icon as={Icons[icon]} {...props} />
 // );
 
-export const getIconComponent = (icon: IconsType): JSX.Element => (
+const getIconComponent = (icon: IconsType): JSX.Element => (
   <Icon as={Icons[icon]} />
 );
 
-export const getIcon = (icon: IconsType): IconType => Icons[icon];
+const getIcon = (icon: IconsType): IconType => Icons[icon];
+
+export { getIcon, getIconComponent, type IconsType };

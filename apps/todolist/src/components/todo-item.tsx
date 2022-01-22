@@ -33,13 +33,17 @@ import { database } from "../firebase";
 import { Toast, Colors, Todo } from "../types";
 import DatePicker from "./date-picker";
 
-interface TodoItemProperties {
+type TodoItemProperties = {
   todo: QueryDocumentSnapshot<Todo>;
   colorMode: ColorMode;
   toast: Toast;
-}
+};
 
-const TodoItem: React.FC<TodoItemProperties> = ({ todo, colorMode, toast }) => {
+const TodoItem = ({
+  todo,
+  colorMode,
+  toast
+}: TodoItemProperties): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { body, color, dueDate } = todo.data();

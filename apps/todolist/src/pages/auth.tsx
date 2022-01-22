@@ -1,11 +1,10 @@
-import { NextPage } from "next";
 import { Grid } from "@chakra-ui/react";
 import Head from "next/head";
 import AuthForm from "../components/auth/form";
 
 // TODO https://codesandbox.io/s/multistep-auth-form-v5nwn
 
-const Auth: NextPage = () => {
+const Auth = (): JSX.Element => {
   return (
     <>
       <Head>

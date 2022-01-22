@@ -1,6 +1,6 @@
 import { defineConfig } from "tsup";
 
-export default defineConfig((options) => {
+const config = defineConfig((options) => {
   return {
     format: ["cjs", "esm"],
     dts: true,
@@ -10,3 +10,5 @@ export default defineConfig((options) => {
     inject: ["./src/react-import.ts"]
   };
 });
+
+export default config;

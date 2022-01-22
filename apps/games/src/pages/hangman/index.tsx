@@ -9,14 +9,13 @@ import {
   IconButton,
   Divider
 } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { getIconComponent } from "@ibcarr/ui";
 import stages from "../../data/hangman-stages";
 import getRandomWord from "../../data/words";
 
-const Hangman: NextPage = (): JSX.Element => {
+const Hangman = (): JSX.Element => {
   const [word, setWord] = useState<string>("");
   const [letterGuesses, setLetterGuesses] = useState<string[]>([]);
   const [wordGuess, setWordGuess] = useState<string>("");

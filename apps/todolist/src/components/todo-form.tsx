@@ -26,13 +26,17 @@ import { database } from "../firebase";
 import { Colors, Toast } from "../types";
 import DatePicker from "./date-picker";
 
-interface TodoFormProperties {
+type TodoFormProperties = {
   user: User;
   toast: Toast;
   colorMode: ColorMode;
-}
+};
 
-const TodoForm: React.FC<TodoFormProperties> = ({ user, toast, colorMode }) => {
+const TodoForm = ({
+  user,
+  toast,
+  colorMode
+}: TodoFormProperties): JSX.Element => {
   const colors: Colors[] = [
     "gray",
     "red",

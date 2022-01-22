@@ -10,7 +10,6 @@ import {
   Icon,
   IconButton
 } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/dist/client/router";
@@ -20,7 +19,7 @@ import TodoList from "../components/todo-list";
 import TodoForm from "../components/todo-form";
 import { auth } from "../firebase";
 
-const Home: NextPage = () => {
+const Home = (): JSX.Element => {
   const router = useRouter();
 
   const { colorMode, toggleColorMode } = useColorMode();

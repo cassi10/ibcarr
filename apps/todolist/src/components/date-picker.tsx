@@ -18,17 +18,20 @@ import {
 import { useEffect, useState } from "react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
 
-interface DatePickerProperties {
+type DatePickerProperties = {
   updateDate: (date: Date | undefined) => void;
   date: Date | undefined;
-}
+};
 
 /**
  * TODO Add previous month numbers to start of month calendar which are also selectable and maybe on click switch the view month to the previous
  * TODO Pull some of this logic out from the component and into a separate file
  */
 
-const DatePicker: React.FC<DatePickerProperties> = ({ updateDate, date }) => {
+const DatePicker = ({
+  updateDate,
+  date
+}: DatePickerProperties): JSX.Element => {
   const { colorMode } = useColorMode();
 
   const todaysDate = new Date();
