@@ -30,7 +30,7 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { database } from "../firebase";
-import { Toast, Colors, Todo } from "../types";
+import type { Toast, Colors, Todo } from "../types";
 import DatePicker from "./date-picker";
 
 type TodoItemProperties = {

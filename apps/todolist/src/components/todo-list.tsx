@@ -23,7 +23,7 @@ import {
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { database } from "../firebase";
-import { Todo, Toast, Colors } from "../types";
+import type { Todo, Toast, Colors } from "../types";
 import TodoItem from "./todo-item";
 
 type TodoListProperties = {

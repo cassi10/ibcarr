@@ -9,7 +9,7 @@ import {
 import NextLink from "next/link";
 import { TopBar } from "@ibcarr/ui";
 import GameLink from "./game-link";
-import { Game } from "../types";
+import type { Game } from "../types";
 
 const Navbar = (): JSX.Element => {
   const games: Game[] = [

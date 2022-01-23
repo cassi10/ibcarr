@@ -1,4 +1,4 @@
-export type Toast = {
+type Toast = {
   (options?: import("@chakra-ui/react").UseToastOptions | undefined):
     | import("@chakra-ui/react").ToastId
     | undefined;
@@ -9,7 +9,7 @@ export type Toast = {
   isActive: (id: import("@chakra-ui/react").ToastId) => boolean | undefined;
 };
 
-export type Todo = {
+type Todo = {
   body: string;
   color: Colors;
   createdAt: import("firebase/firestore").Timestamp;
@@ -18,14 +18,7 @@ export type Todo = {
   dueDate: import("firebase/firestore").Timestamp;
 };
 
-export type Colors =
-  | "gray"
-  | "red"
-  | "orange"
-  | "yellow"
-  | "green"
-  | "teal"
-  | "cyan"
-  | "blue"
-  | "purple"
-  | "pink";
+type ThemeTypings = import("@chakra-ui/react").ThemeTypings;
+type Colors = ThemeTypings["colorSchemes"];
+
+export type { Toast, Todo, ThemeTypings, Colors };

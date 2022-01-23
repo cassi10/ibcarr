@@ -23,7 +23,7 @@ import {
 import { useState } from "react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
 import { database } from "../firebase";
-import { Colors, Toast } from "../types";
+import type { Colors, Toast } from "../types";
 import DatePicker from "./date-picker";
 
 type TodoFormProperties = {

@@ -1,3 +1,7 @@
+/**
+ * TODO Add dropdown to username for logout and settings etc...
+ */
+
 import {
   Container,
   Text,

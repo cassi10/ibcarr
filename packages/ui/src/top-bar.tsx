@@ -1,6 +1,6 @@
 import { Box, ColorMode, Flex, Icon, Link, Text } from "@chakra-ui/react";
 import fromColorMode from "./from-color-mode";
-import { getIcon, IconsType } from "./icons";
+import { getIcon, type IconsType } from "./icons";
 
 type TopBarItemProperties = {
   icon: IconsType;

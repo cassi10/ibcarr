@@ -2,10 +2,13 @@ import {
   FormControl,
   FormLabel,
   Input,
-  FormErrorMessage
+  FormErrorMessage,
+  FormHelperText,
+  Button
 } from "@chakra-ui/react";
-import { Field, FieldAttributes, FormikState } from "formik";
-import { HTMLInputTypeAttribute } from "react";
+import { useField } from "formik";
+import { HTMLInputTypeAttribute, useState } from "react";
+import { type SetStep } from "./form";
 
 type FormFieldProperties = {
   name: "email" | "username" | "password";
@@ -13,6 +16,9 @@ type FormFieldProperties = {
   placeholder?: string;
   type: HTMLInputTypeAttribute;
   label: string;
+  disabled?: boolean;
+  helperText?: boolean;
+  setStep?: SetStep;
 };
 
 const FormField = ({
@@ -20,43 +26,72 @@ const FormField = ({
   id,
   placeholder = "",
   type,
-  label
-}: FormFieldProperties): JSX.Element => (
-  <Field name={name}>
-    {({
-      field,
-      form
-    }: {
-      field: FieldAttributes<never>;
-      form: FormikState<{ [key: string]: string }>;
-    }): JSX.Element => (
-      <FormControl
-        isInvalid={form.errors[name] !== undefined && form.touched[name]}
-      >
-        <FormLabel htmlFor={id} pb={1}>
-          {label}
-        </FormLabel>
-        <Input
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...field}
-          id={id}
-          placeholder={placeholder}
-          type={type}
-          variant="flushed"
-        />
-        <FormErrorMessage>{form.errors[name]}</FormErrorMessage>
-      </FormControl>
-    )}
-  </Field>
-);
+  label,
+  disabled = false,
+  helperText = false,
+  setStep = undefined
+}: FormFieldProperties): JSX.Element => {
+  const [field, meta] = useField<string>(name);
 
-const EmailField = (): JSX.Element => (
+  const [didFocus, setDidFocus] = useState<boolean>(false);
+  const handleFocus = (): void => setDidFocus(true);
+  const showFeedback =
+    (!!didFocus && field.value.trim().length >= 2) || meta.touched;
+
+  return (
+    <FormControl
+      isInvalid={showFeedback && meta.error !== undefined}
+      isDisabled={disabled}
+    >
+      <FormLabel htmlFor={id}>{label}</FormLabel>
+      <Input
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...field}
+        id={id}
+        placeholder={placeholder}
+        type={type}
+        variant="flushed"
+        onFocus={handleFocus}
+        _disabled={{ cursor: " not-allowed" }}
+      />
+      {disabled && setStep && helperText && (
+        <FormHelperText>
+          Not your email address?{" "}
+          <Button
+            variant="link"
+            size="sm"
+            colorScheme="gray"
+            onClick={(): void => setStep("enterEmail")}
+          >
+            Start again.
+          </Button>
+        </FormHelperText>
+      )}
+      <FormErrorMessage>{meta.error}</FormErrorMessage>
+    </FormControl>
+  );
+};
+
+type EmailFieldProperties = {
+  disabled?: boolean;
+  helperText?: boolean;
+  setStep?: SetStep;
+};
+
+const EmailField = ({
+  disabled,
+  helperText,
+  setStep
+}: EmailFieldProperties): JSX.Element => (
   <FormField
     name="email"
     id="email"
     placeholder="john@acme.com"
     type="email"
     label="Email"
+    disabled={disabled}
+    helperText={helperText}
+    setStep={setStep}
   />
 );
 
@@ -71,7 +106,13 @@ const UsernameField = (): JSX.Element => (
 );
 
 const PasswordField = (): JSX.Element => (
-  <FormField name="password" id="password" type="password" label="Password" />
+  <FormField
+    name="password"
+    id="password"
+    type="password"
+    label="Password"
+    placeholder="••••••••"
+  />
 );
 
 const ChoosePasswordField = (): JSX.Element => (
@@ -80,6 +121,7 @@ const ChoosePasswordField = (): JSX.Element => (
     id="password"
     type="password"
     label="Choose Password"
+    placeholder="••••••••"
   />
 );
 

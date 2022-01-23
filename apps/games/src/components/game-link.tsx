@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import { Button, useBreakpointValue } from "@chakra-ui/react";
-import { Game } from "../types";
+import type { Game } from "../types";
 
 type GameLinkProperties = {
   game: Game;
