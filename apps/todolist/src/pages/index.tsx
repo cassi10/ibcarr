@@ -1,5 +1,6 @@
 /**
  * TODO Add dropdown to username for logout and settings etc...
+ * TODO Pull some of this out into it's own component
  */
 
 import {
@@ -16,9 +17,9 @@ import {
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter } from "next/dist/client/router";
 import Head from "next/head";
 import { getIcon, fromColorMode, TopBar } from "@ibcarr/ui";
+import { useRouter } from "next/router";
 import TodoList from "../components/todo-list";
 import TodoForm from "../components/todo-form";
 import { auth } from "../firebase";
@@ -29,8 +30,9 @@ const Home = (): JSX.Element => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   const toast = useToast({
-    position: "bottom-left",
-    isClosable: true
+    position: "top",
+    isClosable: true,
+    variant: "solid"
   });
 
   const [user, userLoading, userError] = useAuthState(auth);
@@ -42,7 +44,7 @@ const Home = (): JSX.Element => {
       router.push("/auth").catch((error: unknown) => {
         throw new Error(JSON.stringify(error));
       });
-  });
+  }, [router, user, userLoading]);
 
   const onSignOutClick = (): void => {
     auth.signOut().catch((error: unknown) => {
@@ -56,7 +58,7 @@ const Home = (): JSX.Element => {
         <title>TodoList</title>
         <meta name="description" content="A simple todolist!" />
       </Head>
-      <TopBar colorMode={colorMode} />
+      <TopBar />
       <Container maxW="8xl" pb={4}>
         {user && (
           <Flex flexDirection="column" justify="center">
@@ -106,8 +108,8 @@ const Home = (): JSX.Element => {
                 </Flex>
               </Flex>
             </Box>
-            <TodoForm user={user} toast={toast} colorMode={colorMode} />
-            <TodoList colorMode={colorMode} toast={toast} user={user} />
+            <TodoForm user={user} toast={toast} />
+            <TodoList toast={toast} user={user} />
           </Flex>
         )}
       </Container>

@@ -1,3 +1,8 @@
+/**
+ * TODO Make background color todocolor with some opacity or left border.
+ * TODO Instead of modal keep it all on the item as a toggle or just click it to edit it.
+ */
+
 import {
   Accordion,
   AccordionButton,
@@ -7,7 +12,6 @@ import {
   Textarea,
   useDisclosure,
   IconButton,
-  ColorMode,
   ListItem,
   Flex,
   Text,
@@ -16,7 +20,8 @@ import {
   ModalContent,
   ModalBody,
   Tooltip,
-  Button
+  Button,
+  useColorMode
 } from "@chakra-ui/react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
 import {
@@ -35,15 +40,12 @@ import DatePicker from "./date-picker";
 
 type TodoItemProperties = {
   todo: QueryDocumentSnapshot<Todo>;
-  colorMode: ColorMode;
   toast: Toast;
 };
 
-const TodoItem = ({
-  todo,
-  colorMode,
-  toast
-}: TodoItemProperties): JSX.Element => {
+const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
+  const { colorMode } = useColorMode();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { body, color, dueDate } = todo.data();
@@ -114,8 +116,8 @@ const TodoItem = ({
     "yellow",
     "green",
     "teal",
-    "cyan",
     "blue",
+    "cyan",
     "purple",
     "pink"
   ];
@@ -221,6 +223,7 @@ const TodoItem = ({
                   roundedBottom={todoDate ? 0 : 8}
                   variant="filled"
                   h="auto"
+                  // fontFamily="monospace"
                   minH={todoDate ? "320px" : "360px"}
                   boxShadow={todoDate ? "none" : "md"}
                 />

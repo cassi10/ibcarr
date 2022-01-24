@@ -1,7 +1,11 @@
-import { Heading, Flex, Button } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import {
+  AuthError,
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
+  setPersistence,
   signInWithEmailAndPassword,
   updateProfile
 } from "firebase/auth";
@@ -9,65 +13,21 @@ import { Formik, Form } from "formik";
 import Router from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import { auth } from "../../firebase";
-import { type SetStep } from "./form";
+import { SetStep } from "../../types";
+import { BackButton, FormHeading, NextButton } from "./form-components";
 import {
   ChoosePasswordField,
   EmailField,
   PasswordField,
+  RememberMeCheckbox,
   UsernameField
 } from "./form-field";
 import { EmailSchema, SignInSchema, SignUpSchema } from "./validation";
 
-type NextButtonProperties = {
-  children: string;
-  isSubmitting: boolean;
-  isValid: boolean;
-};
-
-const NextButton = ({
-  children,
-  isSubmitting,
-  isValid
-}: NextButtonProperties): JSX.Element => (
-  <Button
-    colorScheme="blue"
-    variant="solid"
-    type="submit"
-    isLoading={isSubmitting}
-    isDisabled={isSubmitting || !isValid}
-  >
-    {children}
-  </Button>
-);
-
-type BackButtonProperties = {
-  setStep: SetStep;
-};
-
-const BackButton = ({ setStep }: BackButtonProperties): JSX.Element => (
-  <Button
-    colorScheme="gray"
-    variant="ghost"
-    type="button"
-    onClick={(): void => setStep("enterEmail")}
-  >
-    Back
-  </Button>
-);
-
-type FormHeadingProperties = {
-  children: string;
-};
-
-const FormHeading = ({ children }: FormHeadingProperties): JSX.Element => (
-  <Heading size="md" alignSelf="flex-start" mb={4}>
-    {children}
-  </Heading>
-);
-
 type FormStepProperties = {
   setStep: SetStep;
   email: string;
+  setFormError: Dispatch<SetStateAction<AuthError | undefined>>;
 };
 
 type EmailFormProperties = FormStepProperties & {
@@ -77,24 +37,24 @@ type EmailFormProperties = FormStepProperties & {
 const EmailForm = ({
   setStep,
   email,
+  setFormError,
   setEmail
 }: EmailFormProperties): JSX.Element => (
   <>
-    <FormHeading>Sign in with Email</FormHeading>
+    <FormHeading>Sign In</FormHeading>
     <Formik
       initialValues={{ email }}
-      onSubmit={(values, actions): void => {
+      onSubmit={async (values, actions): Promise<void> => {
         setEmail(values.email);
-        fetchSignInMethodsForEmail(auth, values.email)
-          .then((methods) =>
-            methods.length === 0 ? setStep("signUp") : setStep("signIn")
-          )
-          .finally(() => {
-            actions.setSubmitting(false);
-          })
-          .catch((error: unknown) => {
-            throw new Error(JSON.stringify(error));
-          });
+        try {
+          const methods = await fetchSignInMethodsForEmail(auth, values.email);
+          if (methods.length === 0) {
+            setStep("signUp");
+          } else setStep("signIn");
+        } catch (error: unknown) {
+          setFormError(error as AuthError);
+        }
+        actions.setSubmitting(false);
       }}
       validationSchema={EmailSchema}
     >
@@ -112,20 +72,38 @@ const EmailForm = ({
   </>
 );
 
-const SignInForm = ({ setStep, email }: FormStepProperties): JSX.Element => (
+const SignInForm = ({
+  setStep,
+  email,
+  setFormError
+}: FormStepProperties): JSX.Element => (
   <>
-    <FormHeading>Sign in with Email</FormHeading>
+    <FormHeading>Sign In</FormHeading>
     <Formik
-      initialValues={{ email, password: "" }}
-      onSubmit={(values, actions): void => {
-        signInWithEmailAndPassword(auth, values.email, values.password)
-          .then(() => {
-            actions.setSubmitting(false);
-            return Router.push("/");
-          })
-          .catch((error: unknown) => {
-            throw new Error(JSON.stringify(error));
-          });
+      initialValues={{ email, password: "", rememberMe: true }}
+      onSubmit={async (values, actions): Promise<void> => {
+        try {
+          const persistence = values.rememberMe
+            ? browserLocalPersistence
+            : browserSessionPersistence;
+
+          await setPersistence(auth, persistence);
+          await signInWithEmailAndPassword(auth, values.email, values.password);
+
+          actions.setSubmitting(false);
+
+          await Router.push("/");
+        } catch (error: unknown) {
+          actions.setSubmitting(false);
+          if ((error as AuthError).code === "auth/wrong-password") {
+            actions.setFieldError(
+              "password",
+              "The email and password you entered don't match."
+            );
+          } else if ((error as AuthError).code === "auth/invalid-email") {
+            actions.setFieldError("email", "Invalid email");
+          } else setFormError(error as AuthError);
+        }
       }}
       validationSchema={SignInSchema}
     >
@@ -134,7 +112,13 @@ const SignInForm = ({ setStep, email }: FormStepProperties): JSX.Element => (
           <Flex direction="column" rowGap={5} align="stretch" justify="center">
             <EmailField disabled helperText setStep={setStep} />
             <PasswordField />
-            <Flex direction="row" justify="flex-end" columnGap={2}>
+            <Flex
+              direction="row"
+              justify="flex-end"
+              align="center"
+              columnGap={2}
+            >
+              <RememberMeCheckbox />
               <BackButton setStep={setStep} />
               <NextButton isSubmitting={isSubmitting} isValid={isValid}>
                 Sign In
@@ -147,26 +131,39 @@ const SignInForm = ({ setStep, email }: FormStepProperties): JSX.Element => (
   </>
 );
 
-const SignUpForm = ({ setStep, email }: FormStepProperties): JSX.Element => (
+const SignUpForm = ({
+  setStep,
+  email,
+  setFormError
+}: FormStepProperties): JSX.Element => (
   <>
     <FormHeading>Create Account</FormHeading>
     <Formik
-      initialValues={{ email, username: "", password: "" }}
-      onSubmit={(values, actions): void => {
-        createUserWithEmailAndPassword(auth, email, values.password)
-          .then(async (user) => {
-            actions.setSubmitting(false);
-            try {
-              await updateProfile(user.user, { displayName: values.username });
-              return await Router.push("/");
-            } catch (error: unknown) {
-              throw new Error(JSON.stringify(error));
-            }
-          })
-          .catch((error: unknown) => {
-            throw new Error(JSON.stringify(error));
-          });
-        actions.setSubmitting(false);
+      initialValues={{ email, username: "", password: "", rememberMe: true }}
+      onSubmit={async (values, actions): Promise<void> => {
+        try {
+          const persistence = values.rememberMe
+            ? browserLocalPersistence
+            : browserSessionPersistence;
+
+          await setPersistence(auth, persistence);
+
+          const user = await createUserWithEmailAndPassword(
+            auth,
+            values.email,
+            values.password
+          );
+          await updateProfile(user.user, { displayName: values.username });
+
+          actions.setSubmitting(false);
+
+          await Router.push("/");
+        } catch (error: unknown) {
+          actions.setSubmitting(false);
+          if ((error as AuthError).code === "auth/invalid-email") {
+            actions.setFieldError("email", "Invalid email");
+          } else setFormError(error as AuthError);
+        }
       }}
       validationSchema={SignUpSchema}
     >
@@ -176,7 +173,13 @@ const SignUpForm = ({ setStep, email }: FormStepProperties): JSX.Element => (
             <EmailField disabled helperText setStep={setStep} />
             <UsernameField />
             <ChoosePasswordField />
-            <Flex direction="row" justify="flex-end" columnGap={2}>
+            <Flex
+              direction="row"
+              justify="flex-end"
+              align="center"
+              columnGap={2}
+            >
+              <RememberMeCheckbox />
               <BackButton setStep={setStep} />
               <NextButton isSubmitting={isSubmitting} isValid={isValid}>
                 Save

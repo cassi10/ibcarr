@@ -1,10 +1,11 @@
-import { Grid } from "@chakra-ui/react";
+import { Grid, Icon, IconButton, useColorMode } from "@chakra-ui/react";
+import { getIcon } from "@ibcarr/ui";
 import Head from "next/head";
 import AuthForm from "../components/auth/form";
 
-// TODO https://codesandbox.io/s/multistep-auth-form-v5nwn
-
 const Auth = (): JSX.Element => {
+  const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <>
       <Head>
@@ -12,6 +13,23 @@ const Auth = (): JSX.Element => {
         <meta name="description" content="A simple todolist!" />
       </Head>
       <Grid placeItems="center" h="100vh">
+        <IconButton
+          position="absolute"
+          top={2}
+          right={2}
+          alignSelf="start"
+          justifySelf="end"
+          aria-label="Toggle color mode"
+          variant="ghost"
+          onClick={toggleColorMode}
+          icon={
+            colorMode === "light" ? (
+              <Icon as={getIcon("moon")} />
+            ) : (
+              <Icon as={getIcon("sun")} />
+            )
+          }
+        />
         <AuthForm />
       </Grid>
     </>

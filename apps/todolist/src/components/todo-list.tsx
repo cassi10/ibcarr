@@ -1,5 +1,4 @@
 import {
-  ColorMode,
   Spinner,
   Alert,
   AlertDescription,
@@ -26,12 +25,6 @@ import { database } from "../firebase";
 import type { Todo, Toast, Colors } from "../types";
 import TodoItem from "./todo-item";
 
-type TodoListProperties = {
-  user: User;
-  colorMode: ColorMode;
-  toast: Toast;
-};
-
 const TodoConverter = {
   toFirestore(todo: Todo): DocumentData {
     return { ...todo };
@@ -52,11 +45,12 @@ const TodoConverter = {
   }
 };
 
-const TodoList = ({
-  user,
-  colorMode,
-  toast
-}: TodoListProperties): JSX.Element => {
+type TodoListProperties = {
+  user: User;
+  toast: Toast;
+};
+
+const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
   const todosReference = collection(database, "todos").withConverter<Todo>(
     TodoConverter
   );
@@ -110,12 +104,7 @@ const TodoList = ({
       ) : (
         <List spacing={4} mx={8}>
           {todos.docs.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              colorMode={colorMode}
-              toast={toast}
-            />
+            <TodoItem key={todo.id} todo={todo} toast={toast} />
           ))}
         </List>
       )}

@@ -4,14 +4,15 @@ import {
   Input,
   FormErrorMessage,
   FormHelperText,
-  Button
+  Button,
+  Checkbox
 } from "@chakra-ui/react";
 import { useField } from "formik";
 import { HTMLInputTypeAttribute, useState } from "react";
-import { type SetStep } from "./form";
+import { SetStep } from "../../types";
 
 type FormFieldProperties = {
-  name: "email" | "username" | "password";
+  name: "email" | "username" | "password" | "rememberMe";
   id: string;
   placeholder?: string;
   type: HTMLInputTypeAttribute;
@@ -52,7 +53,10 @@ const FormField = ({
         type={type}
         variant="flushed"
         onFocus={handleFocus}
-        _disabled={{ cursor: " not-allowed" }}
+        _disabled={{
+          cursor: "not-allowed",
+          opacity: "0.4"
+        }}
       />
       {disabled && setStep && helperText && (
         <FormHelperText>
@@ -60,7 +64,7 @@ const FormField = ({
           <Button
             variant="link"
             size="sm"
-            colorScheme="gray"
+            colorScheme="blue"
             onClick={(): void => setStep("enterEmail")}
           >
             Start again.
@@ -125,4 +129,27 @@ const ChoosePasswordField = (): JSX.Element => (
   />
 );
 
-export { EmailField, UsernameField, PasswordField, ChoosePasswordField };
+const RememberMeCheckbox = (): JSX.Element => {
+  const [field] = useField<boolean>("rememberMe");
+
+  return (
+    <FormControl>
+      <Checkbox
+        colorScheme="blue"
+        onChange={field.onChange}
+        isChecked={field.value}
+        name="rememberMe"
+      >
+        Remember me?
+      </Checkbox>
+    </FormControl>
+  );
+};
+
+export {
+  EmailField,
+  UsernameField,
+  PasswordField,
+  ChoosePasswordField,
+  RememberMeCheckbox
+};

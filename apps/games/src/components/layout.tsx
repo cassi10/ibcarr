@@ -1,11 +1,4 @@
-import {
-  Container,
-  Box,
-  Flex,
-  Heading,
-  Link,
-  useColorMode
-} from "@chakra-ui/react";
+import { Container, Box, Flex, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { TopBar } from "@ibcarr/ui";
 import GameLink from "./game-link";
@@ -49,11 +42,9 @@ type LayoutProperties = {
 };
 
 const Layout = ({ children }: LayoutProperties): JSX.Element => {
-  const { colorMode } = useColorMode();
-
   return (
     <>
-      <TopBar colorMode={colorMode} />
+      <TopBar />
       <Container maxW="8xl" pb={4}>
         <Flex direction="column" justify="center" align="center">
           <Box flex={1} w="100%">

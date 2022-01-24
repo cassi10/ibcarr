@@ -1,15 +1,22 @@
 /**
- * TODO Add "Remember Me" checkbox to form to switch between `local` persistense and `session` persistence
+ * TODO Add toggle to view password
+ * TODO Forms needs a rework to allow changing the email if invalid
  */
 
-import { Flex } from "@chakra-ui/react";
+import { Flex, useColorMode } from "@chakra-ui/react";
+import { fromColorMode } from "@ibcarr/ui";
+import { AuthError } from "firebase/auth";
 import Router from "next/router";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { auth } from "../../firebase";
+import { ErrorAlert } from "./form-components";
 import { EmailForm, SignInForm, SignUpForm } from "./form-steps";
 
 const AuthForm = (): JSX.Element => {
+  const { colorMode } = useColorMode();
+
   const [email, setEmail] = useState<string>("");
+  const [formError, setFormError] = useState<AuthError | undefined>(undefined);
 
   useEffect(() => {
     if (auth.currentUser)
@@ -22,45 +29,62 @@ const AuthForm = (): JSX.Element => {
     "enterEmail"
   );
 
-  const [form, setForm] = useState<JSX.Element>(
-    <EmailForm setStep={setStep} email={email} setEmail={setEmail} />
+  const initialForm = useMemo(
+    () => (
+      <EmailForm
+        setStep={setStep}
+        email={email}
+        setEmail={setEmail}
+        setFormError={setFormError}
+      />
+    ),
+    [email]
   );
+
+  const [form, setForm] = useState<JSX.Element>(initialForm);
 
   useEffect(() => {
     switch (step) {
       case "signIn":
-        setForm(<SignInForm setStep={setStep} email={email} />);
-        break;
-      case "signUp":
-        setForm(<SignUpForm setStep={setStep} email={email} />);
-        break;
-      default:
         setForm(
-          <EmailForm setStep={setStep} email={email} setEmail={setEmail} />
+          <SignInForm
+            setStep={setStep}
+            email={email}
+            setFormError={setFormError}
+          />
         );
         break;
+      case "signUp":
+        setForm(
+          <SignUpForm
+            setStep={setStep}
+            email={email}
+            setFormError={setFormError}
+          />
+        );
+        break;
+      default:
+        setForm(initialForm);
+        break;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step]);
+  }, [step, email, initialForm]);
 
   return (
     <Flex
       direction="column"
       align="center"
       justify="center"
-      bg="gray.900"
+      bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
       w="sm"
-      p={6}
-      rounded="sm"
+      p={4}
+      rounded="md"
       shadow="md"
-      rowGap={6}
+      rowGap={4}
     >
+      {formError !== undefined && <ErrorAlert error={formError} />}
       {form}
     </Flex>
   );
 };
 
-export type SetStep = Dispatch<
-  SetStateAction<"enterEmail" | "signIn" | "signUp">
->;
 export default AuthForm;

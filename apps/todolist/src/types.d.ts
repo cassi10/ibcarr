@@ -21,4 +21,8 @@ type Todo = {
 type ThemeTypings = import("@chakra-ui/react").ThemeTypings;
 type Colors = ThemeTypings["colorSchemes"];
 
-export type { Toast, Todo, ThemeTypings, Colors };
+type SetStep = import("react").Dispatch<
+  import("react").SetStateAction<"enterEmail" | "signIn" | "signUp">
+>;
+
+export type { Toast, Todo, ThemeTypings, Colors, SetStep };

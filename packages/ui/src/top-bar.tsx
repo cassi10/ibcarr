@@ -1,4 +1,4 @@
-import { Box, ColorMode, Flex, Icon, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Icon, Link, Text, useColorMode } from "@chakra-ui/react";
 import fromColorMode from "./from-color-mode";
 import { getIcon, type IconsType } from "./icons";
 
@@ -22,11 +22,9 @@ const TopBarItem = ({
   </>
 );
 
-type TopBarProperties = {
-  colorMode: ColorMode;
-};
+const TopBar = (): JSX.Element => {
+  const { colorMode } = useColorMode();
 
-const TopBar = ({ colorMode }: TopBarProperties): JSX.Element => {
   return (
     <Box
       mb={12}
