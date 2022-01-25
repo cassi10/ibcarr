@@ -21,7 +21,7 @@ const Navbar = (): JSX.Element => {
         </Link>
       </NextLink>
       <Flex
-        rounded={8}
+        rounded="md"
         flex={1}
         gridGap={2}
         alignSelf="stretch"

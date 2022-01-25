@@ -35,7 +35,7 @@ const GameLink = ({ game, index }: GameLinkProperties): JSX.Element => {
   return (
     <NextLink href={game.href} key={game.name}>
       <Button
-        boxShadow="md"
+        shadow="md"
         variant="solid"
         colorScheme={color}
         disabled={game.disabled}

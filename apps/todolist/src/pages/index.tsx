@@ -1,6 +1,9 @@
 /**
- * TODO Add dropdown to username for logout and settings etc...
+ * TODO Add dropdown to username for logout, settings and toggle cololr mode etc...
  * TODO Pull some of this out into it's own component
+ * TODO I could even make my own version of M365 sort of...
+ * TODO convert promises to async await try catch blocks
+ * TODO should probably change Firestore to hold user data and link it through userid as collection - this will also allow for support with games leaderboards
  */
 
 import {
@@ -66,14 +69,14 @@ const Home = (): JSX.Element => {
               <Flex align="center" justify="center" direction="row" h={10}>
                 <Heading h={10}>TodoList</Heading>
                 <Flex
-                  rounded={8}
+                  rounded="md"
                   flex={1}
                   mx={6}
                   bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
                   alignSelf="stretch"
                   align="center"
                   justify="center"
-                  boxShadow="md"
+                  shadow="md"
                 >
                   {/* <Text></Text> */}
                 </Flex>
