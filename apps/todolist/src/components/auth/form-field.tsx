@@ -37,7 +37,7 @@ const FormField = ({
   const [didFocus, setDidFocus] = useState<boolean>(false);
   const handleFocus = (): void => setDidFocus(true);
   const showFeedback =
-    (!!didFocus && field.value.trim().length >= 2) || meta.touched;
+    (!!didFocus && field.value.trim().length > 0) || meta.touched;
 
   return (
     <FormControl
@@ -58,7 +58,7 @@ const FormField = ({
           opacity: "0.4"
         }}
       />
-      {disabled && setStep && helperText && (
+      {setStep && helperText && (
         <FormHelperText>
           Not your email address?{" "}
           <Button

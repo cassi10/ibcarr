@@ -28,9 +28,6 @@ type FormStepProperties = {
   setStep: SetStep;
   email: string;
   setFormError: Dispatch<SetStateAction<AuthError | undefined>>;
-};
-
-type EmailFormProperties = FormStepProperties & {
   setEmail: Dispatch<SetStateAction<string>>;
 };
 
@@ -39,7 +36,7 @@ const EmailForm = ({
   email,
   setFormError,
   setEmail
-}: EmailFormProperties): JSX.Element => (
+}: FormStepProperties): JSX.Element => (
   <>
     <FormHeading>Sign In</FormHeading>
     <Formik
@@ -52,7 +49,9 @@ const EmailForm = ({
             setStep("signUp");
           } else setStep("signIn");
         } catch (error: unknown) {
-          setFormError(error as AuthError);
+          if ((error as AuthError).code === "auth/invalid-email") {
+            actions.setFieldError("email", "Invalid email.");
+          } else setFormError(error as AuthError);
         }
         actions.setSubmitting(false);
       }}
@@ -75,7 +74,8 @@ const EmailForm = ({
 const SignInForm = ({
   setStep,
   email,
-  setFormError
+  setFormError,
+  setEmail
 }: FormStepProperties): JSX.Element => (
   <>
     <FormHeading>Sign In</FormHeading>
@@ -101,16 +101,16 @@ const SignInForm = ({
               "The email and password you entered don't match."
             );
           } else if ((error as AuthError).code === "auth/invalid-email") {
-            actions.setFieldError("email", "Invalid email");
+            actions.setFieldError("email", "Invalid email.");
           } else setFormError(error as AuthError);
         }
       }}
       validationSchema={SignInSchema}
     >
-      {({ isSubmitting, isValid }): JSX.Element => (
+      {({ isSubmitting, isValid, values }): JSX.Element => (
         <Form style={{ width: "100%" }} noValidate>
           <Flex direction="column" rowGap={5} align="stretch" justify="center">
-            <EmailField disabled helperText setStep={setStep} />
+            <EmailField helperText setStep={setStep} />
             <PasswordField />
             <Flex
               direction="row"
@@ -119,7 +119,11 @@ const SignInForm = ({
               columnGap={2}
             >
               <RememberMeCheckbox />
-              <BackButton setStep={setStep} />
+              <BackButton
+                setStep={setStep}
+                setEmail={setEmail}
+                email={values.email}
+              />
               <NextButton isSubmitting={isSubmitting} isValid={isValid}>
                 Sign In
               </NextButton>
@@ -134,7 +138,8 @@ const SignInForm = ({
 const SignUpForm = ({
   setStep,
   email,
-  setFormError
+  setFormError,
+  setEmail
 }: FormStepProperties): JSX.Element => (
   <>
     <FormHeading>Create Account</FormHeading>
@@ -161,16 +166,20 @@ const SignUpForm = ({
         } catch (error: unknown) {
           actions.setSubmitting(false);
           if ((error as AuthError).code === "auth/invalid-email") {
-            actions.setFieldError("email", "Invalid email");
+            actions.setFieldError("email", "Invalid email.");
+          } else if (
+            (error as AuthError).code === "auth/email-already-in-use"
+          ) {
+            actions.setFieldError("email", "That email is already in use.");
           } else setFormError(error as AuthError);
         }
       }}
       validationSchema={SignUpSchema}
     >
-      {({ isSubmitting, isValid }): JSX.Element => (
+      {({ isSubmitting, isValid, values }): JSX.Element => (
         <Form style={{ width: "100%" }} noValidate>
           <Flex direction="column" rowGap={5} align="stretch" justify="center">
-            <EmailField disabled helperText setStep={setStep} />
+            <EmailField helperText setStep={setStep} />
             <UsernameField />
             <ChoosePasswordField />
             <Flex
@@ -180,7 +189,11 @@ const SignUpForm = ({
               columnGap={2}
             >
               <RememberMeCheckbox />
-              <BackButton setStep={setStep} />
+              <BackButton
+                setStep={setStep}
+                setEmail={setEmail}
+                email={values.email}
+              />
               <NextButton isSubmitting={isSubmitting} isValid={isValid}>
                 Save
               </NextButton>

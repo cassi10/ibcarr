@@ -3,7 +3,7 @@ import { string, object, boolean } from "yup";
 const emailValidation = string()
   .trim()
   .required("You must provide an email.")
-  .matches(/.+@.+\..{2,}/i, "Invalid email.");
+  .matches(/^([^@])+(@)((\w)+\.)+(\w){2,}$/i, "Invalid email.");
 
 const passwordValidation = string().required("You must provide a password.");
 

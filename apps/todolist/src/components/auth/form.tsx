@@ -50,6 +50,7 @@ const AuthForm = (): JSX.Element => {
           <SignInForm
             setStep={setStep}
             email={email}
+            setEmail={setEmail}
             setFormError={setFormError}
           />
         );
@@ -59,6 +60,7 @@ const AuthForm = (): JSX.Element => {
           <SignUpForm
             setStep={setStep}
             email={email}
+            setEmail={setEmail}
             setFormError={setFormError}
           />
         );
@@ -81,7 +83,9 @@ const AuthForm = (): JSX.Element => {
       shadow="md"
       rowGap={4}
     >
-      {formError !== undefined && <ErrorAlert error={formError} />}
+      {formError !== undefined && (
+        <ErrorAlert error={formError} setError={setFormError} />
+      )}
       {form}
     </Flex>
   );
