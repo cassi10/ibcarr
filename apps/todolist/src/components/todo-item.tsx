@@ -1,42 +1,7 @@
-/**
- * TODO Make background color todocolor with some opacity or left border.
- * TODO Instead of modal keep it all on the item as a toggle or just click it to edit it.
- */
-
-import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
-  ModalHeader,
-  Textarea,
-  useDisclosure,
-  IconButton,
-  ListItem,
-  Flex,
-  Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
-  Tooltip,
-  Button,
-  useColorMode
-} from "@chakra-ui/react";
-import { getIconComponent, fromColorMode } from "@ibcarr/ui";
-import {
-  QueryDocumentSnapshot,
-  deleteDoc,
-  doc,
-  updateDoc,
-  serverTimestamp,
-  FieldValue,
-  deleteField
-} from "firebase/firestore";
-import { useState } from "react";
-import { database } from "../firebase";
-import type { Toast, Colors, Todo } from "../types";
-import DatePicker from "./date-picker";
+import { ListItem, Flex, Text, useColorMode } from "@chakra-ui/react";
+import { fromColorMode } from "@ibcarr/ui";
+import { QueryDocumentSnapshot } from "firebase/firestore";
+import type { Toast, Todo } from "../types";
 
 type TodoItemProperties = {
   todo: QueryDocumentSnapshot<Todo>;
@@ -46,92 +11,103 @@ type TodoItemProperties = {
 const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
   const { colorMode } = useColorMode();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { body, color, dueDate } = todo.data();
 
-  const [todoInput, setTodoInput] = useState<string>(body);
-  const [todoColor, setTodoColor] = useState<Colors>(color);
-  const [todoDate, setTodoDate] = useState<Date | undefined>(
-    dueDate ? dueDate.toDate() : undefined
-  );
+  // const [todoInput, setTodoInput] = useState<string>(body);
+  // const [todoColor, setTodoColor] = useState<Colors>(color);
+  // const [todoDate, setTodoDate] = useState<Date | undefined>(
+  //   dueDate ? dueDate.toDate() : undefined
+  // );
 
-  const handleTodoInputChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ): void => setTodoInput(event.target.value);
+  // const handleTodoInputChange = (
+  //   event: React.ChangeEvent<HTMLTextAreaElement>
+  // ): void => setTodoInput(event.target.value);
 
-  const handleTodoColorClick = (wantedColor: Colors): void =>
-    setTodoColor(wantedColor);
+  // const handleTodoColorClick = (wantedColor: Colors): void =>
+  //   setTodoColor(wantedColor);
 
-  const handleTodoDateChange = (date: Date | undefined): void =>
-    setTodoDate(date);
+  // const handleTodoDateChange = (date: Date | undefined): void =>
+  //   setTodoDate(date);
 
-  const handleUpdateTodoClick = (id: string): void => {
-    if (!todoInput || todoInput.trim().length === 0) {
-      if (toast.isActive("emptySubmittedTodo")) return;
-      toast({
-        id: "emptySubmittedTodo",
-        title: "You cannot submit an empty todo.",
-        status: "warning"
-      });
-    } else {
-      const updatedTodo: {
-        body: string;
-        updatedAt: FieldValue;
-        color: Colors;
-        dueDate?: Date | FieldValue;
-      } = {
-        body: todoInput.trim(),
-        color: todoColor,
-        updatedAt: serverTimestamp(),
-        dueDate: todoDate || deleteField()
-      };
+  // const handleUpdateTodoClick = (id: string): void => {
+  //   if (!todoInput || todoInput.trim().length === 0) {
+  //     if (toast.isActive("emptySubmittedTodo")) return;
+  //     toast({
+  //       id: "emptySubmittedTodo",
+  //       title: "You cannot submit an empty todo.",
+  //       status: "warning"
+  //     });
+  //   } else {
+  //     const updatedTodo: {
+  //       body: string;
+  //       updatedAt: FieldValue;
+  //       color: Colors;
+  //       dueDate?: Date | FieldValue;
+  //     } = {
+  //       body: todoInput.trim(),
+  //       color: todoColor,
+  //       updatedAt: serverTimestamp(),
+  //       dueDate: todoDate || deleteField()
+  //     };
 
-      updateDoc(doc(database, "todos", id), updatedTodo)
-        .then((): void => onClose())
-        .catch((error: unknown) => {
-          onClose();
-          throw new Error(JSON.stringify(error));
-        });
-    }
-  };
+  //     updateDoc(doc(database, "todos", id), updatedTodo)
+  //       .then((): void => onClose())
+  //       .catch((error: unknown) => {
+  //         onClose();
+  //         throw new Error(JSON.stringify(error));
+  //       });
+  //   }
+  // };
 
-  const handleDeleteTodoClick = (id: string): void => {
-    deleteDoc(doc(database, "todos", id))
-      .then(() => {
-        return toast({
-          title: "Todo deleted!",
-          status: "success"
-        });
-      })
-      .catch((error: unknown) => {
-        throw new Error(JSON.stringify(error));
-      });
-  };
+  // const handleDeleteTodoClick = (id: string): void => {
+  //   deleteDoc(doc(database, "todos", id))
+  //     .then(() => {
+  //       return toast({
+  //         title: "Todo deleted!",
+  //         status: "success"
+  //       });
+  //     })
+  //     .catch((error: unknown) => {
+  //       throw new Error(JSON.stringify(error));
+  //     });
+  // };
 
-  const colors: Colors[] = [
-    "gray",
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "teal",
-    "blue",
-    "cyan",
-    "purple",
-    "pink"
-  ];
+  // const colors: Colors[] = [
+  //   "gray",
+  //   "red",
+  //   "orange",
+  //   "yellow",
+  //   "green",
+  //   "teal",
+  //   "blue",
+  //   "cyan",
+  //   "purple",
+  //   "pink"
+  // ];
 
   return (
     <>
       <ListItem
-        p={4}
-        rounded={8}
+        px={6}
+        py={4}
+        roundedRight="md"
+        roundedLeft={0}
         bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
-        boxShadow="md"
+        borderLeftColor={fromColorMode(
+          `${color}.500`,
+          `${color}.200`,
+          colorMode
+        )}
+        borderLeftWidth={5}
+        borderLeftStyle="solid"
+        shadow="md"
+        display="flex"
+        alignItems="center"
+        justifyContent="start"
       >
-        <Flex align="center" justify="start" direction="row">
-          <Tooltip hasArrow label="Edit todo" placement="left">
+        {/* <Tooltip hasArrow label="Edit todo" placement="left">
             <IconButton
               alignSelf="start"
               aria-label="Edit todo"
@@ -140,53 +116,28 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
               onClick={onOpen}
               colorScheme={color}
             />
-          </Tooltip>
-          <Flex
-            direction="column"
-            align="start"
-            justify="start"
-            px={4}
-            gridGap={1}
-          >
-            {dueDate && (
-              <Text fontSize="sm">
-                {dueDate.toDate().toLocaleDateString("en-GB", {
-                  dateStyle: "full"
-                })}
-              </Text>
-            )}
-            <Text
-              whiteSpace="pre-wrap"
-              maxH="md"
-              flex={1}
-              overflow="auto"
-              sx={{
-                "&::-webkit-scrollbar": {
-                  width: "8px",
-                  borderRadius: "8px",
-                  backgroundColor: fromColorMode(
-                    `rgba(0, 0, 0, 0.15)`,
-                    `rgba(255, 255, 255, 0.1)`,
-                    colorMode
-                  )
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  borderRadius: "8px",
-                  backgroundColor: fromColorMode(
-                    `rgba(0, 0, 0, 0.15)`,
-                    `rgba(255, 255, 255, 0.1)`,
-                    colorMode
-                  )
-                }
-              }}
-            >
-              {body}
+          </Tooltip> */}
+        <Flex direction="column" align="start" justify="start" gridGap={1}>
+          {dueDate && (
+            <Text fontSize="sm">
+              {dueDate.toDate().toLocaleDateString("en-GB", {
+                dateStyle: "full"
+              })}
             </Text>
-          </Flex>
+          )}
+          <Text
+            overflowWrap="break-word"
+            wordBreak="break-word"
+            whiteSpace="break-spaces"
+            flex={1}
+            fontSize="lg"
+          >
+            {body}
+          </Text>
         </Flex>
       </ListItem>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      {/* <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent minW="5xl" minH="md">
           <ModalHeader>
@@ -219,13 +170,13 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
                   placeholder="What is the task..."
                   value={todoInput}
                   onChange={handleTodoInputChange}
-                  rounded={8}
+                  rounded="md"
                   roundedBottom={todoDate ? 0 : 8}
                   variant="filled"
                   h="auto"
                   // fontFamily="monospace"
                   minH={todoDate ? "320px" : "360px"}
-                  boxShadow={todoDate ? "none" : "md"}
+                  shadow={todoDate ? "none" : "md"}
                 />
                 {todoDate && (
                   <Flex
@@ -234,9 +185,9 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
                     bg={fromColorMode("gray.100", "whiteAlpha.50", colorMode)}
                     p={2}
                     px={4}
-                    rounded={8}
+                    rounded="md"
                     roundedTop={0}
-                    boxShadow="md"
+                    shadow="md"
                     justify="end"
                   >
                     <Text fontSize="sm">
@@ -250,8 +201,8 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
               <Flex
                 bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
                 p={2}
-                rounded={8}
-                boxShadow="md"
+                rounded="md"
+                shadow="md"
                 direction="column"
                 gridRowGap={2}
               >
@@ -326,7 +277,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
             </Flex>
           </ModalBody>
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

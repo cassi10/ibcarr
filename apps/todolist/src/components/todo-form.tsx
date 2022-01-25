@@ -1,3 +1,16 @@
+/**
+ * TODO this needs an entire rework
+ * TODO add label button to... add... labels... ( also add labels... also add sidebar to access labels )
+ * TODO maybe add titles, this is probably a good idea
+ * TODO make todos pinnable
+ * TODO find better way to display dates on item and form
+ * TODO find better way to show buttons on item and form ( probably at the bottom or in a horizontal menu )
+ * TODO make todo length max 1000 characters on body and 200 on title
+ * TODO probably should add like yup validation here or something
+ * TODO add option to delete todo ( and a place to access them before deletion, this will probably require Firebase functions )
+ * TODO make tasks draggable
+ */
+
 import {
   Box,
   Flex,
@@ -108,26 +121,28 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
         direction="column"
         w="100%"
         gridGap={0}
+        position="relative"
       >
-        <Textarea
+        <Textarea // https://github.com/chakra-ui/chakra-ui/blob/main/packages/theme/src/components/input.ts
           placeholder="What is the task..."
           value={todoInput}
           onChange={handleTodoInputChange}
-          rounded={8}
+          rounded="md"
           roundedBottom={todoDate ? 0 : 8}
           variant="filled"
-          minH={todoDate ? "112px" : "152px"}
+          minH="9.5rem"
+          shadow="md"
         />
-        {todoDate && (
+        {/* {todoDate && (
           <Flex
             direction="row"
             align="stretch"
             bg={fromColorMode("gray.100", "whiteAlpha.50", colorMode)}
             p={2}
             px={4}
-            rounded={8}
+            rounded="md"
             roundedTop={0}
-            boxShadow="md"
+            shadow="md"
             justify="end"
           >
             <Text fontSize="sm">
@@ -136,13 +151,29 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
               })}
             </Text>
           </Flex>
+        )} */}
+        {todoDate && (
+          <Box
+            position="absolute"
+            bottom={4}
+            right={4}
+            bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
+            padding={1}
+            rounded="md"
+          >
+            <Text fontSize="sm">
+              {todoDate.toLocaleDateString("en-GB", {
+                dateStyle: "full"
+              })}
+            </Text>
+          </Box>
         )}
       </Flex>
       <Flex
         bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
         p={2}
-        rounded={8}
-        boxShadow="md"
+        rounded="md"
+        shadow="md"
         direction="column"
         gridRowGap={2}
         justifyContent="space-between"
