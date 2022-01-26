@@ -111,7 +111,7 @@ const SignInForm = ({
         <Form style={{ width: "100%" }} noValidate>
           <Flex direction="column" rowGap={5} align="stretch" justify="center">
             <EmailField helperText setStep={setStep} />
-            <PasswordField />
+            <PasswordField passwordToggle />
             <Flex
               direction="row"
               justify="flex-end"
@@ -181,7 +181,7 @@ const SignUpForm = ({
           <Flex direction="column" rowGap={5} align="stretch" justify="center">
             <EmailField helperText setStep={setStep} />
             <UsernameField />
-            <ChoosePasswordField />
+            <ChoosePasswordField passwordToggle />
             <Flex
               direction="row"
               justify="flex-end"

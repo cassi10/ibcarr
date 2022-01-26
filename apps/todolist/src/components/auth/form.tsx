@@ -1,8 +1,3 @@
-/**
- * TODO Add toggle to view password
- * TODO Forms needs a rework to allow changing the email if invalid
- */
-
 import { Flex, useColorMode } from "@chakra-ui/react";
 import { fromColorMode } from "@ibcarr/ui";
 import { AuthError } from "firebase/auth";

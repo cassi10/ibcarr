@@ -11,7 +11,9 @@ import {
   AiOutlineDoubleRight,
   AiOutlineClose,
   AiFillGithub,
-  AiFillLinkedin
+  AiFillLinkedin,
+  AiFillEyeInvisible,
+  AiFillEye
 } from "react-icons/ai";
 import { BsDot, BsListTask, BsMoonFill, BsSunFill } from "react-icons/bs";
 import { MdGames } from "react-icons/md";
@@ -36,7 +38,9 @@ const Icons = {
   games: MdGames,
   listtask: BsListTask,
   moon: BsMoonFill,
-  sun: BsSunFill
+  sun: BsSunFill,
+  show: AiFillEye,
+  hide: AiFillEyeInvisible
 };
 
 type IconsType = keyof typeof Icons;

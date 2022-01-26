@@ -5,8 +5,12 @@ import {
   FormErrorMessage,
   FormHelperText,
   Button,
-  Checkbox
+  Checkbox,
+  InputGroup,
+  InputRightElement,
+  IconButton
 } from "@chakra-ui/react";
+import { getIconComponent } from "@ibcarr/ui";
 import { useField } from "formik";
 import { HTMLInputTypeAttribute, useState } from "react";
 import { SetStep } from "../../types";
@@ -20,6 +24,7 @@ type FormFieldProperties = {
   disabled?: boolean;
   helperText?: boolean;
   setStep?: SetStep;
+  passwordToggle?: boolean;
 };
 
 const FormField = ({
@@ -30,9 +35,16 @@ const FormField = ({
   label,
   disabled = false,
   helperText = false,
-  setStep = undefined
+  setStep = undefined,
+  passwordToggle = false
 }: FormFieldProperties): JSX.Element => {
   const [field, meta] = useField<string>(name);
+
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const trueType = passwordToggle ? (showPassword ? "text" : "password") : type;
+  const handleShowPasswordClick = (): void => {
+    setShowPassword((previousShowPassword) => !previousShowPassword);
+  };
 
   const [didFocus, setDidFocus] = useState<boolean>(false);
   const handleFocus = (): void => setDidFocus(true);
@@ -45,19 +57,32 @@ const FormField = ({
       isDisabled={disabled}
     >
       <FormLabel htmlFor={id}>{label}</FormLabel>
-      <Input
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...field}
-        id={id}
-        placeholder={placeholder}
-        type={type}
-        variant="flushed"
-        onFocus={handleFocus}
-        _disabled={{
-          cursor: "not-allowed",
-          opacity: "0.4"
-        }}
-      />
+      <InputGroup>
+        <Input
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...field}
+          id={id}
+          placeholder={placeholder}
+          type={trueType}
+          variant="flushed"
+          onFocus={handleFocus}
+          _disabled={{
+            cursor: "not-allowed",
+            opacity: "0.4"
+          }}
+        />
+        {passwordToggle && (
+          <InputRightElement>
+            <IconButton
+              size="sm"
+              variant="ghost"
+              onClick={handleShowPasswordClick}
+              aria-label="Show or hide password"
+              icon={getIconComponent(showPassword ? "show" : "hide")}
+            />
+          </InputRightElement>
+        )}
+      </InputGroup>
       {setStep && helperText && (
         <FormHelperText>
           Not your email address?{" "}
@@ -109,23 +134,33 @@ const UsernameField = (): JSX.Element => (
   />
 );
 
-const PasswordField = (): JSX.Element => (
+type PasswordFieldProperties = {
+  passwordToggle: boolean;
+};
+
+const PasswordField = ({
+  passwordToggle
+}: PasswordFieldProperties): JSX.Element => (
   <FormField
     name="password"
     id="password"
     type="password"
     label="Password"
     placeholder="••••••••"
+    passwordToggle={passwordToggle}
   />
 );
 
-const ChoosePasswordField = (): JSX.Element => (
+const ChoosePasswordField = ({
+  passwordToggle
+}: PasswordFieldProperties): JSX.Element => (
   <FormField
     name="password"
     id="password"
     type="password"
     label="Choose Password"
     placeholder="••••••••"
+    passwordToggle={passwordToggle}
   />
 );
 
