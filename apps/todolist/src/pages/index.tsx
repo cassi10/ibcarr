@@ -8,7 +8,6 @@
 
 import {
   Container,
-  Text,
   Box,
   Heading,
   Flex,
@@ -16,7 +15,11 @@ import {
   useToast,
   useColorMode,
   Icon,
-  IconButton
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -80,34 +83,50 @@ const Home = (): JSX.Element => {
                 >
                   {/* <Text></Text> */}
                 </Flex>
-                <Flex
-                  direction="row"
-                  align="center"
-                  justify="center"
-                  gridGap={2}
-                >
-                  <IconButton
-                    aria-label="Toggle color mode"
-                    variant="ghost"
-                    onClick={toggleColorMode}
-                    icon={
-                      colorMode === "light" ? (
-                        <Icon as={getIcon("moon")} />
-                      ) : (
-                        <Icon as={getIcon("sun")} />
-                      )
-                    }
-                  />
-                  <Text fontSize="lg" px={1}>
-                    {user.displayName}
-                  </Text>
-                  <Button
-                    variant="ghost"
-                    colorScheme="red"
-                    onClick={onSignOutClick}
-                  >
-                    Signout
-                  </Button>
+                <Flex direction="row" align="center" justify="center">
+                  <Menu autoSelect={false} placement="bottom">
+                    <MenuButton as={Button} colorScheme="blue" variant="ghost">
+                      {user.displayName}
+                    </MenuButton>
+                    <MenuList minW="min-content">
+                      <MenuItem
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="flex-start"
+                        columnGap={2}
+                      >
+                        <Icon as={getIcon("settings")} />
+                        Settings
+                      </MenuItem>
+                      <MenuItem
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="flex-start"
+                        columnGap={2}
+                        onClick={toggleColorMode}
+                      >
+                        <Icon
+                          as={
+                            colorMode === "light"
+                              ? getIcon("moon")
+                              : getIcon("sun")
+                          }
+                        />
+                        Toggle {colorMode === "dark" ? "light" : "dark"} mode
+                      </MenuItem>
+                      <MenuDivider />
+                      <MenuItem
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="flex-start"
+                        columnGap={2}
+                        onClick={onSignOutClick}
+                      >
+                        <Icon as={getIcon("logout")} />
+                        Signout
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
                 </Flex>
               </Flex>
             </Box>
