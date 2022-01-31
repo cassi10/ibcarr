@@ -1,82 +1,19 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Alert,
-  AlertDescription,
   AlertIcon,
-  AlertTitle,
-  Button,
   Flex,
-  Heading,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AlertTitle,
+  AccordionIcon,
+  AccordionPanel,
+  AlertDescription,
   IconButton
 } from "@chakra-ui/react";
 import { getIconComponent } from "@ibcarr/ui";
 import { AuthError } from "firebase/auth";
 import { Dispatch, SetStateAction } from "react";
-import { SetStep } from "../../types";
-
-type NextButtonProperties = {
-  children: string;
-  isSubmitting: boolean;
-  isValid: boolean;
-};
-
-const NextButton = ({
-  children,
-  isSubmitting,
-  isValid
-}: NextButtonProperties): JSX.Element => (
-  <Button
-    colorScheme="blue"
-    variant="solid"
-    type="submit"
-    isLoading={isSubmitting}
-    isDisabled={isSubmitting || !isValid}
-  >
-    {children}
-  </Button>
-);
-
-type BackButtonProperties = {
-  setStep: SetStep;
-  setEmail: Dispatch<SetStateAction<string>>;
-  email: string;
-};
-
-const BackButton = ({
-  setStep,
-  setEmail,
-  email
-}: BackButtonProperties): JSX.Element => {
-  const onButtonClick = (): void => {
-    setEmail(email);
-    setStep("enterEmail");
-  };
-
-  return (
-    <Button
-      colorScheme="gray"
-      variant="ghost"
-      type="button"
-      onClick={onButtonClick}
-    >
-      Back
-    </Button>
-  );
-};
-
-type FormHeadingProperties = {
-  children: string;
-};
-
-const FormHeading = ({ children }: FormHeadingProperties): JSX.Element => (
-  <Heading size="md" alignSelf="flex-start" my={2}>
-    {children}
-  </Heading>
-);
 
 type ErrorAlertProperties = {
   error: AuthError;
@@ -128,4 +65,4 @@ const ErrorAlert = ({ error, setError }: ErrorAlertProperties): JSX.Element => {
   );
 };
 
-export { NextButton, BackButton, FormHeading, ErrorAlert };
+export default ErrorAlert;

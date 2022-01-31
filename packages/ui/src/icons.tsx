@@ -13,6 +13,7 @@ import {
   MdGames,
   MdLightMode,
   MdLogout,
+  MdMoreVert,
   MdSettings,
   MdVisibility,
   MdVisibilityOff
@@ -49,7 +50,8 @@ const Icons = {
   show: MdVisibility,
   hide: MdVisibilityOff,
   settings: MdSettings,
-  logout: MdLogout
+  logout: MdLogout,
+  more: MdMoreVert
 };
 
 type IconsType = keyof typeof Icons;

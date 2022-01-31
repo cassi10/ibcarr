@@ -1,6 +1,7 @@
 import { ListItem, Flex, Text, useColorMode } from "@chakra-ui/react";
 import { fromColorMode } from "@ibcarr/ui";
 import { QueryDocumentSnapshot } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import type { Toast, Todo } from "../types";
 
 type TodoItemProperties = {
@@ -13,99 +14,50 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
 
   // const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { body, color, dueDate } = todo.data();
+  const { body, color, dueDate, createdAt, updatedAt } = todo.data();
 
-  // const [todoInput, setTodoInput] = useState<string>(body);
-  // const [todoColor, setTodoColor] = useState<Colors>(color);
-  // const [todoDate, setTodoDate] = useState<Date | undefined>(
-  //   dueDate ? dueDate.toDate() : undefined
-  // );
+  const [boxColors, setBoxColors] = useState({
+    bg: fromColorMode("gray.100", "whiteAlpha.200", colorMode),
+    color: fromColorMode("black", "whiteAlpha.900", colorMode)
+  });
 
-  // const handleTodoInputChange = (
-  //   event: React.ChangeEvent<HTMLTextAreaElement>
-  // ): void => setTodoInput(event.target.value);
+  useEffect(() => {
+    const bgLightShade = (): "100" | "400" | "500" => {
+      if (color === "gray") {
+        return "100";
+      }
+      if (color === "yellow" || color === "cyan") {
+        return "400";
+      }
+      return "500";
+    };
 
-  // const handleTodoColorClick = (wantedColor: Colors): void =>
-  //   setTodoColor(wantedColor);
-
-  // const handleTodoDateChange = (date: Date | undefined): void =>
-  //   setTodoDate(date);
-
-  // const handleUpdateTodoClick = (id: string): void => {
-  //   if (!todoInput || todoInput.trim().length === 0) {
-  //     if (toast.isActive("emptySubmittedTodo")) return;
-  //     toast({
-  //       id: "emptySubmittedTodo",
-  //       title: "You cannot submit an empty todo.",
-  //       status: "warning"
-  //     });
-  //   } else {
-  //     const updatedTodo: {
-  //       body: string;
-  //       updatedAt: FieldValue;
-  //       color: Colors;
-  //       dueDate?: Date | FieldValue;
-  //     } = {
-  //       body: todoInput.trim(),
-  //       color: todoColor,
-  //       updatedAt: serverTimestamp(),
-  //       dueDate: todoDate || deleteField()
-  //     };
-
-  //     updateDoc(doc(database, "todos", id), updatedTodo)
-  //       .then((): void => onClose())
-  //       .catch((error: unknown) => {
-  //         onClose();
-  //         throw new Error(JSON.stringify(error));
-  //       });
-  //   }
-  // };
-
-  // const handleDeleteTodoClick = (id: string): void => {
-  //   deleteDoc(doc(database, "todos", id))
-  //     .then(() => {
-  //       return toast({
-  //         title: "Todo deleted!",
-  //         status: "success"
-  //       });
-  //     })
-  //     .catch((error: unknown) => {
-  //       throw new Error(JSON.stringify(error));
-  //     });
-  // };
-
-  // const colors: Colors[] = [
-  //   "gray",
-  //   "red",
-  //   "orange",
-  //   "yellow",
-  //   "green",
-  //   "teal",
-  //   "blue",
-  //   "cyan",
-  //   "purple",
-  //   "pink"
-  // ];
+    setBoxColors({
+      bg: fromColorMode(
+        `${color}.${bgLightShade()}`,
+        `${color === "gray" ? "whiteAlpha" : color}.200`,
+        colorMode
+      ),
+      color: fromColorMode(
+        ["gray", "yellow", "cyan"].includes(color) ? "black" : "white",
+        color === "gray" ? "whiteAlpha.900" : "gray.800",
+        colorMode
+      )
+    });
+  }, [colorMode, color]);
 
   return (
     <>
       <ListItem
         px={6}
         py={4}
-        roundedRight="md"
-        roundedLeft={0}
-        bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
-        borderLeftColor={fromColorMode(
-          `${color}.500`,
-          `${color}.200`,
-          colorMode
-        )}
-        borderLeftWidth={5}
-        borderLeftStyle="solid"
+        rounded="md"
         shadow="md"
         display="flex"
         alignItems="center"
         justifyContent="start"
+        bg={boxColors.bg}
+        color={boxColors.color}
       >
         {/* <Tooltip hasArrow label="Edit todo" placement="left">
             <IconButton
@@ -117,7 +69,13 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
               colorScheme={color}
             />
           </Tooltip> */}
-        <Flex direction="column" align="start" justify="start" gridGap={1}>
+        <Flex
+          direction="column"
+          align="start"
+          justify="start"
+          gridGap={1}
+          w="100%"
+        >
           {dueDate && (
             <Text fontSize="sm">
               {dueDate.toDate().toLocaleDateString("en-GB", {
@@ -125,12 +83,26 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
               })}
             </Text>
           )}
+          <Text fontSize="sm">
+            Created:{" "}
+            {createdAt.toDate().toLocaleString("en-GB", {
+              dateStyle: "full",
+              timeStyle: "full"
+            })}
+          </Text>
+          <Text fontSize="sm">
+            Updated:{" "}
+            {updatedAt.toDate().toLocaleString("en-GB", {
+              dateStyle: "full",
+              timeStyle: "full"
+            })}
+          </Text>
           <Text
+            cursor="text"
             overflowWrap="break-word"
             wordBreak="break-word"
             whiteSpace="break-spaces"
-            flex={1}
-            fontSize="lg"
+            w="100%"
           >
             {body}
           </Text>
@@ -283,3 +255,74 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
 };
 
 export default TodoItem;
+
+// const [todoColor, setTodoColor] = useState<Colors>(color);
+// const [todoDate, setTodoDate] = useState<Date | undefined>(
+//   dueDate ? dueDate.toDate() : undefined
+// );
+
+// const handleTodoInputChange = (
+//   event: React.ChangeEvent<HTMLTextAreaElement>
+// ): void => setTodoInput(event.target.value);
+
+// const handleTodoColorClick = (wantedColor: Colors): void =>
+//   setTodoColor(wantedColor);
+
+// const handleTodoDateChange = (date: Date | undefined): void =>
+//   setTodoDate(date);
+
+// const handleUpdateTodoClick = (id: string): void => {
+//   if (!todoInput || todoInput.trim().length === 0) {
+//     if (toast.isActive("emptySubmittedTodo")) return;
+//     toast({
+//       id: "emptySubmittedTodo",
+//       title: "You cannot submit an empty todo.",
+//       status: "warning"
+//     });
+//   } else {
+//     const updatedTodo: {
+//       body: string;
+//       updatedAt: FieldValue;
+//       color: Colors;
+//       dueDate?: Date | FieldValue;
+//     } = {
+//       body: todoInput.trim(),
+//       color: todoColor,
+//       updatedAt: serverTimestamp(),
+//       dueDate: todoDate || deleteField()
+//     };
+
+//     updateDoc(doc(database, "todos", id), updatedTodo)
+//       .then((): void => onClose())
+//       .catch((error: unknown) => {
+//         onClose();
+//         throw new Error(JSON.stringify(error));
+//       });
+//   }
+// };
+
+// const handleDeleteTodoClick = (id: string): void => {
+//   deleteDoc(doc(database, "todos", id))
+//     .then(() => {
+//       return toast({
+//         title: "Todo deleted!",
+//         status: "success"
+//       });
+//     })
+//     .catch((error: unknown) => {
+//       throw new Error(JSON.stringify(error));
+//     });
+// };
+
+// const colors: Colors[] = [
+//   "gray",
+//   "red",
+//   "orange",
+//   "yellow",
+//   "green",
+//   "teal",
+//   "blue",
+//   "cyan",
+//   "purple",
+//   "pink"
+// ];

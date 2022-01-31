@@ -14,7 +14,7 @@ import Router from "next/router";
 import { Dispatch, SetStateAction } from "react";
 import { auth } from "../../firebase";
 import { SetStep } from "../../types";
-import { BackButton, FormHeading, NextButton } from "./form-components";
+import { BackButton, FormHeading, NextButton } from "./components";
 import {
   ChoosePasswordField,
   EmailField,

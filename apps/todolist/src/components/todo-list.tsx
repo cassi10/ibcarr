@@ -102,7 +102,7 @@ const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
           Try adding some tasks!
         </Text>
       ) : (
-        <List spacing={4} mx={8}>
+        <List spacing={4}>
           {todos.docs.map((todo) => (
             <TodoItem key={todo.id} todo={todo} toast={toast} />
           ))}

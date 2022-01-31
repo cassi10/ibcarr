@@ -4,7 +4,7 @@ import { AuthError } from "firebase/auth";
 import Router from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { auth } from "../../firebase";
-import { ErrorAlert } from "./form-components";
+import { ErrorAlert } from "./components";
 import { EmailForm, SignInForm, SignUpForm } from "./form-steps";
 
 const AuthForm = (): JSX.Element => {
