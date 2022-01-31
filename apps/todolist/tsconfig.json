@@ -1,5 +1,5 @@
 {
   "extends": "@ibcarr/tsconfig/next.json",
   "exclude": ["node_modules", ".next", ".firebase", ".turbo", "out"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.mjs"]
+  "include": ["next-env.d.ts", "src/**/*", "next.config.mjs"]
 }
