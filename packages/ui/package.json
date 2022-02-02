@@ -21,7 +21,8 @@
     "tsup": "^5.11.10"
   },
   "devDependencies": {
-    "@ibcarr/eslint-config-ibcarr": "file:packages/eslint-config-ibcarr",
+    "@ibcarr/eslint-config-ibcarr": "*",
+    "@ibcarr/tsconfig": "*",
     "@types/node": "^17.0.8",
     "@types/react": "^17.0.38",
     "typescript": "^4.5.4"

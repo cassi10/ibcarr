@@ -1,0 +1,22 @@
+{
+  "baseBranch": "origin/main",
+  "pipeline": {
+    "export": {
+      "dependsOn": ["build"],
+      "outputs": ["out/**"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint", "type-check"]
+    },
+    "type-check": {
+      "dependsOn": ["^type-check"]
+    },
+    "dev": {
+      "cache": false
+    }
+  }
+}
