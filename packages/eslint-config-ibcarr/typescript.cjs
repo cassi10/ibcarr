@@ -4,9 +4,14 @@ module.exports = {
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "./base.cjs"
   ],
-  ignorePatterns: ["dist", ".next", "next-env.d.ts"],
+  // ignorePatterns: ["dist", ".next", "next-env.d.ts"],
   rules: {
     "@typescript-eslint/explicit-function-return-type": "error",
-    "prettier/prettier": "error"
+    "unicorn/consistent-function-scoping": [
+      "error",
+      {
+        checkArrowFunctions: false
+      }
+    ]
   }
 };

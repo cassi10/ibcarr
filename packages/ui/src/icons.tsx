@@ -1,53 +1,69 @@
-import * as React from "react";
+import { AiFillLinkedin } from "react-icons/ai";
+import { BsDot } from "react-icons/bs";
 import {
-  AiTwotoneEdit,
-  AiTwotoneCalendar,
-  AiTwotoneDelete,
-  AiOutlineCheck,
-  AiOutlinePlus,
-  AiOutlineBgColors,
-  AiOutlineLeft,
-  AiOutlineDoubleLeft,
-  AiOutlineRight,
-  AiOutlineDoubleRight,
-  AiOutlineClose,
-  AiFillGithub,
-  AiFillLinkedin
-} from "react-icons/ai";
-import { BsDot, BsListTask, BsMoonFill, BsSunFill } from "react-icons/bs";
-import { MdGames } from "react-icons/md";
+  MdAdd,
+  MdCalendarToday,
+  MdCheck,
+  MdChecklist,
+  MdClose,
+  MdDarkMode,
+  MdDelete,
+  MdEdit,
+  MdFormatColorFill,
+  MdGames,
+  MdLightMode,
+  MdLogout,
+  MdMoreVert,
+  MdSettings,
+  MdVisibility,
+  MdVisibilityOff
+} from "react-icons/md";
+import {
+  HiOutlineChevronDoubleLeft,
+  HiOutlineChevronDoubleRight,
+  HiOutlineChevronLeft,
+  HiOutlineChevronRight
+} from "react-icons/hi";
+import { GoMarkGithub } from "react-icons/go";
 import { Icon } from "@chakra-ui/react";
 import { IconType } from "react-icons";
 
 const Icons = {
-  edit: AiTwotoneEdit,
-  calendar: AiTwotoneCalendar,
-  delete: AiTwotoneDelete,
-  tick: AiOutlineCheck,
-  close: AiOutlineClose,
-  add: AiOutlinePlus,
-  colorPicker: AiOutlineBgColors,
-  left: AiOutlineLeft,
-  doubleLeft: AiOutlineDoubleLeft,
-  right: AiOutlineRight,
-  doubleRight: AiOutlineDoubleRight,
+  edit: MdEdit,
+  calendar: MdCalendarToday,
+  delete: MdDelete,
+  tick: MdCheck,
+  close: MdClose,
+  add: MdAdd,
+  colorPicker: MdFormatColorFill,
+  left: HiOutlineChevronLeft,
+  doubleLeft: HiOutlineChevronDoubleLeft,
+  right: HiOutlineChevronRight,
+  doubleRight: HiOutlineChevronDoubleRight,
   dot: BsDot,
-  github: AiFillGithub,
+  github: GoMarkGithub,
   linkedIn: AiFillLinkedin,
   games: MdGames,
-  listtask: BsListTask,
-  moon: BsMoonFill,
-  sun: BsSunFill
+  listtask: MdChecklist,
+  moon: MdDarkMode,
+  sun: MdLightMode,
+  show: MdVisibility,
+  hide: MdVisibilityOff,
+  settings: MdSettings,
+  logout: MdLogout,
+  more: MdMoreVert
 };
 
-export type IconsType = keyof typeof Icons;
+type IconsType = keyof typeof Icons;
 
 // const getIcon = (icon: keyof typeof Icons, props?: unknown) => (
 //   <Icon as={Icons[icon]} {...props} />
 // );
 
-export const getIconComponent = (icon: IconsType): JSX.Element => (
+const getIconComponent = (icon: IconsType): JSX.Element => (
   <Icon as={Icons[icon]} />
 );
 
-export const getIcon = (icon: IconsType): IconType => Icons[icon];
+const getIcon = (icon: IconsType): IconType => Icons[icon];
+
+export { getIcon, getIconComponent, type IconsType };

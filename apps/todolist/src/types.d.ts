@@ -1,4 +1,4 @@
-export type Toast = {
+type Toast = {
   (options?: import("@chakra-ui/react").UseToastOptions | undefined):
     | import("@chakra-ui/react").ToastId
     | undefined;
@@ -9,23 +9,17 @@ export type Toast = {
   isActive: (id: import("@chakra-ui/react").ToastId) => boolean | undefined;
 };
 
-export type Todo = {
+type Todo = {
   body: string;
-  color: Colors;
+  color: import("@ibcarr/utils").Colors;
   createdAt: import("firebase/firestore").Timestamp;
   updatedAt: import("firebase/firestore").Timestamp;
   ownerUID: string;
   dueDate: import("firebase/firestore").Timestamp;
 };
 
-export type Colors =
-  | "gray"
-  | "red"
-  | "orange"
-  | "yellow"
-  | "green"
-  | "teal"
-  | "cyan"
-  | "blue"
-  | "purple"
-  | "pink";
+type SetStep = import("react").Dispatch<
+  import("react").SetStateAction<"enterEmail" | "signIn" | "signUp">
+>;
+
+export type { Toast, Todo, SetStep };

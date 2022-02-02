@@ -1,17 +1,30 @@
+/**
+ * TODO this needs an entire rework
+ * TODO add label button to... add... labels... ( also add labels... also add sidebar to access labels )
+ * TODO maybe add titles, this is probably a good idea
+ * TODO make todos pinnable
+ * TODO find better way to display dates on item and form
+ * TODO find better way to show buttons on item and form ( probably at the bottom or in a horizontal menu )
+ * TODO make todo length max 1000 characters on body and 200 on title
+ * TODO probably should add like yup validation here or something
+ * TODO add option to delete todo ( and a place to access them before deletion, this will probably require Firebase functions )
+ * TODO make tasks draggable
+ */
+
 import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
   Box,
-  ColorMode,
   Flex,
   Grid,
   IconButton,
   Textarea,
   Tooltip,
   Text,
-  Button
+  Button,
+  useColorMode,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList
 } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import {
@@ -22,29 +35,18 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
-import { firestore } from "../firebase";
-import { Colors, Toast } from "../types";
+import { colors, type Colors } from "@ibcarr/utils";
+import { database } from "../firebase";
+import type { Toast } from "../types";
 import DatePicker from "./date-picker";
 
-interface ITodoForm {
+type TodoFormProperties = {
   user: User;
   toast: Toast;
-  colorMode: ColorMode;
-}
+};
 
-const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
-  const colors: Colors[] = [
-    "gray",
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "teal",
-    "cyan",
-    "blue",
-    "purple",
-    "pink"
-  ];
+const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
+  const { colorMode } = useColorMode();
 
   const [todoInput, setTodoInput] = useState<string>("");
   const [todoColor, setTodoColor] = useState<Colors>("gray");
@@ -66,12 +68,10 @@ const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
       ownerUID: user?.uid
     };
 
-    if (todoDate) {
-      todoToAdd.dueDate = todoDate;
-    }
+    if (todoDate) todoToAdd.dueDate = todoDate;
 
-    addDoc(collection(firestore, "todos"), todoToAdd).catch((error) => {
-      throw error;
+    addDoc(collection(database, "todos"), todoToAdd).catch((error: unknown) => {
+      throw new Error(JSON.stringify(error));
     });
   };
 
@@ -91,6 +91,8 @@ const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
       addTodoToFirestore();
 
       setTodoInput("");
+      setTodoColor("gray");
+      setTodoDate(undefined);
     }
   };
 
@@ -107,26 +109,28 @@ const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
         direction="column"
         w="100%"
         gridGap={0}
+        position="relative"
       >
-        <Textarea
+        <Textarea // https://github.com/chakra-ui/chakra-ui/blob/main/packages/theme/src/components/input.ts
           placeholder="What is the task..."
           value={todoInput}
           onChange={handleTodoInputChange}
-          rounded={8}
-          roundedBottom={todoDate ? 0 : 8}
+          rounded="md"
+          // roundedBottom={todoDate ? 0 : 8}
           variant="filled"
-          minH={todoDate ? "112px" : "152px"}
+          minH="9.5rem"
+          shadow="md"
         />
-        {todoDate && (
+        {/* {todoDate && (
           <Flex
             direction="row"
             align="stretch"
             bg={fromColorMode("gray.100", "whiteAlpha.50", colorMode)}
             p={2}
             px={4}
-            rounded={8}
+            rounded="md"
             roundedTop={0}
-            boxShadow="md"
+            shadow="md"
             justify="end"
           >
             <Text fontSize="sm">
@@ -135,62 +139,68 @@ const TodoForm: React.FC<ITodoForm> = ({ user, toast, colorMode }) => {
               })}
             </Text>
           </Flex>
+        )} */}
+        {todoDate && (
+          <Box
+            position="absolute"
+            bottom={4}
+            right={4}
+            bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
+            padding={1}
+            rounded="md"
+          >
+            <Text fontSize="sm">
+              {todoDate.toLocaleDateString("en-GB", {
+                dateStyle: "full"
+              })}
+            </Text>
+          </Box>
         )}
       </Flex>
       <Flex
         bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
         p={2}
-        rounded={8}
-        boxShadow="md"
+        rounded="md"
+        shadow="md"
         direction="column"
         gridRowGap={2}
         justifyContent="space-between"
       >
         <Grid gridRowGap={2}>
           <Box>
-            <DatePicker onSaveClick={handleTodoDateChange} />
+            <DatePicker updateDate={handleTodoDateChange} date={todoDate} />
           </Box>
-          <Accordion allowMultiple border={0}>
-            <AccordionItem border={0}>
-              <Tooltip hasArrow label="Change color" placement="right">
-                <AccordionButton
-                  _expanded={{ marginBottom: "1rem" }}
-                  as="div"
-                  p={0}
-                  m={0}
-                >
-                  <IconButton
-                    aria-label="Change color"
-                    icon={getIconComponent("colorPicker")}
-                    colorScheme={todoColor}
-                  />
-                </AccordionButton>
-              </Tooltip>
-              <AccordionPanel p={0} m={0}>
-                <Flex direction="column" gridGap={1}>
-                  {colors.map((color) => (
-                    <Tooltip
-                      hasArrow
-                      label={color}
-                      placement="right"
-                      key={color}
+          {/* --> Color picker */}
+          <Box>
+            <Menu autoSelect={false} placement="bottom">
+              <MenuButton
+                as={IconButton}
+                icon={getIconComponent("colorPicker")}
+                colorScheme={todoColor}
+              />
+              <MenuList minW="min-content" border="none" p={0}>
+                {colors.map((color) => (
+                  <MenuItem
+                    key={color}
+                    as="div"
+                    onClick={(): void => handleTodoColorClick(color)}
+                    p={1}
+                  >
+                    <Button
+                      colorScheme={color}
+                      w={10}
+                      h={10}
                       textTransform="capitalize"
+                      position="relative"
                     >
-                      <Button
-                        colorScheme={color}
-                        w={10}
-                        h={10}
-                        textTransform="capitalize"
-                        onClick={(): void => handleTodoColorClick(color)}
-                      >
-                        {color.slice(0, 3)}
-                      </Button>
-                    </Tooltip>
-                  ))}
-                </Flex>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
+                      {color.slice(0, 3)}
+                    </Button>
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </Box>
+          {/* Color picker <-- */}
         </Grid>
         <Tooltip hasArrow label="Add todo" placement="right">
           <IconButton

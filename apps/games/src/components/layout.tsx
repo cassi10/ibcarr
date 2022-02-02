@@ -1,16 +1,8 @@
-import {
-  Container,
-  Box,
-  Flex,
-  Heading,
-  Link,
-  useColorMode
-} from "@chakra-ui/react";
+import { Container, Box, Flex, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { ReactNode } from "react";
 import { TopBar } from "@ibcarr/ui";
 import GameLink from "./game-link";
-import { Game } from "../types";
+import type { Game } from "../types";
 
 const Navbar = (): JSX.Element => {
   const games: Game[] = [
@@ -29,7 +21,7 @@ const Navbar = (): JSX.Element => {
         </Link>
       </NextLink>
       <Flex
-        rounded={8}
+        rounded="md"
         flex={1}
         gridGap={2}
         alignSelf="stretch"
@@ -45,12 +37,14 @@ const Navbar = (): JSX.Element => {
   );
 };
 
-const Layout = ({ children }: { children: ReactNode }): JSX.Element => {
-  const { colorMode } = useColorMode();
+type LayoutProperties = {
+  children: JSX.Element;
+};
 
+const Layout = ({ children }: LayoutProperties): JSX.Element => {
   return (
     <>
-      <TopBar colorMode={colorMode} />
+      <TopBar />
       <Container maxW="8xl" pb={4}>
         <Flex direction="column" justify="center" align="center">
           <Box flex={1} w="100%">

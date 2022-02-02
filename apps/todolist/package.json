@@ -2,7 +2,7 @@
   "name": "@ibcarr/todolist",
   "version": "1.0.0",
   "description": "",
-  "author": "cassi10 <67207048+cassi10@users.noreply.github.com> (https://www.ibcarr.com/)",
+  "author": "cassi10",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
@@ -17,13 +17,15 @@
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@ibcarr/ui": "file:packages/ui",
+    "@ibcarr/utils": "file:packages/utils",
     "firebase": "^9.6.1",
+    "formik": "^2.2.9",
     "framer-motion": "^5.5.5",
     "next": "^12.0.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-firebase-hooks": "^4.0.1",
-    "react-firebaseui": "^6.0.0"
+    "yup": "^1.0.0-beta.1"
   },
   "devDependencies": {
     "@ibcarr/eslint-config-ibcarr": "file:packages/eslint-config-ibcarr",

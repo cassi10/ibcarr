@@ -10,9 +10,10 @@
     "dev": "turbo run dev --no-cache --continue",
     "lint": "turbo run lint --continue",
     "type-check": "turbo run type-check",
-    "format": "prettier --check \"**/*.{ts,tsx,md}\""
+    "format": "prettier --check .",
+    "format:write": "prettier --write ."
   },
-  "author": "cassi10 <67207048+cassi10@users.noreply.github.com> (https://www.ibcarr.com/)",
+  "author": "cassi10",
   "license": "UNLICENSED",
   "workspaces": [
     "packages/*",

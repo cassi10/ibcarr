@@ -3,10 +3,18 @@
   "arrowParens": "always",
   "bracketSameLine": false,
   "bracketSpacing": true,
-  "endOfLine": "crlf",
+  "endOfLine": "lf",
   "htmlWhitespaceSensitivity": "css",
   "insertPragma": false,
   "jsxSingleQuote": false,
+  "overrides": [
+    {
+      "files": ["*.code-workspace"],
+      "options": {
+        "parser": "json"
+      }
+    }
+  ],
   "printWidth": 80,
   "proseWrap": "preserve",
   "quoteProps": "consistent",

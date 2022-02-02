@@ -1,132 +1,153 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
-  ModalHeader,
-  Textarea,
-  useDisclosure,
-  IconButton,
-  ColorMode,
   ListItem,
   Flex,
   Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalBody,
-  Tooltip,
+  useColorMode,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
   Button
 } from "@chakra-ui/react";
-import { getIconComponent, fromColorMode } from "@ibcarr/ui";
-import {
-  QueryDocumentSnapshot,
-  deleteDoc,
-  doc,
-  updateDoc,
-  serverTimestamp,
-  FieldValue,
-  deleteField
-} from "firebase/firestore";
-import { useState } from "react";
-import { firestore } from "../firebase";
-import { Toast, Colors, Todo } from "../types";
-import DatePicker from "./date-picker";
+import { fromColorMode, getIconComponent } from "@ibcarr/ui";
+import { colors } from "@ibcarr/utils";
+import { QueryDocumentSnapshot } from "firebase/firestore";
+import type { Toast, Todo } from "../types";
 
-interface ITodoItem {
+type TodoItemProperties = {
   todo: QueryDocumentSnapshot<Todo>;
-  colorMode: ColorMode;
   toast: Toast;
-}
+};
 
-const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
+  const { colorMode } = useColorMode();
 
-  const { body, color, dueDate } = todo.data();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [todoInput, setTodoInput] = useState<string>(body);
-  const [todoColor, setTodoColor] = useState<Colors>(color);
-  const [todoDate, setTodoDate] = useState<Date | undefined>(
-    dueDate ? dueDate.toDate() : undefined
-  );
+  const { body, color, dueDate, createdAt, updatedAt } = todo.data();
 
-  const handleTodoInputChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ): void => setTodoInput(event.target.value);
-
-  const handleTodoColorClick = (wantedColor: Colors): void =>
-    setTodoColor(wantedColor);
-
-  const handleTodoDateChange = (date: Date | undefined): void =>
-    setTodoDate(date);
-
-  const handleUpdateTodoClick = (id: string): void => {
-    if (!todoInput || todoInput.trim().length === 0) {
-      if (toast.isActive("emptySubmittedTodo")) return;
-      toast({
-        id: "emptySubmittedTodo",
-        title: "You cannot submit an empty todo.",
-        status: "warning"
-      });
-    } else {
-      const updatedTodo: {
-        body: string;
-        updatedAt: FieldValue;
-        color: Colors;
-        dueDate?: Date | FieldValue;
-      } = {
-        body: todoInput.trim(),
-        color: todoColor,
-        updatedAt: serverTimestamp(),
-        dueDate: todoDate || deleteField()
-      };
-
-      updateDoc(doc(firestore, "todos", id), updatedTodo)
-        .then((): void => onClose())
-        .catch((error) => {
-          onClose();
-          throw error;
-        });
+  const borderColor = (): string => {
+    if (colorMode === "light") {
+      if (color === "gray") return `${color}.100`;
+      if (color === "yellow" || color === "cyan") return `${color}.400`;
+      return `${color}.500`;
     }
+    return `${color === "gray" ? "whiteAlpha" : color}.200`;
   };
+  // const colors = useMemo(() => {
+  // const bgLightShade = (): "100" | "400" | "500" => {
+  //   if (color === "gray") return "100";
+  //   if (color === "yellow" || color === "cyan") return "400";
+  //   return "500";
+  //   };
 
-  const handleDeleteTodoClick = (id: string): void => {
-    deleteDoc(doc(firestore, "todos", id))
-      .then(() => {
-        toast({
-          title: "Successfully deleted todo!",
-          status: "success"
-        });
-        return onClose();
-      })
-      .catch((error) => {
-        throw error;
-      });
-  };
-
-  const colors: Colors[] = [
-    "gray",
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "teal",
-    "cyan",
-    "blue",
-    "purple",
-    "pink"
-  ];
+  //   return {
+  //     bg: fromColorMode(
+  //       `${color}.${bgLightShade()}`,
+  //       `${color === "gray" ? "whiteAlpha" : color}.200`,
+  //       colorMode
+  //     ),
+  //     color: fromColorMode(
+  //       ["gray", "yellow", "cyan"].includes(color) ? "black" : "white",
+  //       color === "gray" ? "whiteAlpha.900" : "gray.800",
+  //       colorMode
+  //     ),
+  //     toolbarHover: fromColorMode(
+  //       ["gray", "yellow", "cyan"].includes(color)
+  //         ? "blackAlpha.400"
+  //         : "whiteAlpha.400",
+  //       color === "gray" ? "blackAlpha.300" : "blackAlpha.400",
+  //       colorMode
+  //     )
+  //   };
+  // }, [color, colorMode]);
 
   return (
     <>
       <ListItem
         p={4}
-        rounded={8}
+        pb={0}
+        rounded="md"
+        shadow="md"
+        display="flex"
+        flexDirection="column"
+        alignItems="start"
+        justifyContent="start"
+        borderColor={borderColor()}
+        borderWidth={2}
         bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
-        boxShadow="md"
+        color={fromColorMode("gray.800", "whiteAlpha.900", colorMode)}
+        role="group"
       >
-        <Flex align="center" justify="start" direction="row">
-          <Tooltip hasArrow label="Edit todo" placement="left">
+        <Text cursor="text" wordBreak="break-word" whiteSpace="pre-wrap">
+          {body}
+        </Text>
+        <Flex
+          direction="row"
+          align="center"
+          justify="center"
+          p={2}
+          mt={0}
+          gap={2}
+          opacity={0}
+          bg="transparent"
+          roundedTop="md"
+          shadow="sm"
+          transitionProperty="all"
+          transitionDuration="150ms"
+          transitionTimingFunction="ease-in"
+          _groupHover={{
+            opacity: 1,
+            bg: fromColorMode("gray.200", "whiteAlpha.200", colorMode),
+            mt: 2
+          }}
+        >
+          <IconButton
+            aria-label="Edit todo"
+            icon={getIconComponent("calendar")}
+            colorScheme={color}
+            size="sm"
+          />
+          <Menu autoSelect={false} placement="bottom-start">
+            <MenuButton
+              as={IconButton}
+              icon={getIconComponent("colorPicker")}
+              colorScheme={color}
+              size="sm"
+            />
+            <MenuList
+              minW="min-content"
+              border="none"
+              p={0}
+              display="flex"
+              flexDirection="row"
+            >
+              {colors.map((itemColor) => (
+                <MenuItem key={itemColor} as="div" p={1} w={10}>
+                  <Button
+                    size="sm"
+                    colorScheme={itemColor}
+                    w={8}
+                    h={8}
+                    textTransform="capitalize"
+                  >
+                    {itemColor.slice(0, 3)}
+                  </Button>
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+          <IconButton
+            aria-label="Edit todo"
+            icon={getIconComponent("edit")}
+            colorScheme={color}
+            size="sm"
+          />
+        </Flex>
+      </ListItem>
+
+      {/* <Tooltip hasArrow label="Edit todo" placement="left">
             <IconButton
               alignSelf="start"
               aria-label="Edit todo"
@@ -135,53 +156,30 @@ const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
               onClick={onOpen}
               colorScheme={color}
             />
-          </Tooltip>
-          <Flex
-            direction="column"
-            align="start"
-            justify="start"
-            px={4}
-            gridGap={1}
-          >
-            {dueDate && (
-              <Text fontSize="sm">
-                {dueDate.toDate().toLocaleDateString("en-GB", {
-                  dateStyle: "full"
-                })}
-              </Text>
-            )}
-            <Text
-              whiteSpace="pre-wrap"
-              maxH="md"
-              flex={1}
-              overflow="auto"
-              sx={{
-                "&::-webkit-scrollbar": {
-                  width: "8px",
-                  borderRadius: "8px",
-                  backgroundColor: fromColorMode(
-                    `rgba(0, 0, 0, 0.15)`,
-                    `rgba(255, 255, 255, 0.1)`,
-                    colorMode
-                  )
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  borderRadius: "8px",
-                  backgroundColor: fromColorMode(
-                    `rgba(0, 0, 0, 0.15)`,
-                    `rgba(255, 255, 255, 0.1)`,
-                    colorMode
-                  )
-                }
-              }}
-            >
-              {body}
+          </Tooltip> */}
+      {/* {dueDate && (
+            <Text fontSize="sm">
+              {dueDate.toDate().toLocaleDateString("en-GB", {
+                dateStyle: "full"
+              })}
             </Text>
-          </Flex>
-        </Flex>
-      </ListItem>
+          )}
+          <Text fontSize="sm">
+            Created:{" "}
+            {createdAt.toDate().toLocaleString("en-GB", {
+              dateStyle: "full",
+              timeStyle: "full"
+            })}
+          </Text>
+          <Text fontSize="sm">
+            Updated:{" "}
+            {updatedAt.toDate().toLocaleString("en-GB", {
+              dateStyle: "full",
+              timeStyle: "full"
+            })}
+          </Text> */}
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      {/* <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent minW="5xl" minH="md">
           <ModalHeader>
@@ -214,12 +212,13 @@ const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
                   placeholder="What is the task..."
                   value={todoInput}
                   onChange={handleTodoInputChange}
-                  rounded={8}
+                  rounded="md"
                   roundedBottom={todoDate ? 0 : 8}
                   variant="filled"
                   h="auto"
+                  // fontFamily="monospace"
                   minH={todoDate ? "320px" : "360px"}
-                  boxShadow={todoDate ? "none" : "md"}
+                  shadow={todoDate ? "none" : "md"}
                 />
                 {todoDate && (
                   <Flex
@@ -228,9 +227,9 @@ const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
                     bg={fromColorMode("gray.100", "whiteAlpha.50", colorMode)}
                     p={2}
                     px={4}
-                    rounded={8}
+                    rounded="md"
                     roundedTop={0}
-                    boxShadow="md"
+                    shadow="md"
                     justify="end"
                   >
                     <Text fontSize="sm">
@@ -244,13 +243,16 @@ const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
               <Flex
                 bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
                 p={2}
-                rounded={8}
-                boxShadow="md"
+                rounded="md"
+                shadow="md"
                 direction="column"
                 gridRowGap={2}
               >
                 <Flex flex={1} gridRowGap={2} direction="column">
-                  <DatePicker onSaveClick={handleTodoDateChange} />
+                  <DatePicker
+                    updateDate={handleTodoDateChange}
+                    date={todoDate}
+                  />
                   <Accordion allowMultiple border={0}>
                     <AccordionItem border={0}>
                       <Tooltip hasArrow label="Change color" placement="right">
@@ -317,9 +319,80 @@ const TodoItem: React.FC<ITodoItem> = ({ todo, colorMode, toast }) => {
             </Flex>
           </ModalBody>
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </>
   );
 };
 
 export default TodoItem;
+
+// const [todoColor, setTodoColor] = useState<Colors>(color);
+// const [todoDate, setTodoDate] = useState<Date | undefined>(
+//   dueDate ? dueDate.toDate() : undefined
+// );
+
+// const handleTodoInputChange = (
+//   event: React.ChangeEvent<HTMLTextAreaElement>
+// ): void => setTodoInput(event.target.value);
+
+// const handleTodoColorClick = (wantedColor: Colors): void =>
+//   setTodoColor(wantedColor);
+
+// const handleTodoDateChange = (date: Date | undefined): void =>
+//   setTodoDate(date);
+
+// const handleUpdateTodoClick = (id: string): void => {
+//   if (!todoInput || todoInput.trim().length === 0) {
+//     if (toast.isActive("emptySubmittedTodo")) return;
+//     toast({
+//       id: "emptySubmittedTodo",
+//       title: "You cannot submit an empty todo.",
+//       status: "warning"
+//     });
+//   } else {
+//     const updatedTodo: {
+//       body: string;
+//       updatedAt: FieldValue;
+//       color: Colors;
+//       dueDate?: Date | FieldValue;
+//     } = {
+//       body: todoInput.trim(),
+//       color: todoColor,
+//       updatedAt: serverTimestamp(),
+//       dueDate: todoDate || deleteField()
+//     };
+
+//     updateDoc(doc(database, "todos", id), updatedTodo)
+//       .then((): void => onClose())
+//       .catch((error: unknown) => {
+//         onClose();
+//         throw new Error(JSON.stringify(error));
+//       });
+//   }
+// };
+
+// const handleDeleteTodoClick = (id: string): void => {
+//   deleteDoc(doc(database, "todos", id))
+//     .then(() => {
+//       return toast({
+//         title: "Todo deleted!",
+//         status: "success"
+//       });
+//     })
+//     .catch((error: unknown) => {
+//       throw new Error(JSON.stringify(error));
+//     });
+// };
+
+// const colors: Colors[] = [
+//   "gray",
+//   "red",
+//   "orange",
+//   "yellow",
+//   "green",
+//   "teal",
+//   "blue",
+//   "cyan",
+//   "purple",
+//   "pink"
+// ];

@@ -1,4 +1,9 @@
-dist
-.next
-.turbo
-node_modules
+.gitignore
+.npmrc
+.prettierignore
+.next/
+.turbo/
+node_modules/
+out/
+.firebase/
+dist/

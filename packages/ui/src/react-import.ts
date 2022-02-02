@@ -1,6 +1,4 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable unicorn/prefer-export-from */
 import * as React from "react";
 
+// eslint-disable-next-line unicorn/prefer-export-from,import/prefer-default-export
 export { React };

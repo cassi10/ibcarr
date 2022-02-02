@@ -10,7 +10,6 @@ import {
   Text,
   useMediaQuery
 } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 
@@ -20,7 +19,7 @@ type Card = {
   id: number;
 };
 
-const CardMatch: NextPage = () => {
+const CardMatch = (): JSX.Element => {
   const [
     minHeight1050,
     minHeight950,

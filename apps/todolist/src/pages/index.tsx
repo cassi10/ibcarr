@@ -1,52 +1,41 @@
-import {
-  Container,
-  Text,
-  Box,
-  Heading,
-  Flex,
-  Button,
-  useToast,
-  useColorMode,
-  Icon,
-  IconButton
-} from "@chakra-ui/react";
-import { NextPage } from "next";
+/**
+ * TODO Add dropdown to username for logout, settings and toggle cololr mode etc...
+ * TODO Pull some of this out into it's own component
+ * TODO I could even make my own version of M365 sort of...
+ * TODO convert promises to async await try catch blocks
+ * TODO should probably change Firestore to hold user data and link it through userid as collection - this will also allow for support with games leaderboards
+ */
+
+import { Container, Flex, useToast } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Head from "next/head";
-import { getIcon, fromColorMode, TopBar } from "@ibcarr/ui";
+import { TopBar } from "@ibcarr/ui";
 import { useRouter } from "next/router";
 import TodoList from "../components/todo-list";
 import TodoForm from "../components/todo-form";
 import { auth } from "../firebase";
+import NavBar from "../components/layout/navbar";
 
-const Home: NextPage = () => {
+const Home = (): JSX.Element => {
   const router = useRouter();
 
-  const { colorMode, toggleColorMode } = useColorMode();
-
   const toast = useToast({
-    position: "bottom-left",
-    isClosable: true
+    position: "top",
+    isClosable: true,
+    variant: "solid"
   });
 
-  // @ts-expect-error - Type 'Persistence' is not assignable to type 'string'.
   const [user, userLoading, userError] = useAuthState(auth);
 
   if (userError) throw userError;
 
   useEffect(() => {
     if (!user && !userLoading)
-      router.push("/auth").catch((error) => {
-        throw error;
+      router.push("/auth").catch((error: unknown) => {
+        throw new Error(JSON.stringify(error));
       });
-  });
-
-  const onSignOutClick = (): void => {
-    auth.signOut().catch((error) => {
-      throw error;
-    });
-  };
+  }, [router, user, userLoading]);
 
   return (
     <>
@@ -54,58 +43,15 @@ const Home: NextPage = () => {
         <title>TodoList</title>
         <meta name="description" content="A simple todolist!" />
       </Head>
-      <TopBar colorMode={colorMode} />
+      <TopBar />
       <Container maxW="8xl" pb={4}>
         {user && (
           <Flex flexDirection="column" justify="center">
-            <Box>
-              <Flex align="center" justify="center" direction="row" h={10}>
-                <Heading h={10}>TodoList</Heading>
-                <Flex
-                  rounded={8}
-                  flex={1}
-                  mx={6}
-                  bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
-                  alignSelf="stretch"
-                  align="center"
-                  justify="center"
-                  boxShadow="md"
-                >
-                  {/* <Text></Text> */}
-                </Flex>
-                <Flex
-                  direction="row"
-                  align="center"
-                  justify="center"
-                  gridGap={2}
-                >
-                  <IconButton
-                    aria-label="Toggle color mode"
-                    variant="ghost"
-                    onClick={toggleColorMode}
-                    icon={
-                      colorMode === "light" ? (
-                        <Icon as={getIcon("moon")} />
-                      ) : (
-                        <Icon as={getIcon("sun")} />
-                      )
-                    }
-                  />
-                  <Text fontSize="lg" px={1}>
-                    {user.displayName}
-                  </Text>
-                  <Button
-                    variant="ghost"
-                    colorScheme="red"
-                    onClick={onSignOutClick}
-                  >
-                    Signout
-                  </Button>
-                </Flex>
-              </Flex>
-            </Box>
-            <TodoForm user={user} toast={toast} colorMode={colorMode} />
-            <TodoList colorMode={colorMode} toast={toast} user={user} />
+            <NavBar displayName={user.displayName} />
+            <Container maxW="6xl">
+              <TodoForm user={user} toast={toast} />
+              <TodoList toast={toast} user={user} />
+            </Container>
           </Flex>
         )}
       </Container>

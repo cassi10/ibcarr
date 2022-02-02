@@ -1,19 +1,7 @@
-/**
- * * Add this back in when firebaseUI updates to firebase v9
- *
- * import { initializeApp } from "firebase/app";
- * import { getAuth } from "firebase/auth";
- * import { getFirestore } from "firebase/firestore";
- *
- * const firebaseApp = initializeApp(clientCredentials);
- * const firestore = getFirestore(firebaseApp);
- * const firebaseAuth = getAuth(firebaseApp);
- * export { firebaseApp, firestore, firebaseAuth };
- */
-
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/firestore";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
 const clientCredentials = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,15 +9,13 @@ const clientCredentials = {
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-if (firebase.apps.length === 0) firebase.initializeApp(clientCredentials);
+const app = initializeApp(clientCredentials);
+const database = getFirestore(app);
+const auth = getAuth(app);
+const analytics = (await isSupported()) && getAnalytics(app);
 
-const auth = firebase.auth();
-const firestore = firebase.firestore();
-
-const providers = [firebase.auth.EmailAuthProvider.PROVIDER_ID];
-
-export { auth, firestore, providers };
-export default firebase;
+export { app, database, auth, analytics };

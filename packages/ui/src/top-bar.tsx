@@ -1,18 +1,18 @@
-import { Box, ColorMode, Flex, Icon, Link, Text } from "@chakra-ui/react";
+import { Box, Flex, Icon, Link, Text, useColorMode } from "@chakra-ui/react";
 import fromColorMode from "./from-color-mode";
-import { getIcon, IconsType } from "./icons";
+import { getIcon, type IconsType } from "./icons";
 
-interface TopBarItemProperties {
+type TopBarItemProperties = {
   icon: IconsType;
   link: string;
   linkText: string;
-}
+};
 
-const TopBarItem: React.FC<TopBarItemProperties> = ({
+const TopBarItem = ({
   icon,
   link,
   linkText
-}) => (
+}: TopBarItemProperties): JSX.Element => (
   <>
     <Icon as={getIcon("dot")} p={0} h={6} w={6} />
     <Icon as={getIcon(icon)} mr={1} />
@@ -22,11 +22,9 @@ const TopBarItem: React.FC<TopBarItemProperties> = ({
   </>
 );
 
-export interface TopBarProperties {
-  colorMode: ColorMode;
-}
+const TopBar = (): JSX.Element => {
+  const { colorMode } = useColorMode();
 
-export const TopBar: React.FC<TopBarProperties> = ({ colorMode }) => {
   return (
     <Box
       mb={12}
@@ -59,5 +57,7 @@ export const TopBar: React.FC<TopBarProperties> = ({ colorMode }) => {
     </Box>
   );
 };
+
+export default TopBar;
 
 TopBar.displayName = "TopBar";

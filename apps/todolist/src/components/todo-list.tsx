@@ -1,5 +1,4 @@
 import {
-  ColorMode,
   Spinner,
   Alert,
   AlertDescription,
@@ -13,6 +12,7 @@ import {
 import { User } from "firebase/auth";
 import {
   collection,
+  DocumentData,
   orderBy,
   query,
   QueryDocumentSnapshot,
@@ -21,18 +21,13 @@ import {
   where
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
-import firebase, { firestore } from "../firebase";
-import { Todo, Toast, Colors } from "../types";
+import type { Colors } from "@ibcarr/utils";
+import { database } from "../firebase";
+import type { Todo, Toast } from "../types";
 import TodoItem from "./todo-item";
 
-interface ITodoList {
-  user: User;
-  colorMode: ColorMode;
-  toast: Toast;
-}
-
 const TodoConverter = {
-  toFirestore(todo: Todo): firebase.firestore.DocumentData {
+  toFirestore(todo: Todo): DocumentData {
     return { ...todo };
   },
   fromFirestore(
@@ -51,14 +46,21 @@ const TodoConverter = {
   }
 };
 
-const TodoList: React.FC<ITodoList> = ({ user, colorMode, toast }) => {
-  const todosReference = collection(firestore, "todos").withConverter<Todo>(
+type TodoListProperties = {
+  user: User;
+  toast: Toast;
+};
+
+const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
+  const todosReference = collection(database, "todos").withConverter<Todo>(
     TodoConverter
   );
+
   const queryConstraints = [
     orderBy("createdAt", "desc"),
     where("ownerUID", "==", !user ? "" : user.uid)
   ];
+
   const todosQuery = query(todosReference, ...queryConstraints).withConverter(
     TodoConverter
   );
@@ -96,23 +98,18 @@ const TodoList: React.FC<ITodoList> = ({ user, colorMode, toast }) => {
           <Spinner size="xl" />
         </SimpleGrid>
       )}
-
-      {!todos || todos.docs.length <= 0 ? (
-        <Text alignSelf="center" fontSize="2xl">
-          Try adding some tasks!
-        </Text>
-      ) : (
-        <List spacing={4} mx={8}>
-          {todos.docs.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              colorMode={colorMode}
-              toast={toast}
-            />
-          ))}
-        </List>
-      )}
+      {todosLoading === false &&
+        (todos === undefined || todos.docs.length <= 0 ? (
+          <Text alignSelf="center" fontSize="2xl">
+            Try adding some tasks!
+          </Text>
+        ) : (
+          <List spacing={4}>
+            {todos.docs.map((todo) => (
+              <TodoItem key={todo.id} todo={todo} toast={toast} />
+            ))}
+          </List>
+        ))}
     </VStack>
   );
 };

@@ -2,7 +2,7 @@
   "name": "@ibcarr/ui",
   "version": "1.0.0",
   "description": "UI library for this monorepo",
-  "author": "cassi10 <67207048+cassi10@users.noreply.github.com> (https://www.ibcarr.com/)",
+  "author": "cassi10",
   "license": "UNLICENSED",
   "private": true,
   "main": "./dist/index.js",

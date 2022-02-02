@@ -1,29 +1,18 @@
 import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import { Button, useBreakpointValue } from "@chakra-ui/react";
-import { Game } from "../types";
+import { colors } from "@ibcarr/utils";
+import type { Game } from "../types";
 
-interface IGameLink {
+type GameLinkProperties = {
   game: Game;
   index: number;
-}
+};
 
-const GameLink: React.FC<IGameLink> = ({ game, index }) => {
+const GameLink = ({ game, index }: GameLinkProperties): JSX.Element => {
   const [color, setColor] = useState<string>("gray");
 
   useEffect(() => {
-    const colors = [
-      "red",
-      "orange",
-      "yellow",
-      "green",
-      "teal",
-      "cyan",
-      "blue",
-      "purple",
-      "pink"
-    ];
-
     const chosenColor = colors[index % colors.length];
 
     setColor(chosenColor);
@@ -35,7 +24,7 @@ const GameLink: React.FC<IGameLink> = ({ game, index }) => {
   return (
     <NextLink href={game.href} key={game.name}>
       <Button
-        boxShadow="md"
+        shadow="md"
         variant="solid"
         colorScheme={color}
         disabled={game.disabled}
