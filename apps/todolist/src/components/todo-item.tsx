@@ -1,7 +1,18 @@
-import { ListItem, Flex, Text, useColorMode } from "@chakra-ui/react";
-import { fromColorMode } from "@ibcarr/ui";
+import {
+  ListItem,
+  Flex,
+  Text,
+  useColorMode,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button
+} from "@chakra-ui/react";
+import { fromColorMode, getIconComponent } from "@ibcarr/ui";
+import { colors } from "@ibcarr/utils";
 import { QueryDocumentSnapshot } from "firebase/firestore";
-import { useEffect, useState } from "react";
 import type { Toast, Todo } from "../types";
 
 type TodoItemProperties = {
@@ -16,50 +27,127 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
 
   const { body, color, dueDate, createdAt, updatedAt } = todo.data();
 
-  const [boxColors, setBoxColors] = useState({
-    bg: fromColorMode("gray.100", "whiteAlpha.200", colorMode),
-    color: fromColorMode("black", "whiteAlpha.900", colorMode)
-  });
+  const borderColor = (): string => {
+    if (colorMode === "light") {
+      if (color === "gray") return `${color}.100`;
+      if (color === "yellow" || color === "cyan") return `${color}.400`;
+      return `${color}.500`;
+    }
+    return `${color === "gray" ? "whiteAlpha" : color}.200`;
+  };
+  // const colors = useMemo(() => {
+  // const bgLightShade = (): "100" | "400" | "500" => {
+  //   if (color === "gray") return "100";
+  //   if (color === "yellow" || color === "cyan") return "400";
+  //   return "500";
+  //   };
 
-  useEffect(() => {
-    const bgLightShade = (): "100" | "400" | "500" => {
-      if (color === "gray") {
-        return "100";
-      }
-      if (color === "yellow" || color === "cyan") {
-        return "400";
-      }
-      return "500";
-    };
-
-    setBoxColors({
-      bg: fromColorMode(
-        `${color}.${bgLightShade()}`,
-        `${color === "gray" ? "whiteAlpha" : color}.200`,
-        colorMode
-      ),
-      color: fromColorMode(
-        ["gray", "yellow", "cyan"].includes(color) ? "black" : "white",
-        color === "gray" ? "whiteAlpha.900" : "gray.800",
-        colorMode
-      )
-    });
-  }, [colorMode, color]);
+  //   return {
+  //     bg: fromColorMode(
+  //       `${color}.${bgLightShade()}`,
+  //       `${color === "gray" ? "whiteAlpha" : color}.200`,
+  //       colorMode
+  //     ),
+  //     color: fromColorMode(
+  //       ["gray", "yellow", "cyan"].includes(color) ? "black" : "white",
+  //       color === "gray" ? "whiteAlpha.900" : "gray.800",
+  //       colorMode
+  //     ),
+  //     toolbarHover: fromColorMode(
+  //       ["gray", "yellow", "cyan"].includes(color)
+  //         ? "blackAlpha.400"
+  //         : "whiteAlpha.400",
+  //       color === "gray" ? "blackAlpha.300" : "blackAlpha.400",
+  //       colorMode
+  //     )
+  //   };
+  // }, [color, colorMode]);
 
   return (
     <>
       <ListItem
-        px={6}
-        py={4}
+        p={4}
+        pb={0}
         rounded="md"
         shadow="md"
         display="flex"
-        alignItems="center"
+        flexDirection="column"
+        alignItems="start"
         justifyContent="start"
-        bg={boxColors.bg}
-        color={boxColors.color}
+        borderColor={borderColor()}
+        borderWidth={2}
+        bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
+        color={fromColorMode("gray.800", "whiteAlpha.900", colorMode)}
+        role="group"
       >
-        {/* <Tooltip hasArrow label="Edit todo" placement="left">
+        <Text cursor="text" wordBreak="break-word" whiteSpace="pre-wrap">
+          {body}
+        </Text>
+        <Flex
+          direction="row"
+          align="center"
+          justify="center"
+          p={2}
+          mt={0}
+          gap={2}
+          opacity={0}
+          bg="transparent"
+          roundedTop="md"
+          shadow="sm"
+          transitionProperty="all"
+          transitionDuration="150ms"
+          transitionTimingFunction="ease-in"
+          _groupHover={{
+            opacity: 1,
+            bg: fromColorMode("gray.200", "whiteAlpha.200", colorMode),
+            mt: 2
+          }}
+        >
+          <IconButton
+            aria-label="Edit todo"
+            icon={getIconComponent("calendar")}
+            colorScheme={color}
+            size="sm"
+          />
+          <Menu autoSelect={false} placement="bottom-start">
+            <MenuButton
+              as={IconButton}
+              icon={getIconComponent("colorPicker")}
+              colorScheme={color}
+              size="sm"
+            />
+            <MenuList
+              minW="min-content"
+              border="none"
+              p={0}
+              display="flex"
+              flexDirection="row"
+            >
+              {colors.map((itemColor) => (
+                <MenuItem key={itemColor} as="div" p={1} w={10}>
+                  <Button
+                    size="sm"
+                    colorScheme={itemColor}
+                    w={8}
+                    h={8}
+                    textTransform="capitalize"
+                  >
+                    {itemColor.slice(0, 3)}
+                  </Button>
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+          <IconButton
+            aria-label="Edit todo"
+            icon={getIconComponent("edit")}
+            colorScheme={color}
+            size="sm"
+          />
+        </Flex>
+      </ListItem>
+
+      {/* <Tooltip hasArrow label="Edit todo" placement="left">
             <IconButton
               alignSelf="start"
               aria-label="Edit todo"
@@ -69,14 +157,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
               colorScheme={color}
             />
           </Tooltip> */}
-        <Flex
-          direction="column"
-          align="start"
-          justify="start"
-          gridGap={1}
-          w="100%"
-        >
-          {dueDate && (
+      {/* {dueDate && (
             <Text fontSize="sm">
               {dueDate.toDate().toLocaleDateString("en-GB", {
                 dateStyle: "full"
@@ -96,18 +177,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
               dateStyle: "full",
               timeStyle: "full"
             })}
-          </Text>
-          <Text
-            cursor="text"
-            overflowWrap="break-word"
-            wordBreak="break-word"
-            whiteSpace="break-spaces"
-            w="100%"
-          >
-            {body}
-          </Text>
-        </Flex>
-      </ListItem>
+          </Text> */}
 
       {/* <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

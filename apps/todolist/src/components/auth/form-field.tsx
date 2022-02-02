@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { getIconComponent } from "@ibcarr/ui";
 import { useField } from "formik";
-import { HTMLInputTypeAttribute, useState } from "react";
+import { HTMLInputTypeAttribute, LegacyRef, useState } from "react";
 import { SetStep } from "../../types";
 
 type FormFieldProperties = {
@@ -25,6 +25,8 @@ type FormFieldProperties = {
   helperText?: boolean;
   setStep?: SetStep;
   passwordToggle?: boolean;
+  autoFocus?: boolean;
+  reference?: LegacyRef<HTMLInputElement>;
 };
 
 const FormField = ({
@@ -36,7 +38,8 @@ const FormField = ({
   disabled = false,
   helperText = false,
   setStep = undefined,
-  passwordToggle = false
+  passwordToggle = false,
+  autoFocus = false
 }: FormFieldProperties): JSX.Element => {
   const [field, meta] = useField<string>(name);
 
@@ -66,6 +69,7 @@ const FormField = ({
           type={trueType}
           variant="flushed"
           onFocus={handleFocus}
+          autoFocus={autoFocus}
           _disabled={{
             cursor: "not-allowed",
             opacity: "0.4"
@@ -105,12 +109,14 @@ type EmailFieldProperties = {
   disabled?: boolean;
   helperText?: boolean;
   setStep?: SetStep;
+  autoFocus?: boolean;
 };
 
 const EmailField = ({
   disabled,
   helperText,
-  setStep
+  setStep,
+  autoFocus
 }: EmailFieldProperties): JSX.Element => (
   <FormField
     name="email"
@@ -121,25 +127,35 @@ const EmailField = ({
     disabled={disabled}
     helperText={helperText}
     setStep={setStep}
+    autoFocus={autoFocus}
   />
 );
 
-const UsernameField = (): JSX.Element => (
+type UsernameFieldProperties = {
+  autoFocus?: boolean;
+};
+
+const UsernameField = ({
+  autoFocus = false
+}: UsernameFieldProperties): JSX.Element => (
   <FormField
     name="username"
     id="username"
     placeholder="john110"
     type="text"
     label="Username"
+    autoFocus={autoFocus}
   />
 );
 
 type PasswordFieldProperties = {
   passwordToggle: boolean;
+  autoFocus?: boolean;
 };
 
 const PasswordField = ({
-  passwordToggle
+  passwordToggle,
+  autoFocus = false
 }: PasswordFieldProperties): JSX.Element => (
   <FormField
     name="password"
@@ -148,12 +164,13 @@ const PasswordField = ({
     label="Password"
     placeholder="••••••••"
     passwordToggle={passwordToggle}
+    autoFocus={autoFocus}
   />
 );
 
 const ChoosePasswordField = ({
   passwordToggle
-}: PasswordFieldProperties): JSX.Element => (
+}: Omit<PasswordFieldProperties, "autoFocus">): JSX.Element => (
   <FormField
     name="password"
     id="password"

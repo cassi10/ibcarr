@@ -21,8 +21,9 @@ import {
   where
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
+import type { Colors } from "@ibcarr/utils";
 import { database } from "../firebase";
-import type { Todo, Toast, Colors } from "../types";
+import type { Todo, Toast } from "../types";
 import TodoItem from "./todo-item";
 
 const TodoConverter = {
@@ -97,17 +98,18 @@ const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
           <Spinner size="xl" />
         </SimpleGrid>
       )}
-      {todos === undefined || todos.docs.length <= 0 ? (
-        <Text alignSelf="center" fontSize="2xl">
-          Try adding some tasks!
-        </Text>
-      ) : (
-        <List spacing={4}>
-          {todos.docs.map((todo) => (
-            <TodoItem key={todo.id} todo={todo} toast={toast} />
-          ))}
-        </List>
-      )}
+      {todosLoading === false &&
+        (todos === undefined || todos.docs.length <= 0 ? (
+          <Text alignSelf="center" fontSize="2xl">
+            Try adding some tasks!
+          </Text>
+        ) : (
+          <List spacing={4}>
+            {todos.docs.map((todo) => (
+              <TodoItem key={todo.id} todo={todo} toast={toast} />
+            ))}
+          </List>
+        ))}
     </VStack>
   );
 };

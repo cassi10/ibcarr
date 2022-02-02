@@ -35,8 +35,9 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
+import { colors, type Colors } from "@ibcarr/utils";
 import { database } from "../firebase";
-import type { Colors, Toast } from "../types";
+import type { Toast } from "../types";
 import DatePicker from "./date-picker";
 
 type TodoFormProperties = {
@@ -46,19 +47,6 @@ type TodoFormProperties = {
 
 const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
   const { colorMode } = useColorMode();
-
-  const colors: Colors[] = [
-    "gray",
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "teal",
-    "blue",
-    "cyan",
-    "purple",
-    "pink"
-  ];
 
   const [todoInput, setTodoInput] = useState<string>("");
   const [todoColor, setTodoColor] = useState<Colors>("gray");
@@ -128,7 +116,7 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
           value={todoInput}
           onChange={handleTodoInputChange}
           rounded="md"
-          roundedBottom={todoDate ? 0 : 8}
+          // roundedBottom={todoDate ? 0 : 8}
           variant="filled"
           minH="9.5rem"
           shadow="md"
@@ -203,6 +191,7 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
                       w={10}
                       h={10}
                       textTransform="capitalize"
+                      position="relative"
                     >
                       {color.slice(0, 3)}
                     </Button>

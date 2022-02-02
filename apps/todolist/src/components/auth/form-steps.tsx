@@ -60,7 +60,7 @@ const EmailForm = ({
       {({ isSubmitting, isValid }): JSX.Element => (
         <Form style={{ width: "100%" }} noValidate>
           <Flex direction="column" rowGap={5}>
-            <EmailField />
+            <EmailField autoFocus />
             <NextButton isSubmitting={isSubmitting} isValid={isValid}>
               Next
             </NextButton>
@@ -111,7 +111,7 @@ const SignInForm = ({
         <Form style={{ width: "100%" }} noValidate>
           <Flex direction="column" rowGap={5} align="stretch" justify="center">
             <EmailField helperText setStep={setStep} />
-            <PasswordField passwordToggle />
+            <PasswordField passwordToggle autoFocus />
             <Flex
               direction="row"
               justify="flex-end"
@@ -180,7 +180,7 @@ const SignUpForm = ({
         <Form style={{ width: "100%" }} noValidate>
           <Flex direction="column" rowGap={5} align="stretch" justify="center">
             <EmailField helperText setStep={setStep} />
-            <UsernameField />
+            <UsernameField autoFocus />
             <ChoosePasswordField passwordToggle />
             <Flex
               direction="row"
