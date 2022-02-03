@@ -27,3 +27,9 @@ sx={{
   }
 }}
 ```
+
+## Scrap stuff
+
+```json
+"deploy": "firebase deploy --only hosting",
+```
