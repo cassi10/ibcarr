@@ -4,7 +4,7 @@ module.exports = {
     "airbnb-typescript",
     "airbnb/hooks",
     "plugin:react/recommended",
-    "./typescript.cjs"
+    "./base-typescript.cjs"
   ],
   rules: {
     "react/react-in-jsx-scope": "off",

@@ -12,7 +12,8 @@
       "packages/eslint-config-ibcarr",
       "packages/ui",
       "packages/tsconfig",
-      "packages/utils"
+      "packages/utils",
+      "firebase/functions"
     ],
     "files.encoding": "utf8",
     "files.eol": "\n",

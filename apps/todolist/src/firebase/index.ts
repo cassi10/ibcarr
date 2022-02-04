@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const clientCredentials = {
@@ -16,10 +17,16 @@ const clientCredentials = {
 const app = initializeApp(clientCredentials);
 
 const database = getFirestore(app);
-if (process.env.NODE_ENV === "development")
-  connectFirestoreEmulator(database, "127.0.0.1", 8080);
-
 const auth = getAuth(app);
+const functions = getFunctions(app);
 const analytics = (await isSupported()) && getAnalytics(app);
+
+if (process.env.NODE_ENV === "development") {
+  const HOST = "127.0.0.1";
+
+  connectFirestoreEmulator(database, HOST, 8080);
+  connectAuthEmulator(auth, `http://${HOST}:9099`);
+  connectFunctionsEmulator(functions, HOST, 5001);
+}
 
 export { app, database, auth, analytics };

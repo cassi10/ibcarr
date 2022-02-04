@@ -21,6 +21,7 @@ import { getIconComponent, fromColorMode } from "@ibcarr/ui";
 type DatePickerProperties = {
   updateDate: (date: Date | undefined) => void;
   date: Date | undefined;
+  smallButton?: boolean;
 };
 
 /**
@@ -31,7 +32,8 @@ type DatePickerProperties = {
 
 const DatePicker = ({
   updateDate,
-  date
+  date,
+  smallButton = false
 }: DatePickerProperties): JSX.Element => {
   const { colorMode } = useColorMode();
 
@@ -131,6 +133,7 @@ const DatePicker = ({
         icon={getIconComponent("calendar")}
         colorScheme="teal"
         onClick={onOpen}
+        size={smallButton ? "sm" : "md"}
       />
       <Modal isOpen={isOpen} onClose={onClose} size="sm">
         <ModalOverlay />

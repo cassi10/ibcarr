@@ -4,11 +4,10 @@
   "description": "ibcarr monorepo",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "export": "turbo run export",
-    "dev": "turbo run dev --no-cache --continue",
+    "build": "turbo run build --scope=\"@ibcarr/*\" --ignore=\"functions\"",
+    "export": "turbo run export --scope=\"@ibcarr/*\"",
+    "dev": "turbo run dev --no-cache --continue --scope=\"@ibcarr/*\"",
     "lint": "turbo run lint --continue",
-    "type-check": "turbo run type-check",
     "format": "prettier --check .",
     "format:write": "prettier --write ."
   },
@@ -16,7 +15,8 @@
   "license": "UNLICENSED",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "firebase/*"
   ],
   "dependencies": {
     "eslint": "^8.6.0",

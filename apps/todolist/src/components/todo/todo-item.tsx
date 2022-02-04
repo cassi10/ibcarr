@@ -11,9 +11,10 @@ import {
   Button
 } from "@chakra-ui/react";
 import { fromColorMode, getIconComponent } from "@ibcarr/ui";
-import { colors } from "@ibcarr/utils";
+import { type Colors, colors } from "@ibcarr/utils";
 import { QueryDocumentSnapshot } from "firebase/firestore";
-import type { Toast, Todo } from "../types";
+import type { Toast, Todo } from "../../types";
+import DatePicker from "./date-picker";
 
 type TodoItemProperties = {
   todo: QueryDocumentSnapshot<Todo>;
@@ -35,33 +36,12 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
     }
     return `${color === "gray" ? "whiteAlpha" : color}.200`;
   };
-  // const colors = useMemo(() => {
-  // const bgLightShade = (): "100" | "400" | "500" => {
-  //   if (color === "gray") return "100";
-  //   if (color === "yellow" || color === "cyan") return "400";
-  //   return "500";
-  //   };
 
-  //   return {
-  //     bg: fromColorMode(
-  //       `${color}.${bgLightShade()}`,
-  //       `${color === "gray" ? "whiteAlpha" : color}.200`,
-  //       colorMode
-  //     ),
-  //     color: fromColorMode(
-  //       ["gray", "yellow", "cyan"].includes(color) ? "black" : "white",
-  //       color === "gray" ? "whiteAlpha.900" : "gray.800",
-  //       colorMode
-  //     ),
-  //     toolbarHover: fromColorMode(
-  //       ["gray", "yellow", "cyan"].includes(color)
-  //         ? "blackAlpha.400"
-  //         : "whiteAlpha.400",
-  //       color === "gray" ? "blackAlpha.300" : "blackAlpha.400",
-  //       colorMode
-  //     )
-  //   };
-  // }, [color, colorMode]);
+  // const handleTodoColorChange = (wantedColor: Colors): void =>
+  // TODO update todo with new color on click
+
+  // const handleTodoDateChange = (date: Date): void =>
+  // TODO update todo with new date on click
 
   return (
     <>
@@ -90,7 +70,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
           p={2}
           mt={0}
           gap={2}
-          opacity={0}
+          opacity={0} // if menu open opacity, mt and bg are same as _groupHover
           bg="transparent"
           roundedTop="md"
           shadow="sm"
@@ -104,10 +84,15 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
           }}
         >
           <IconButton
-            aria-label="Edit todo"
+            aria-label="Change date"
             icon={getIconComponent("calendar")}
-            colorScheme={color}
+            colorScheme="teal"
             size="sm"
+          />
+          <DatePicker
+            smallButton
+            date={dueDate ? dueDate.toDate() : undefined}
+            updateDate={(date): void => console.log(date)}
           />
           <Menu autoSelect={false} placement="bottom-start">
             <MenuButton
@@ -124,7 +109,14 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
               flexDirection="row"
             >
               {colors.map((itemColor) => (
-                <MenuItem key={itemColor} as="div" p={1} w={10}>
+                <MenuItem
+                  key={itemColor}
+                  as="div"
+                  p={1}
+                  w={10}
+                  role="group"
+                  cursor="pointer"
+                >
                   <Button
                     size="sm"
                     colorScheme={itemColor}
@@ -141,7 +133,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
           <IconButton
             aria-label="Edit todo"
             icon={getIconComponent("edit")}
-            colorScheme={color}
+            colorScheme="green"
             size="sm"
           />
         </Flex>

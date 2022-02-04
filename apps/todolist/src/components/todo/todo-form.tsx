@@ -36,8 +36,8 @@ import {
 import { useState } from "react";
 import { getIconComponent, fromColorMode } from "@ibcarr/ui";
 import { colors, type Colors } from "@ibcarr/utils";
-import { database } from "../firebase";
-import type { Toast } from "../types";
+import { database } from "../../firebase";
+import type { Toast } from "../../types";
 import DatePicker from "./date-picker";
 
 type TodoFormProperties = {

@@ -22,8 +22,8 @@ import {
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import type { Colors } from "@ibcarr/utils";
-import { database } from "../firebase";
-import type { Todo, Toast } from "../types";
+import { database } from "../../firebase";
+import type { Todo, Toast } from "../../types";
 import TodoItem from "./todo-item";
 
 const TodoConverter = {

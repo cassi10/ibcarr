@@ -12,8 +12,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import Head from "next/head";
 import { TopBar } from "@ibcarr/ui";
 import { useRouter } from "next/router";
-import TodoList from "../components/todo-list";
-import TodoForm from "../components/todo-form";
+import { TodoList, TodoForm } from "../components/todo";
 import { auth } from "../firebase";
 import NavBar from "../components/layout/navbar";
 

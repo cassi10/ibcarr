@@ -38,3 +38,5 @@ sx={{
 
 users -> userid -> todos -> all the todos
 -----------------> games -> games data
+
+https://firebase.google.com/docs/functions/auth-events
