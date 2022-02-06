@@ -1,6 +1,13 @@
+/**
+ * TODO Add previous month numbers to start of month calendar which are also selectable and maybe on click switch the view month to the previous
+ * TODO Pull some of this logic out from the component and into a separate file
+ * TODO The state could probably be converted to useReducer instead or useState as object
+ */
+
 import {
   Box,
   Button,
+  ButtonProps,
   Flex,
   Grid,
   HStack,
@@ -21,19 +28,15 @@ import { getIconComponent, fromColorMode } from "@ibcarr/ui";
 type DatePickerProperties = {
   updateDate: (date: Date | undefined) => void;
   date: Date | undefined;
-  smallButton?: boolean;
+  button?: ButtonProps;
+  buttonText?: string;
 };
-
-/**
- * TODO Add previous month numbers to start of month calendar which are also selectable and maybe on click switch the view month to the previous
- * TODO Pull some of this logic out from the component and into a separate file
- * TODO The state could probably be converted to useReducer instead
- */
 
 const DatePicker = ({
   updateDate,
   date,
-  smallButton = false
+  button,
+  buttonText
 }: DatePickerProperties): JSX.Element => {
   const { colorMode } = useColorMode();
 
@@ -128,13 +131,28 @@ const DatePicker = ({
 
   return (
     <>
-      <IconButton
-        aria-label="Change date"
-        icon={getIconComponent("calendar")}
-        colorScheme="teal"
-        onClick={onOpen}
-        size={smallButton ? "sm" : "md"}
-      />
+      <Tooltip hasArrow label="Change date" placement="auto">
+        {buttonText ? (
+          <Button
+            leftIcon={getIconComponent("calendar")}
+            colorScheme="teal"
+            onClick={onOpen}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...button}
+          >
+            {buttonText}
+          </Button>
+        ) : (
+          <IconButton
+            aria-label="Change date"
+            icon={getIconComponent("calendar")}
+            colorScheme="teal"
+            onClick={onOpen}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...button}
+          />
+        )}
+      </Tooltip>
       <Modal isOpen={isOpen} onClose={onClose} size="sm">
         <ModalOverlay />
         <ModalContent>
@@ -257,14 +275,14 @@ const DatePicker = ({
                 <Tooltip
                   hasArrow
                   label="Set date to todays date"
-                  placement="bottom"
+                  placement="auto"
                 >
                   <Button variant="link" onClick={onTodayButtonClick}>
                     Today
                   </Button>
                 </Tooltip>
                 <HStack spacing={6}>
-                  <Tooltip hasArrow label="Clear the date" placement="bottom">
+                  <Tooltip hasArrow label="Clear the date" placement="auto">
                     <Button variant="link" onClick={onClearButtonClick}>
                       Clear
                     </Button>

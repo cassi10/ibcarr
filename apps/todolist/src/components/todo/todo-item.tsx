@@ -8,25 +8,44 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Button
+  Button,
+  Tooltip,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Textarea
 } from "@chakra-ui/react";
 import { fromColorMode, getIconComponent } from "@ibcarr/ui";
 import { type Colors, colors } from "@ibcarr/utils";
-import { QueryDocumentSnapshot } from "firebase/firestore";
+import {
+  deleteDoc,
+  deleteField,
+  doc,
+  QueryDocumentSnapshot,
+  serverTimestamp,
+  updateDoc
+} from "firebase/firestore";
+import { database } from "../../firebase";
 import type { Toast, Todo } from "../../types";
 import DatePicker from "./date-picker";
 
 type TodoItemProperties = {
   todo: QueryDocumentSnapshot<Todo>;
   toast: Toast;
+  userUID: string;
 };
 
-const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
+const TodoItem = ({
+  todo,
+  toast,
+  userUID
+}: TodoItemProperties): JSX.Element => {
   const { colorMode } = useColorMode();
 
   // const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { body, color, dueDate, createdAt, updatedAt } = todo.data();
+  const { title, body, color, pinned, dueDate, createdAt, updatedAt } =
+    todo.data();
 
   const borderColor = (): string => {
     if (colorMode === "light") {
@@ -37,17 +56,50 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
     return `${color === "gray" ? "whiteAlpha" : color}.200`;
   };
 
-  // const handleTodoColorChange = (wantedColor: Colors): void =>
-  // TODO update todo with new color on click
+  const handleTodoPinnedClicked = (): void => {
+    updateDoc(doc(database, "users", userUID, "todos", todo.id), {
+      pinned: !pinned,
+      updatedAt: serverTimestamp()
+    }).catch((error: unknown) => {
+      throw new Error(JSON.stringify(error));
+    });
+  };
 
-  // const handleTodoDateChange = (date: Date): void =>
-  // TODO update todo with new date on click
+  const handleTodoColorChange = (wantedColor: Colors): void => {
+    updateDoc(doc(database, "users", userUID, "todos", todo.id), {
+      color: wantedColor,
+      updatedAt: serverTimestamp()
+    }).catch((error: unknown) => {
+      throw new Error(JSON.stringify(error));
+    });
+  };
+
+  const handleTodoDateChange = (date: Date | undefined): void => {
+    updateDoc(doc(database, "users", userUID, "todos", todo.id), {
+      dueDate: date || deleteField(),
+      updatedAt: serverTimestamp()
+    }).catch((error: unknown) => {
+      throw new Error(JSON.stringify(error));
+    });
+  };
+
+  const handleTodoDeleteClick = (): void => {
+    deleteDoc(doc(database, "users", userUID, "todos", todo.id))
+      .then(() => {
+        return toast({
+          title: "Todo deleted!",
+          status: "success"
+        });
+      })
+      .catch((error: unknown) => {
+        throw new Error(JSON.stringify(error));
+      });
+  };
 
   return (
     <>
       <ListItem
         p={4}
-        pb={0}
         rounded="md"
         shadow="md"
         display="flex"
@@ -56,51 +108,90 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
         justifyContent="start"
         borderColor={borderColor()}
         borderWidth={2}
+        gap={0}
         bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
         color={fromColorMode("gray.800", "whiteAlpha.900", colorMode)}
         role="group"
       >
-        <Text cursor="text" wordBreak="break-word" whiteSpace="pre-wrap">
+        {title && (
+          <Text
+            cursor="text"
+            wordBreak="break-word"
+            whiteSpace="pre-wrap"
+            w="100%"
+            fontSize="lg"
+            fontWeight="semibold"
+          >
+            {title}
+          </Text>
+        )}
+        {/* <Text
+          cursor="text"
+          wordBreak="break-word"
+          whiteSpace="pre-wrap"
+          w="100%"
+        >
           {body}
-        </Text>
+        </Text> */}
+        <Editable defaultValue={body} w="100%">
+          <EditablePreview
+            cursor="text"
+            wordBreak="break-word"
+            whiteSpace="pre-wrap"
+            w="100%"
+          />
+          <EditableInput
+            w="100%"
+            as={Textarea}
+            p={0}
+            _focus={{
+              outline: 0,
+              boxShadow: "none",
+              border: 0
+            }}
+          />
+        </Editable>
         <Flex
-          direction="row"
           align="center"
-          justify="center"
-          p={2}
-          mt={0}
-          gap={2}
-          opacity={0} // if menu open opacity, mt and bg are same as _groupHover
+          justify="start"
+          gap={3}
+          opacity={0} // if menu open then opacity, mt and bg are same as _groupHover
           bg="transparent"
           roundedTop="md"
           shadow="sm"
           transitionProperty="all"
           transitionDuration="150ms"
-          transitionTimingFunction="ease-in"
+          transitionTimingFunction="ease-in-out"
+          w="100%"
           _groupHover={{
             opacity: 1,
-            bg: fromColorMode("gray.200", "whiteAlpha.200", colorMode),
-            mt: 2
+            mt: 3
           }}
         >
-          <IconButton
-            aria-label="Change date"
-            icon={getIconComponent("calendar")}
-            colorScheme="teal"
-            size="sm"
-          />
           <DatePicker
-            smallButton
+            button={{
+              size: "sm",
+              variant: "outline",
+              rounded: "full"
+            }}
+            buttonText={dueDate?.toDate().toLocaleDateString("en-GB", {
+              dateStyle: "medium"
+            })}
             date={dueDate ? dueDate.toDate() : undefined}
-            updateDate={(date): void => console.log(date)}
+            updateDate={(date): void => handleTodoDateChange(date)}
           />
           <Menu autoSelect={false} placement="bottom-start">
-            <MenuButton
-              as={IconButton}
-              icon={getIconComponent("colorPicker")}
-              colorScheme={color}
-              size="sm"
-            />
+            <Tooltip hasArrow label="Color picker" placement="auto">
+              <MenuButton
+                as={IconButton}
+                icon={getIconComponent("colorPicker")}
+                colorScheme={color}
+                aria-label="Color picker"
+                variant="outline"
+                rounded="full"
+                size="sm"
+              />
+            </Tooltip>
             <MenuList
               minW="min-content"
               border="none"
@@ -116,6 +207,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
                   w={10}
                   role="group"
                   cursor="pointer"
+                  onClick={(): void => handleTodoColorChange(itemColor)}
                 >
                   <Button
                     size="sm"
@@ -130,12 +222,71 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
               ))}
             </MenuList>
           </Menu>
-          <IconButton
-            aria-label="Edit todo"
-            icon={getIconComponent("edit")}
-            colorScheme="green"
-            size="sm"
-          />
+          <Tooltip hasArrow label="Toggle pinned" placement="auto">
+            <IconButton
+              aria-label="Toggle pinned"
+              icon={
+                pinned
+                  ? getIconComponent("pin")
+                  : getIconComponent("outlinePin")
+              }
+              colorScheme="blue"
+              variant="outline"
+              rounded="full"
+              size="sm"
+              onClick={handleTodoPinnedClicked}
+            />
+          </Tooltip>
+          <Tooltip hasArrow label="Edit todo" placement="auto">
+            <IconButton
+              aria-label="Edit todo"
+              icon={getIconComponent("edit")}
+              colorScheme="green"
+              variant="outline"
+              rounded="full"
+              size="sm"
+            />
+          </Tooltip>
+          <Menu autoSelect={false}>
+            <Tooltip hasArrow label="More options" placement="auto">
+              <MenuButton
+                as={IconButton}
+                aria-label="Options"
+                icon={getIconComponent("more")}
+                size="sm"
+                variant="outline"
+                rounded="full"
+              />
+            </Tooltip>
+            <MenuList minW="min-content" p={0}>
+              <MenuItem
+                icon={getIconComponent("delete")}
+                onClick={handleTodoDeleteClick}
+              >
+                Delete todo
+              </MenuItem>
+            </MenuList>
+          </Menu>
+          {updatedAt && createdAt && (
+            <Tooltip
+              hasArrow
+              placement="auto"
+              label={`Created ${updatedAt.toDate().toLocaleDateString("en-GB", {
+                year: undefined,
+                month: "short",
+                day: "numeric"
+              })}`}
+            >
+              <Text fontSize="sm" ml="auto">
+                Edited{" "}
+                {updatedAt.toDate().toLocaleDateString("en-GB", {
+                  year: undefined,
+                  month: "short",
+                  day: "numeric"
+                })}
+              </Text>
+            </Tooltip>
+          )}
         </Flex>
       </ListItem>
 
