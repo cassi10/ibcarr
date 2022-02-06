@@ -10,9 +10,20 @@ const NavBar = ({ displayName }: NavBarProperties): JSX.Element => {
   const { colorMode } = useColorMode();
 
   return (
-    <Flex align="center" justify="center" direction="row" h={10} columnGap={6}>
-      <Heading h={10}>TodoList</Heading>
-      <Flex
+    <Flex
+      align="center"
+      justify="space-between"
+      direction="row"
+      h={14}
+      columnGap={6}
+      p={2}
+      px={4}
+      bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
+      rounded="md"
+      shadow="md"
+    >
+      <Heading>TodoList</Heading>
+      {/* <Flex
         rounded="md"
         flex={1}
         bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
@@ -21,8 +32,8 @@ const NavBar = ({ displayName }: NavBarProperties): JSX.Element => {
         justify="center"
         shadow="md"
       >
-        {/* <Text></Text> */}
-      </Flex>
+        <Text></Text>
+      </Flex> */}
       <Flex direction="row" align="center" justify="center">
         <UserMenu displayName={displayName} />
       </Flex>
