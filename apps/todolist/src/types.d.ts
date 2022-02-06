@@ -10,8 +10,10 @@ type Toast = {
 };
 
 type Todo = {
+  title: string;
   body: string;
   color: import("@ibcarr/utils").Colors;
+  pinned: boolean;
   createdAt: import("firebase/firestore").Timestamp;
   updatedAt: import("firebase/firestore").Timestamp;
   ownerUID: string;
