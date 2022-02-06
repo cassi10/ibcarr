@@ -1,11 +1,3 @@
-/**
- * TODO Add dropdown to username for logout, settings and toggle cololr mode etc...
- * TODO Pull some of this out into it's own component
- * TODO I could even make my own version of M365 sort of...
- * TODO convert promises to async await try catch blocks
- * TODO should probably change Firestore to hold user data and link it through userid as collection - this will also allow for support with games leaderboards
- */
-
 import { Container, Flex, useToast } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -20,7 +12,7 @@ const Home = (): JSX.Element => {
   const router = useRouter();
 
   const toast = useToast({
-    position: "top",
+    position: "bottom-start",
     isClosable: true,
     variant: "solid"
   });
@@ -49,7 +41,7 @@ const Home = (): JSX.Element => {
             <NavBar displayName={user.displayName} />
             <Container maxW="6xl">
               <TodoForm user={user} toast={toast} />
-              <TodoList toast={toast} user={user} />
+              <TodoList user={user} toast={toast} />
             </Container>
           </Flex>
         )}

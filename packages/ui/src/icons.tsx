@@ -11,9 +11,12 @@ import {
   MdEdit,
   MdFormatColorFill,
   MdGames,
+  MdLabelOutline,
   MdLightMode,
   MdLogout,
   MdMoreVert,
+  MdOutlinePushPin,
+  MdPushPin,
   MdSettings,
   MdVisibility,
   MdVisibilityOff
@@ -51,7 +54,10 @@ const Icons = {
   hide: MdVisibilityOff,
   settings: MdSettings,
   logout: MdLogout,
-  more: MdMoreVert
+  more: MdMoreVert,
+  label: MdLabelOutline,
+  pin: MdPushPin,
+  outlinePin: MdOutlinePushPin
 };
 
 type IconsType = keyof typeof Icons;

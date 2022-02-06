@@ -27,7 +27,7 @@ const TopBar = (): JSX.Element => {
 
   return (
     <Box
-      mb={12}
+      mb={6}
       p={1}
       bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
     >
