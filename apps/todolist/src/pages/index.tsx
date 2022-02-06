@@ -12,7 +12,7 @@ const Home = (): JSX.Element => {
   const router = useRouter();
 
   const toast = useToast({
-    position: "bottom-start",
+    position: "top",
     isClosable: true,
     variant: "solid"
   });

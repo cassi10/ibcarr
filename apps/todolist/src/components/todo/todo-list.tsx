@@ -127,22 +127,26 @@ const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
                     />
                   ))}
                 </List>
+              </>
+            )}
+            {todos.others && todos.others.length > 0 && (
+              <>
                 <Text fontSize="sm" fontWeight="semibold">
                   OTHERS
                 </Text>
+                <List spacing={6}>
+                  {todos.others &&
+                    todos.others.map((todo) => (
+                      <TodoItem
+                        key={todo.id}
+                        todo={todo}
+                        toast={toast}
+                        userUID={user.uid}
+                      />
+                    ))}
+                </List>
               </>
             )}
-            <List spacing={6}>
-              {todos.others &&
-                todos.others.map((todo) => (
-                  <TodoItem
-                    key={todo.id}
-                    todo={todo}
-                    toast={toast}
-                    userUID={user.uid}
-                  />
-                ))}
-            </List>
           </>
         ))}
     </VStack>

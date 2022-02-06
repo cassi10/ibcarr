@@ -4,17 +4,7 @@
  * TODO make tasks draggable
  */
 
-import {
-  Flex,
-  IconButton,
-  Textarea,
-  Tooltip,
-  Button,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList
-} from "@chakra-ui/react";
+import { Flex, Textarea, useColorMode } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import {
   addDoc,
@@ -22,17 +12,12 @@ import {
   FieldValue,
   serverTimestamp
 } from "firebase/firestore";
-import { useState } from "react";
-import { getIconComponent } from "@ibcarr/ui";
-import { colors, type Colors } from "@ibcarr/utils";
+import { useEffect, useRef, useState } from "react";
+import { type Colors } from "@ibcarr/utils";
 import { database } from "../../firebase";
 import type { Toast } from "../../types";
-import DatePicker from "./date-picker";
-
-type TodoFormProperties = {
-  user: User;
-  toast: Toast;
-};
+import { scrollbar } from "../../theme";
+import BottomBar from "./components/bottom-bar";
 
 type HalfTodo = {
   title?: string;
@@ -41,7 +26,17 @@ type HalfTodo = {
   dueDate?: Date | undefined;
 };
 
+type TodoFormProperties = {
+  user: User;
+  toast: Toast;
+};
+
 const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
+  const { colorMode } = useColorMode();
+
+  const titleReference = useRef<HTMLTextAreaElement | null>(null);
+  const bodyReference = useRef<HTMLTextAreaElement | null>(null);
+
   const todoInitialValues: HalfTodo = {
     title: "",
     body: "",
@@ -51,6 +46,20 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
 
   const [{ title, body, color, dueDate }, setTodo] =
     useState<HalfTodo>(todoInitialValues);
+
+  useEffect(() => {
+    if (titleReference && titleReference.current) {
+      titleReference.current.style.height = `auto`;
+      titleReference.current.style.height = `${titleReference.current.scrollHeight.toString()}px`;
+    }
+  }, [title]);
+
+  useEffect(() => {
+    if (bodyReference && bodyReference.current) {
+      bodyReference.current.style.height = `auto`;
+      bodyReference.current.style.height = `${bodyReference.current.scrollHeight.toString()}px`;
+    }
+  }, [body]);
 
   const updateTodo = (toUpdate: Partial<HalfTodo>): void =>
     setTodo((previousTodo) => {
@@ -85,7 +94,7 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
     if (title && title.length > 0) todoToAdd.title = title.trim();
     if (dueDate) todoToAdd.dueDate = dueDate;
 
-    addDoc(collection(database, "users", user.uid, "todos"), todoToAdd).catch(
+    addDoc(collection(database, `/users/${user.uid}/todos`), todoToAdd).catch(
       (error: unknown) => {
         throw new Error(JSON.stringify(error));
       }
@@ -108,189 +117,71 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
   };
 
   return (
-    <Flex align="stretch" justify="center" direction="row" gridGap={3} mt={8}>
-      <Flex
-        align="stretch"
-        justify="stretch"
-        direction="column"
-        w="100%"
-        gridGap={0}
-        shadow="md"
-        bg="whiteAlpha.50"
+    <Flex
+      mt={8}
+      align="stretch"
+      justify="stretch"
+      direction="column"
+      w="100%"
+      shadow="md"
+      bg="whiteAlpha.50"
+      rounded="md"
+    >
+      <Textarea
+        placeholder="Title"
+        value={title}
+        onChange={handleTodoInputChange}
+        roundedBottom={0}
+        minH={10}
+        maxLength={1000}
+        name="title"
+        ref={titleReference}
+        fontSize="lg"
+        fontWeight="semibold"
+        sx={scrollbar(colorMode)}
         rounded="md"
-      >
-        <Textarea
-          placeholder="Title"
-          value={title}
-          onChange={handleTodoInputChange}
-          rounded="md"
-          roundedBottom={0}
-          variant="filled"
-          resize="none"
-          minH={10}
-          pb={0}
-          maxLength={500}
-          name="title"
-        />
-        <Textarea // https://github.com/chakra-ui/chakra-ui/blob/main/packages/theme/src/components/input.ts
-          placeholder="What is the task..."
-          value={body}
-          onChange={handleTodoInputChange}
-          roundedTop={0}
-          rounded="md"
-          variant="filled"
-          minH={40}
-          maxH={64}
-          shadow="md"
-          resize="none"
-          maxLength={5000}
-          name="body"
-        />
-        <Flex align="center" justify="start" p={3} gap={2}>
-          <DatePicker
-            button={{
-              variant: "outline",
-              rounded: "full"
-            }}
-            buttonText={dueDate?.toLocaleDateString("en-GB", {
-              dateStyle: "medium"
-            })}
-            date={dueDate}
-            updateDate={(date): void => handleTodoDateChange(date)}
-          />
-          <Menu autoSelect={false} placement="right">
-            <Tooltip hasArrow label="Color picker" placement="auto">
-              <MenuButton
-                as={IconButton}
-                icon={getIconComponent("colorPicker")}
-                colorScheme={color}
-                aria-label="Color picker"
-                variant="outline"
-                rounded="full"
-              />
-            </Tooltip>
-            <MenuList
-              minW="min-content"
-              border="none"
-              p={0}
-              display="flex"
-              flexDirection="row"
-            >
-              {colors.map((itemColor) => (
-                <MenuItem
-                  key={itemColor}
-                  as="div"
-                  p={1}
-                  w={12}
-                  role="group"
-                  cursor="pointer"
-                  onClick={(): void => handleTodoColorClick(itemColor)}
-                >
-                  <Button
-                    colorScheme={itemColor}
-                    w={10}
-                    h={10}
-                    textTransform="capitalize"
-                  >
-                    {itemColor.slice(0, 3)}
-                  </Button>
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-          {/* <Tooltip hasArrow label="Labels" placement="auto">
-            <IconButton
-              aria-label="Labels"
-              icon={getIconComponent("label")}
-              colorScheme="gray"
-              variant="outline"
-              rounded="full"
-            />
-          </Tooltip> */}
-          <Button
-            ml="auto"
-            colorScheme="green"
-            variant="outline"
-            rounded="full"
-            onClick={handleAddTodoClick}
-          >
-            Save todo
-          </Button>
-        </Flex>
-      </Flex>
+        variant="filled"
+        resize="none"
+        spellCheck={false}
+      />
+      <Textarea
+        placeholder="What is the task..."
+        value={body}
+        onChange={handleTodoInputChange}
+        roundedTop={0}
+        minH={40}
+        maxLength={10_000}
+        name="body"
+        shadow="md"
+        ref={bodyReference}
+        sx={scrollbar(colorMode)}
+        rounded="md"
+        variant="filled"
+        resize="none"
+        spellCheck={false}
+      />
+      <BottomBar
+        flex={{
+          p: 3,
+          gap: 2
+        }}
+        datePicker={{
+          date: dueDate,
+          updateDate: handleTodoDateChange
+        }}
+        colorPicker={{
+          menuPlacement: "right",
+          color,
+          updateColor: handleTodoColorClick
+        }}
+        editTodo={false}
+        moreOptions={false}
+        todoDates={false}
+        togglePinned={false}
+        saveTodo={handleAddTodoClick}
+      />
     </Flex>
   );
 };
 
 export default TodoForm;
-
-// /* {todoDate && (
-//         <Box
-//           position="absolute"
-//           bottom={4}
-//           right={4}
-//           bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
-//           padding={1}
-//           rounded="md"
-//         >
-//           <Text fontSize="sm">
-//             {todoDate.toLocaleDateString("en-GB", {
-//               dateStyle: "full"
-//             })}
-//           </Text>
-//         </Box>
-//       )} */
-// /* <Flex
-//       bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
-//       p={2}
-//       rounded="md"
-//       shadow="md"
-//       direction="column"
-//       gridRowGap={2}
-//       justifyContent="space-between"
-//     >
-//       <Grid gridRowGap={2}>
-//         <Box>
-//           <DatePicker updateDate={handleTodoDateChange} date={todoDate} />
-//         </Box>
-//         --> Color picker
-//         <Box>
-//           <Menu autoSelect={false} placement="bottom">
-//             <MenuButton
-//               as={IconButton}
-//               icon={getIconComponent("colorPicker")}
-//               colorScheme={todoColor}
-//             />
-//             <MenuList minW="min-content" border="none" p={0}>
-//               {colors.map((color) => (
-//                 <MenuItem
-//                   key={color}
-//                   as="div"
-//                   onClick={(): void => handleTodoColorClick(color)}
-//                   p={1}
-//                 >
-//                   <Button
-//                     colorScheme={color}
-//                     w={10}
-//                     h={10}
-//                     textTransform="capitalize"
-//                     position="relative"
-//                   >
-//                     {color.slice(0, 3)}
-//                   </Button>
-//                 </MenuItem>
-//               ))}
-//             </MenuList>
-//           </Menu>
-//         </Box>
-//         Color picker <--
-//       </Grid>
-//       <Tooltip hasArrow label="Add todo" placement="right">
-//         <IconButton
-//           aria-label="Add todo"
-//           icon={getIconComponent("add")}
-//           colorScheme="green"
-//           onClick={handleAddTodoClick}
-//         />
-//       </Tooltip>
-//     </Flex> */
