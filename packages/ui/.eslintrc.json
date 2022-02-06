@@ -1,4 +1,5 @@
 {
+  "root": true,
   "extends": "@ibcarr/ibcarr/react.cjs",
   "parserOptions": {
     "project": "tsconfig.json"

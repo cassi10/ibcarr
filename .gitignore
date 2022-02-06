@@ -6,4 +6,5 @@ dist
 .env.*
 out
 .firebase
-package-copy.json
+*.log
+lib
