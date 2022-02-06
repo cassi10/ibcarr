@@ -9,6 +9,7 @@ import {
   MenuDivider
 } from "@chakra-ui/react";
 import { getIcon, type IconsType } from "@ibcarr/ui";
+import { deleteUser, signOut } from "firebase/auth";
 import { MouseEventHandler } from "react";
 import { auth } from "../../../firebase";
 
@@ -42,10 +43,22 @@ type UserMenuProperties = {
 const UserMenu = ({ displayName }: UserMenuProperties): JSX.Element => {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const onSignOutClick = (): void => {
-    auth.signOut().catch((error: unknown) => {
+  const onSignOutClick = async (): Promise<void> => {
+    try {
+      await signOut(auth);
+    } catch (error) {
       throw new Error(JSON.stringify(error));
-    });
+    }
+  };
+
+  const onDeleteUserClick = async (): Promise<void> => {
+    const user = auth.currentUser;
+    if (!user) return;
+    try {
+      await deleteUser(user);
+    } catch (error) {
+      throw new Error(JSON.stringify(error));
+    }
   };
 
   return (
@@ -65,6 +78,11 @@ const UserMenu = ({ displayName }: UserMenuProperties): JSX.Element => {
         <UserMenuItem icon="logout" onClick={onSignOutClick}>
           Sign Out
         </UserMenuItem>
+        {process.env.NODE_ENV === "development" && (
+          <UserMenuItem icon="close" onClick={onDeleteUserClick}>
+            Delete
+          </UserMenuItem>
+        )}
       </MenuList>
     </Menu>
   );
