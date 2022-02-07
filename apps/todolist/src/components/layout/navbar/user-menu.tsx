@@ -67,7 +67,7 @@ const UserMenu = ({ displayName }: UserMenuProperties): JSX.Element => {
         {displayName}
       </MenuButton>
       <MenuList minW="min-content">
-        <UserMenuItem icon="settings">Settings</UserMenuItem>
+        {/* <UserMenuItem icon="settings">Settings</UserMenuItem> */}
         <UserMenuItem
           icon={colorMode === "light" ? "moon" : "sun"}
           onClick={toggleColorMode}

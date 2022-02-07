@@ -1,3 +1,7 @@
+/**
+ * Flashes when adding title
+ */
+
 import { ListItem, Textarea, useBoolean, useColorMode } from "@chakra-ui/react";
 import { fromColorMode } from "@ibcarr/ui";
 import { type Colors } from "@ibcarr/utils";
@@ -142,7 +146,7 @@ const TodoItem = ({
           value={newTitle}
           onChange={(event): void => setNewTitle(event.target.value)}
           minH={0}
-          maxLength={10_000}
+          maxLength={1000}
           ref={titleReference}
           sx={scrollbar(colorMode)}
           overflow="hidden"
@@ -150,6 +154,9 @@ const TodoItem = ({
           resize="none"
           spellCheck={false}
           disabled={!editing}
+          p={2}
+          borderWidth={editing ? 2 : 0}
+          borderStyle="solid"
         />
       )}
       <Textarea
@@ -166,6 +173,9 @@ const TodoItem = ({
         resize="none"
         spellCheck={false}
         disabled={!editing}
+        p={2}
+        borderWidth={editing ? 2 : 0}
+        borderStyle="solid"
       />
       <BottomBar
         flex={{
