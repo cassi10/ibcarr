@@ -1,5 +1,4 @@
 /**
- * TODO this needs an entire rework
  * TODO add label button to... add... labels... ( also add labels... also add sidebar to access labels )
  * TODO make tasks draggable
  */

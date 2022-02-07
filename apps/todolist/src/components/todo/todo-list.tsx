@@ -131,9 +131,11 @@ const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
             )}
             {todos.others && todos.others.length > 0 && (
               <>
-                <Text fontSize="sm" fontWeight="semibold">
-                  OTHERS
-                </Text>
+                {todos.pinned && todos.pinned.length > 0 && (
+                  <Text fontSize="sm" fontWeight="semibold">
+                    OTHERS
+                  </Text>
+                )}
                 <List spacing={6}>
                   {todos.others &&
                     todos.others.map((todo) => (
