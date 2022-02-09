@@ -1,5 +1,20 @@
 # ibcarr monorepo
 
+## TODO
+
+### Setup projects board or something alike to track tasks and ideas (that's ironic).
+
+### Add precommit script to lint project using Husky or something like that.
+
+
+```text
+todolist -> user_uid -> todos -> todo_uid
+                     -> todo_labels (array): list of todos with that label
+
+games -> user_uid -> game_name (map): maps timestamp to score
+      -> leaderboards -> game_name (map): maps user_uid to their highest score
+```
+
 ## Info
 
 To (re)generate ChakraUI types run `npx @chakra-ui/cli tokens ./path/to/theme.(ts,js)`
