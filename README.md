@@ -2,10 +2,7 @@
 
 ## TODO
 
-### Setup projects board or something alike to track tasks and ideas (that's ironic).
-
-### Add precommit script to lint project using Husky or something like that.
-
+### Add precommit script to lint project using Husky or something like that
 
 ```text
 todolist -> user_uid -> todos -> todo_uid
