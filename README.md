@@ -4,7 +4,7 @@
 
 ### General
 
-- [ ] Add precommit script to lint project using Husky or something like that.
+- [x] Add precommit script to lint project using Husky or something like that.
 
 - [ ] Alot of functionality can be pulled out into Cloud Functions or NextJS API things... so do that.
 
@@ -25,7 +25,7 @@ C games -> D user_uid     -> F game_name (map): maps timestamp to score
 
 ### Todolist
 
-- [x] ADD TODO WITH ALL FIELDS BUT MAKE OPTIONAL ONES FIREBASE.NULL
+- [x] ADD TODO WITH ALL FIELDS BUT MAKE OPTIONAL ONES FIREBASE.NULL (just allowed undefined values but still using deleteField())
 - [ ] Add settings page to change data:
   - [ ] Change password,
   - [ ] Change email,
@@ -40,6 +40,7 @@ C games -> D user_uid     -> F game_name (map): maps timestamp to score
 - [ ] Add labels to todo's.
 - [ ] Add `Forgot Password` feature on auth form.
 - [ ] Make tasks draggable.
+- [ ] Fix that annoying flashing when adding a title to a todo.
 
 ### Games
 
@@ -80,3 +81,11 @@ sx={{
 `find . -type d -name "folder_name" -exec -rc {} +`
 
 To (re)generate ChakraUI theme types run `npx @chakra-ui/cli tokens ./path/to/theme.(ts,js)`
+
+When in doubt:
+
+```bash
+npm run clean
+npm ci
+npm run build
+```

@@ -4,7 +4,7 @@ import { AuthError } from "firebase/auth";
 import Router from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import { auth } from "../../firebase";
-import { ErrorAlert } from "./components";
+import ErrorAlert from "../error-alert";
 import { EmailForm, SignInForm, SignUpForm } from "./form-steps";
 
 const AuthForm = (): JSX.Element => {
@@ -79,7 +79,7 @@ const AuthForm = (): JSX.Element => {
       rowGap={4}
     >
       {formError !== undefined && (
-        <ErrorAlert error={formError} setError={setFormError} />
+        <ErrorAlert error={formError} setError={setFormError} compact />
       )}
       {form}
     </Flex>

@@ -1,14 +1,4 @@
-import {
-  Spinner,
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  List,
-  SimpleGrid,
-  Text,
-  VStack
-} from "@chakra-ui/react";
+import { Spinner, List, Text, VStack, Grid } from "@chakra-ui/react";
 import { User } from "firebase/auth";
 import {
   collection,
@@ -23,6 +13,7 @@ import { useMemo } from "react";
 import { database } from "../../firebase";
 import type { Todo, Toast } from "../../types";
 import TodoItem from "./todo-item";
+import ErrorAlert from "../error-alert";
 
 const TodoConverter = {
   toFirestore(todo: Todo): DocumentData {
@@ -62,33 +53,15 @@ const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
   return (
     <VStack align="stretch" justify="center" mt={8}>
       {todosError && (
-        <Alert
-          status="error"
-          variant="left-accent"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          textAlign="center"
-          height={200}
-        >
-          <AlertIcon boxSize={16} m={0} />
-          <AlertTitle my={4} fontSize="lg">
-            Error fetching todos!
-          </AlertTitle>
-          <AlertDescription maxWidth="sm">{todosError}</AlertDescription>
-        </Alert>
+        <ErrorAlert
+          error={todosError}
+          title="Something went wrong fetching data."
+        />
       )}
       {todosLoading && (
-        <SimpleGrid
-          columns={1}
-          rows={1}
-          justifyContent="center"
-          alignContent="center"
-          justifyItems="center"
-          alignItems="center"
-        >
+        <Grid placeItems="center">
           <Spinner size="xl" />
-        </SimpleGrid>
+        </Grid>
       )}
       {!todosLoading &&
         !todosError &&
