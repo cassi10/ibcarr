@@ -51,8 +51,6 @@ C games -> D user_uid     -> F game_name (map): maps timestamp to score
 
 ## Info
 
-To (re)generate ChakraUI types run `npx @chakra-ui/cli tokens ./path/to/theme.(ts,js)`
-
 ## Scrap code but still useful
 
 ```tsx
@@ -80,3 +78,5 @@ sx={{
 ## Scrap stuff
 
 `find . -type d -name "folder_name" -exec -rc {} +`
+
+To (re)generate ChakraUI theme types run `npx @chakra-ui/cli tokens ./path/to/theme.(ts,js)`
