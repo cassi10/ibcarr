@@ -1,7 +1,7 @@
-import { initializeApp } from "firebase/app";
+import { FirebaseOptions, initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
-const clientCredentials = {
+const clientCredentials: FirebaseOptions = {
   apiKey: "AIzaSyBehraLx56BzqHr0gH_70ulwrvRR6ZKyFA",
   authDomain: "ibcarr.firebaseapp.com",
   projectId: "ibcarr",

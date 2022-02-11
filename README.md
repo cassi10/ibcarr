@@ -2,12 +2,14 @@
 
 ## TODO
 
-#### General
+### General
+
 - [ ] Add precommit script to lint project using Husky or something like that.
 
 - [ ] Alot of functionality can be pulled out into Cloud Functions or NextJS API things... so do that.
 
-- [ ] Convert data to below schema... again.
+- [x] Convert data to below schema... again.
+
 ```text
 C = Collection
 D = Document
@@ -21,8 +23,9 @@ C games -> D user_uid     -> F game_name (map): maps timestamp to score
         -> D data         -> F game_name (map): maps global game data
 ```
 
-#### Todolist
-- [ ] ADD TODO WITH ALL FIELDS BUT MAKE OPTIONAL ONES FIREBASE.NULL
+### Todolist
+
+- [x] ADD TODO WITH ALL FIELDS BUT MAKE OPTIONAL ONES FIREBASE.NULL
 - [ ] Add settings page to change data:
   - [ ] Change password,
   - [ ] Change email,
@@ -36,13 +39,15 @@ C games -> D user_uid     -> F game_name (map): maps timestamp to score
   - [ ] Allow keyboard to be used.
 - [ ] Add labels to todo's.
 - [ ] Add `Forgot Password` feature on auth form.
+- [ ] Make tasks draggable.
 
-#### Games
+### Games
+
 - [ ] Add leaderboards to games.
 - [ ] Add graphs to users to show progression over time.
 - [ ] Add `Information` button to games to show how to play etc...
-- [ ] Make Wordle clone
-- [ ] Allow keyboard to be used on hangman
+- [ ] Make Wordle clone.
+- [ ] Allow keyboard to be used on hangman.
 
 ## Info
 

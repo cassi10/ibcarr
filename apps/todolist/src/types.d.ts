@@ -10,14 +10,17 @@ type Toast = {
 };
 
 type Todo = {
-  title: string;
+  title: string | import("firebase/firestore").FieldValue | undefined;
   body: string;
   color: import("@ibcarr/utils").Colors;
   pinned: boolean;
   createdAt: import("firebase/firestore").Timestamp;
   updatedAt: import("firebase/firestore").Timestamp;
   ownerUID: string;
-  dueDate: import("firebase/firestore").Timestamp;
+  dueDate:
+    | import("firebase/firestore").Timestamp
+    | import("firebase/firestore").FieldValue
+    | undefined;
 };
 
 type SetStep = import("react").Dispatch<

@@ -16,11 +16,9 @@ import {
   orderBy,
   query,
   QueryDocumentSnapshot,
-  SnapshotOptions,
-  Timestamp
+  SnapshotOptions
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
-import type { Colors } from "@ibcarr/utils";
 import { useMemo } from "react";
 import { database } from "../../firebase";
 import type { Todo, Toast } from "../../types";
@@ -31,20 +29,11 @@ const TodoConverter = {
     return { ...todo };
   },
   fromFirestore(
-    snapshot: QueryDocumentSnapshot,
+    snapshot: QueryDocumentSnapshot<Todo>,
     options: SnapshotOptions | undefined
   ): Todo {
     const data = snapshot.data(options);
-    return {
-      title: data.title as string,
-      body: data.body as string,
-      color: data.color as Colors,
-      pinned: data.pinned as boolean,
-      dueDate: data.dueDate as Timestamp,
-      createdAt: data.created_at as Timestamp,
-      updatedAt: data.updated_at as Timestamp,
-      ownerUID: data.owner_uid as string
-    };
+    return { ...data };
   }
 };
 
@@ -54,24 +43,21 @@ type TodoListProperties = {
 };
 
 const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
-  const todosReference = collection(
-    database,
-    `users/${user.uid}/todos`
-  ).withConverter<Todo>(TodoConverter);
+  const todosReference = collection(database, "todolist", user.uid, "todos");
 
   const todosQuery = query(
     todosReference,
-    orderBy("created_at", "desc")
-  ).withConverter(TodoConverter);
+    orderBy("createdAt", "desc")
+  ).withConverter<Todo>(TodoConverter);
 
-  const [baseTodos, todosLoading, todosError] = useCollection(todosQuery);
+  const [allTodos, todosLoading, todosError] = useCollection(todosQuery);
 
   const todos = useMemo(() => {
     return {
-      pinned: baseTodos?.docs.filter((baseTodo) => baseTodo.data().pinned),
-      others: baseTodos?.docs.filter((baseTodo) => !baseTodo.data().pinned)
+      pinned: allTodos?.docs.filter((todo) => todo.data().pinned),
+      others: allTodos?.docs.filter((todo) => !todo.data().pinned)
     };
-  }, [baseTodos]);
+  }, [allTodos]);
 
   return (
     <VStack align="stretch" justify="center" mt={8}>
@@ -106,7 +92,7 @@ const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
       )}
       {!todosLoading &&
         !todosError &&
-        (baseTodos === undefined || baseTodos.empty ? (
+        (allTodos === undefined || allTodos.empty ? (
           <Text alignSelf="center" fontSize="2xl">
             Try adding some tasks!
           </Text>
@@ -119,12 +105,7 @@ const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
                 </Text>
                 <List spacing={6}>
                   {todos.pinned.map((todo) => (
-                    <TodoItem
-                      key={todo.id}
-                      todo={todo}
-                      toast={toast}
-                      userUID={user.uid}
-                    />
+                    <TodoItem key={todo.id} todo={todo} toast={toast} />
                   ))}
                 </List>
               </>
@@ -139,12 +120,7 @@ const TodoList = ({ user, toast }: TodoListProperties): JSX.Element => {
                 <List spacing={6}>
                   {todos.others &&
                     todos.others.map((todo) => (
-                      <TodoItem
-                        key={todo.id}
-                        todo={todo}
-                        toast={toast}
-                        userUID={user.uid}
-                      />
+                      <TodoItem key={todo.id} todo={todo} toast={toast} />
                     ))}
                 </List>
               </>

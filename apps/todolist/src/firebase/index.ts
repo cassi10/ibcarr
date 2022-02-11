@@ -1,10 +1,13 @@
-import { initializeApp } from "firebase/app";
+import { FirebaseOptions, initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import {
+  connectFirestoreEmulator,
+  initializeFirestore
+} from "firebase/firestore";
 import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
-const clientCredentials = {
+const clientCredentials: FirebaseOptions = {
   apiKey: "AIzaSyBehraLx56BzqHr0gH_70ulwrvRR6ZKyFA",
   authDomain: "ibcarr.firebaseapp.com",
   projectId: "ibcarr",
@@ -16,7 +19,9 @@ const clientCredentials = {
 
 const app = initializeApp(clientCredentials);
 
-const database = getFirestore(app);
+const database = initializeFirestore(app, {
+  ignoreUndefinedProperties: true
+});
 const auth = getAuth(app);
 const functions = getFunctions(app);
 const analytics = (await isSupported()) && getAnalytics(app);
