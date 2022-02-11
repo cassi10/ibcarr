@@ -1,10 +1,10 @@
 {
   "name": "@ibcarr/utils",
   "version": "1.0.0",
-  "description": "Utils for this monorepo",
-  "author": "cassi10",
-  "license": "UNLICENSED",
   "private": true,
+  "description": "Utils for this monorepo",
+  "license": "UNLICENSED",
+  "author": "cassi10",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
