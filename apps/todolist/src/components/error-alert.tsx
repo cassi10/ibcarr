@@ -12,28 +12,34 @@ import {
   IconButton
 } from "@chakra-ui/react";
 import { getIconComponent } from "@ibcarr/ui";
+import { FirebaseError } from "firebase/app";
 import { AuthError } from "firebase/auth";
 import { Dispatch, SetStateAction } from "react";
 
 type ErrorAlertProperties = {
-  error: AuthError;
-  setError: Dispatch<SetStateAction<AuthError | undefined>>;
+  error: AuthError | FirebaseError | undefined;
+  setError?: Dispatch<SetStateAction<AuthError | undefined>>;
+  compact?: boolean;
+  title?: string;
 };
 
-const ErrorAlert = ({ error, setError }: ErrorAlertProperties): JSX.Element => {
-  const closeErrorAlert = (): void => setError(undefined);
-
-  return (
-    <Alert
-      status="error"
-      variant="left-accent"
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="center"
-      p={1}
-    >
-      <AlertIcon boxSize={6} onClick={closeErrorAlert} />
-      <Flex direction="column" w="100%">
+const ErrorAlert = ({
+  error,
+  setError,
+  compact = false,
+  title = "Something went wrong."
+}: ErrorAlertProperties): JSX.Element => (
+  <Alert
+    status="error"
+    variant="left-accent"
+    flexDirection="row"
+    alignItems="center"
+    justifyContent="center"
+    p={compact ? 1 : 6}
+  >
+    <AlertIcon boxSize={compact ? 6 : 8} />
+    <Flex direction="column" w="100%">
+      {error ? (
         <Accordion allowToggle p={0} mr={2}>
           <AccordionItem border="none" p={0}>
             <AccordionButton
@@ -42,8 +48,8 @@ const ErrorAlert = ({ error, setError }: ErrorAlertProperties): JSX.Element => {
               columnGap={1}
               p={0}
             >
-              <AlertTitle fontSize="md" fontWeight="bold">
-                Something went wrong.
+              <AlertTitle fontSize={compact ? "md" : "lg"} fontWeight="bold">
+                {title}
               </AlertTitle>
               <AccordionIcon />
             </AccordionButton>
@@ -52,17 +58,23 @@ const ErrorAlert = ({ error, setError }: ErrorAlertProperties): JSX.Element => {
             </AccordionPanel>
           </AccordionItem>
         </Accordion>
-      </Flex>
+      ) : (
+        <AlertTitle fontSize={compact ? "md" : "lg"} fontWeight="bold">
+          {title}
+        </AlertTitle>
+      )}
+    </Flex>
+    {setError && (
       <IconButton
         alignSelf="start"
         aria-label="Close Alert"
         variant="ghost"
         size="sm"
         icon={getIconComponent("close")}
-        onClick={closeErrorAlert}
+        onClick={(): void => setError(undefined)}
       />
-    </Alert>
-  );
-};
+    )}
+  </Alert>
+);
 
 export default ErrorAlert;

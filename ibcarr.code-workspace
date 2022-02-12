@@ -32,26 +32,6 @@
       "statusBar": "none",
       "titleBar": "none"
     },
-    "sortJSON.orderOverride": [
-      "name",
-      "version",
-      "description",
-      "author",
-      "license",
-      "private",
-      "main",
-      "module",
-      "types",
-      "sideEffects",
-      "files",
-      "type",
-      "repository",
-      "bugs",
-      "homepage",
-      "scripts",
-      "dependencies",
-      "devDependencies"
-    ],
     "todo-tree.highlights.defaultHighlight": {
       "type": "tag",
       "borderRadius": "0",

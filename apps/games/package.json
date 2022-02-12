@@ -1,16 +1,16 @@
 {
   "name": "@ibcarr/games",
   "version": "1.0.0",
-  "description": "",
-  "author": "cassi10",
-  "license": "UNLICENSED",
   "private": true,
+  "description": "",
+  "license": "UNLICENSED",
+  "author": "cassi10",
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "export": "next export",
     "lint": "next lint --format=pretty",
-    "start": "next start",
-    "export": "next export"
+    "start": "next start"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.8.1",

@@ -1,34 +1,19 @@
-/**
- * TODO add label button to... add... labels... ( also add labels... also add sidebar to access labels )
- * TODO make tasks draggable
- */
-
 import { Flex, Textarea, useColorMode } from "@chakra-ui/react";
 import { User } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  FieldValue,
-  serverTimestamp
-} from "firebase/firestore";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { type Colors } from "@ibcarr/utils";
 import { database } from "../../firebase";
-import type { Toast } from "../../types";
+import type { Toast, Todo } from "../../types";
 import { scrollbar } from "../../theme";
 import BottomBar from "./components/bottom-bar";
-
-type HalfTodo = {
-  title?: string;
-  body: string;
-  color: Colors;
-  dueDate?: Date | undefined;
-};
 
 type TodoFormProperties = {
   user: User;
   toast: Toast;
 };
+
+type HalfTodo = Pick<Todo, "title" | "body" | "color" | "dueDate">;
 
 const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
   const { colorMode } = useColorMode();
@@ -37,7 +22,7 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
   const bodyReference = useRef<HTMLTextAreaElement | null>(null);
 
   const todoInitialValues: HalfTodo = {
-    title: "",
+    title: undefined,
     body: "",
     color: "gray",
     dueDate: undefined
@@ -73,31 +58,28 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
     updateTodo({ color: wantedColor });
 
   const handleTodoDateChange = (date: Date | undefined): void =>
-    updateTodo({ dueDate: date });
+    updateTodo({ dueDate: date ? Timestamp.fromDate(date) : undefined });
 
   const addTodoToFirestore = (): void => {
-    const todoToAdd: HalfTodo & {
-      created_at: FieldValue;
-      updated_at: FieldValue;
-      owner_uid: string;
-      pinned: boolean;
-    } = {
+    const trimmedTitle = title?.toString().trim();
+
+    const todoToAdd: Todo = {
+      title: trimmedTitle || undefined,
       body: body.trim(),
-      created_at: serverTimestamp(),
-      updated_at: serverTimestamp(),
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+      dueDate: dueDate || undefined,
       color,
-      owner_uid: user?.uid,
+      ownerUID: user?.uid,
       pinned: false
     };
 
-    if (title && title.length > 0) todoToAdd.title = title.trim();
-    if (dueDate) todoToAdd.dueDate = dueDate;
-
-    addDoc(collection(database, `/users/${user.uid}/todos`), todoToAdd).catch(
-      (error: unknown) => {
-        throw new Error(JSON.stringify(error));
-      }
-    );
+    addDoc(
+      collection(database, "todolist", user.uid, "todos"),
+      todoToAdd
+    ).catch((error: unknown) => {
+      throw new Error(JSON.stringify(error));
+    });
   };
 
   const handleAddTodoClick = (): void => {
@@ -128,7 +110,7 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
     >
       <Textarea
         placeholder="Title"
-        value={title}
+        value={title?.toString()}
         onChange={handleTodoInputChange}
         roundedBottom={0}
         minH={10}
@@ -165,7 +147,7 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
           gap: 2
         }}
         datePicker={{
-          date: dueDate,
+          date: dueDate instanceof Timestamp ? dueDate.toDate() : undefined,
           updateDate: handleTodoDateChange
         }}
         colorPicker={{

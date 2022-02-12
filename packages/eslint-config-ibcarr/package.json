@@ -1,12 +1,12 @@
 {
   "name": "@ibcarr/eslint-config-ibcarr",
   "version": "1.0.0",
-  "description": "Eslint configs for this monorepo",
-  "author": "cassi10",
-  "license": "UNLICENSED",
   "private": true,
-  "types": "index.d.ts",
+  "description": "Eslint configs for this monorepo",
+  "license": "UNLICENSED",
+  "author": "cassi10",
   "type": "commonjs",
+  "types": "index.d.ts",
   "scripts": {
     "lint": "eslint . --ext .cjs --format=pretty"
   },

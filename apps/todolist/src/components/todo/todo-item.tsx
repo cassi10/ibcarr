@@ -9,9 +9,8 @@ import {
   deleteDoc,
   deleteField,
   doc,
-  FieldValue,
   QueryDocumentSnapshot,
-  serverTimestamp,
+  Timestamp,
   updateDoc
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
@@ -23,14 +22,9 @@ import BottomBar from "./components/bottom-bar";
 type TodoItemProperties = {
   todo: QueryDocumentSnapshot<Todo>;
   toast: Toast;
-  userUID: string;
 };
 
-const TodoItem = ({
-  todo,
-  toast,
-  userUID
-}: TodoItemProperties): JSX.Element => {
+const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
   const { colorMode } = useColorMode();
 
   const [editing, setEditing] = useBoolean();
@@ -50,7 +44,9 @@ const TodoItem = ({
     return `${color === "gray" ? "whiteAlpha" : color}.200`;
   };
 
-  const [newTitle, setNewTitle] = useState<string>(title);
+  const [newTitle, setNewTitle] = useState<string | undefined>(
+    title?.toString()
+  );
   const [newBody, setNewBody] = useState<string>(body);
 
   useEffect(() => {
@@ -68,28 +64,12 @@ const TodoItem = ({
   }, [newBody]);
 
   const updateTodo = (
-    toUpdate: Partial<
-      Omit<Todo, "dueDate" | "title"> & {
-        dueDate: Date | FieldValue;
-        title: string | FieldValue;
-      }
-    >,
+    toUpdate: Partial<Todo>,
     updateTimestamp: boolean
   ): void => {
-    const update: Partial<
-      Omit<Todo, "updatedAt" | "dueDate" | "title"> & {
-        updatedAt: FieldValue;
-        dueDate: Date | FieldValue;
-        title: string | FieldValue;
-      }
-    > = {
-      ...toUpdate
-    };
-
-    if (updateTimestamp) update.updatedAt = serverTimestamp();
-
-    updateDoc(doc(database, `users/${userUID}/todos/${todo.id}`), {
-      ...update
+    updateDoc(doc(database, todo.ref.path), {
+      ...toUpdate,
+      updatedAt: updateTimestamp ? Timestamp.now() : updatedAt
     }).catch((error: unknown) => {
       throw new Error(JSON.stringify(error));
     });
@@ -106,10 +86,13 @@ const TodoItem = ({
     updateTodo({ color: wantedColor }, false);
 
   const handleTodoDateChange = (date: Date | undefined): void =>
-    updateTodo({ dueDate: date || deleteField() }, false);
+    updateTodo(
+      { dueDate: date ? Timestamp.fromDate(date) : deleteField() },
+      false
+    );
 
   const handleTodoDeleteClick = (): void => {
-    deleteDoc(doc(database, `users/${userUID}/todos/${todo.id}`))
+    deleteDoc(doc(database, todo.ref.path))
       .then(() => {
         return toast({
           title: "Todo deleted!",
@@ -184,7 +167,7 @@ const TodoItem = ({
           w: "100%"
         }}
         datePicker={{
-          date: dueDate?.toDate(),
+          date: dueDate instanceof Timestamp ? dueDate.toDate() : undefined,
           updateDate: handleTodoDateChange
         }}
         colorPicker={{

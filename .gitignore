@@ -8,3 +8,4 @@ out
 .firebase
 *.log
 lib
+.husky/_

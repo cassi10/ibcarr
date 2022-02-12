@@ -1,10 +1,10 @@
 {
   "name": "@ibcarr/ui",
   "version": "1.0.0",
-  "description": "UI library for this monorepo",
-  "author": "cassi10",
-  "license": "UNLICENSED",
   "private": true,
+  "description": "UI library for this monorepo",
+  "license": "UNLICENSED",
+  "author": "cassi10",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
