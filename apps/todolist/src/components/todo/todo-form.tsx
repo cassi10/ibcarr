@@ -22,7 +22,7 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
   const bodyReference = useRef<HTMLTextAreaElement | null>(null);
 
   const todoInitialValues: HalfTodo = {
-    title: undefined,
+    title: "",
     body: "",
     color: "gray",
     dueDate: undefined
