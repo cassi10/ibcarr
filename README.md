@@ -31,11 +31,10 @@ C games -> D user_uid     -> F game_name (map): maps timestamp to score
   - [ ] Change email,
   - [ ] Change display name,
   - [ ] Delete account.
-- [ ] Date picker:
+- [x] Date picker:
   - [x] Add previous months days to start of next month,
   - [x] Change how state is handled interally,
   - [x] Don't allow to user go back before current date,
-  - [ ] Allow keyboard to be used.
 - [ ] Add labels to todo's.
 - [ ] Add `Forgot Password` feature on auth form.
 - [ ] Make tasks draggable.
