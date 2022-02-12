@@ -13,11 +13,17 @@ import {
   ModalOverlay,
   Text,
   Tooltip,
-  useColorMode,
   useDisclosure
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { getIconComponent, fromColorMode } from "@ibcarr/ui";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getIconComponent } from "@ibcarr/ui";
+
+type DayButton = {
+  shadow: ButtonProps["shadow"];
+  variant: ButtonProps["variant"];
+  disabled: ButtonProps["disabled"];
+  date: Date;
+};
 
 type DatePickerProperties = {
   updateDate: (date: Date | undefined) => void;
@@ -32,48 +38,7 @@ const DatePicker = ({
   button,
   buttonText
 }: DatePickerProperties): JSX.Element => {
-  const { colorMode } = useColorMode();
-
-  const todaysDate = new Date();
-
-  const [currentDate, setDate] = useState<Date | undefined>(date);
-
-  const [viewDate, setViewDate] = useState<Date>(
-    currentDate !== undefined
-      ? new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-      : new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1)
-  );
-  const [monthGap, setMonthGap] = useState<number[]>([]);
-
-  const { isOpen, onOpen, onClose } = useDisclosure({
-    onOpen: () => {
-      setViewDate(
-        currentDate !== undefined
-          ? new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
-          : new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1)
-      );
-    }
-  });
-
-  useEffect(() => setDate(date), [date]);
-
-  useEffect(() => {
-    setMonthGap([
-      ...Array.from({
-        length: viewDate.getDay() - 1 === -1 ? 6 : viewDate.getDay() - 1
-      }).keys()
-    ]);
-  }, [viewDate]);
-
-  const lastDayOfMonth = new Date(
-    viewDate.getFullYear(),
-    viewDate.getMonth() + 1,
-    0
-  );
-
-  const days = [...Array.from({ length: lastDayOfMonth.getDate() }).keys()].map(
-    (day) => day + 1
-  );
+  const todaysDate = useMemo(() => new Date(), []);
 
   const months = [
     "January",
@@ -90,14 +55,141 @@ const DatePicker = ({
     "December"
   ];
 
-  const daysShort = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  const daysShort = useMemo(
+    () => ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    []
+  );
 
-  const onDayButtonClick = (day: number): void =>
-    setDate(new Date(viewDate.getFullYear(), viewDate.getMonth(), day));
+  // This is the date the user has currently selected
+  const [currentDate, setCurrentDate] = useState<Date | undefined>(date);
+
+  // This is the date that is currently being shown
+  const initialViewDate =
+    currentDate !== undefined
+      ? new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+      : new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1);
+
+  const [viewDate, setViewDate] = useState<Date>(initialViewDate);
+
+  const [daysToDisplay, setDaysToDisplay] = useState<DayButton[]>([]);
+
+  const getDaysInMonth = (fromDate: Date): number =>
+    new Date(fromDate.getFullYear(), fromDate.getMonth() + 1, 0).getDate();
+
+  const getDaysInPreviousMonth = (fromDate: Date): number =>
+    new Date(fromDate.getFullYear(), fromDate.getMonth(), 0).getDate();
+
+  const previousButtonsDisabled = (): boolean =>
+    todaysDate.getFullYear() === viewDate.getFullYear() &&
+    todaysDate.getMonth() === viewDate.getMonth();
+
+  const previousDaysDisabled = useCallback(
+    (fromDate: Date): boolean => {
+      return (
+        fromDate.getFullYear() === todaysDate.getFullYear() &&
+        fromDate.getMonth() < todaysDate.getMonth()
+      );
+    },
+    [todaysDate]
+  );
+
+  const generateDays = useCallback((): void => {
+    // This is needed because in JS Sunday = 0 and Saturday = 6
+    const previousMonthGap = (day: number): number => {
+      if (day === 0) return 6;
+      if (day === 1) return 0;
+      return day - 1;
+    };
+
+    const nextMonthGap = (fromDate: Date): number => {
+      const lastDayOfMonth = new Date(
+        fromDate.getFullYear(),
+        fromDate.getMonth() + 1,
+        0
+      ).toLocaleDateString("en-GB", {
+        weekday: "short"
+      });
+
+      return daysShort.indexOf("Sun") - daysShort.indexOf(lastDayOfMonth);
+    };
+
+    const previousMonthDays: DayButton[] =
+      previousMonthGap(viewDate.getDay()) > 0
+        ? [
+            ...Array.from({
+              length: previousMonthGap(viewDate.getDay())
+            }).keys()
+          ]
+            .map((day) => {
+              const buttonDate = new Date(
+                viewDate.getFullYear(),
+                viewDate.getMonth() - 1,
+                getDaysInPreviousMonth(viewDate) - day
+              );
+
+              return {
+                shadow: "none",
+                variant: "ghost",
+                date: buttonDate,
+                disabled: previousDaysDisabled(buttonDate)
+              };
+            })
+            .reverse()
+        : [];
+
+    const currentMonthDays: DayButton[] = [
+      ...Array.from({ length: getDaysInMonth(viewDate) }).keys()
+    ].map((day) => {
+      return {
+        shadow: "md",
+        variant: "solid",
+        date: new Date(viewDate.getFullYear(), viewDate.getMonth(), day + 1),
+        disabled: false
+      };
+    });
+
+    const nextMonthDays: DayButton[] =
+      nextMonthGap(viewDate) > 0
+        ? [...Array.from({ length: nextMonthGap(viewDate) }).keys()].map(
+            (day) => {
+              return {
+                shadow: "none",
+                variant: "ghost",
+                date: new Date(
+                  viewDate.getFullYear(),
+                  viewDate.getMonth() + 1,
+                  day + 1
+                ),
+                disabled: false
+              };
+            }
+          )
+        : [];
+
+    setDaysToDisplay([
+      ...previousMonthDays,
+      ...currentMonthDays,
+      ...nextMonthDays
+    ]);
+  }, [viewDate, daysShort, previousDaysDisabled]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure({
+    onOpen: () => {
+      generateDays();
+      setViewDate(initialViewDate);
+    }
+  });
+
+  useEffect(() => {
+    generateDays();
+  }, [generateDays]);
+
+  const onDayButtonClick = (wantedDate: Date): void =>
+    setCurrentDate(wantedDate);
 
   const onTodayButtonClick = (): void => {
     const todayDate = new Date();
-    setDate(todayDate);
+    setCurrentDate(todayDate);
     setViewDate(new Date(todayDate.getFullYear(), todayDate.getMonth(), 1));
   };
 
@@ -107,13 +199,23 @@ const DatePicker = ({
   const onNextMonthButtonClick = (): void =>
     setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
 
-  const onPreviousYearButtonClick = (): void =>
-    setViewDate(new Date(viewDate.getFullYear() - 1, 0, 1));
+  const onPreviousYearButtonClick = (): void => {
+    const tooFar = viewDate.getFullYear() - 1 < todaysDate.getFullYear();
+
+    const dateToSet = new Date(
+      tooFar ? todaysDate.getFullYear() : viewDate.getFullYear(),
+      tooFar ? todaysDate.getMonth() : viewDate.getMonth(),
+      1
+    );
+    setViewDate(dateToSet);
+  };
 
   const onNextYearButtonClick = (): void =>
-    setViewDate(new Date(viewDate.getFullYear() + 1, 0, 1));
+    setViewDate(new Date(viewDate.getFullYear() + 1, viewDate.getMonth(), 1));
 
   const onClearButtonClick = (): void => {
+    setCurrentDate(undefined);
+    setViewDate(currentDate || todaysDate);
     updateDate(undefined);
     onClose();
   };
@@ -177,6 +279,7 @@ const DatePicker = ({
                   aria-label="Go to previous year"
                   icon={getIconComponent("doubleLeft")}
                   onClick={onPreviousYearButtonClick}
+                  disabled={previousButtonsDisabled()}
                 />
                 <IconButton
                   variant="ghost"
@@ -186,6 +289,7 @@ const DatePicker = ({
                   aria-label="Go to previous month"
                   icon={getIconComponent("left")}
                   onClick={onPreviousMonthButtonClick}
+                  disabled={previousButtonsDisabled()}
                 />
                 <Text fontSize="lg" flex={1} align="center">
                   {months[viewDate.getMonth()]} {viewDate.getFullYear()}
@@ -220,42 +324,28 @@ const DatePicker = ({
                     {day}
                   </Text>
                 ))}
-                {monthGap.length > 0 &&
-                  monthGap.map((day) => (
-                    <Box
-                      key={day}
-                      minW={10}
-                      maxW={10}
-                      h={10}
-                      p={0}
-                      rounded="md"
-                      bg={fromColorMode("gray.50", "whiteAlpha.50", colorMode)}
-                    />
-                  ))}
-                {days.map((day) => (
+                {daysToDisplay.map((day) => (
                   <Button
-                    key={day}
+                    key={day.date.toLocaleString("en-GB")}
                     minW={10}
-                    maxW={10}
                     h={10}
                     p={0}
                     justifyContent="center"
                     alignItems="center"
-                    shadow="sm"
-                    onClick={(): void => onDayButtonClick(day)}
+                    shadow={day.shadow}
+                    // colorScheme="gray"
                     colorScheme={
                       currentDate !== undefined &&
                       currentDate.toLocaleDateString("en-GB") ===
-                        new Date(
-                          viewDate.getFullYear(),
-                          viewDate.getMonth(),
-                          day
-                        ).toLocaleDateString("en-GB")
+                        day.date.toLocaleDateString("en-GB")
                         ? "blue"
                         : "gray"
                     }
+                    variant={day.variant}
+                    disabled={day.disabled}
+                    onClick={(): void => onDayButtonClick(day.date)}
                   >
-                    {day}
+                    {day.date.getDate()}
                   </Button>
                 ))}
               </Grid>
