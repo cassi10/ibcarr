@@ -35,6 +35,8 @@ C games -> D user_uid     -> F game_name (map): maps timestamp to score
   - [x] Add previous months days to start of next month,
   - [x] Change how state is handled interally,
   - [x] Don't allow to user go back before current date,
+- [ ] Clear dueDate in todo form after submit.
+  - Currently it will keep the previous value after `Save Todo` is clicked.
 - [ ] Add labels to todo's.
 - [ ] Add `Forgot Password` feature on auth form.
 - [ ] Make tasks draggable.
