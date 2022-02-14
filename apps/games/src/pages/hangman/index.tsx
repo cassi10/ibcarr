@@ -1,5 +1,4 @@
 import {
-  Heading,
   Text,
   Flex,
   Button,
@@ -13,7 +12,8 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import { getIconComponent } from "@ibcarr/ui";
 import stages from "../../data/hangman-stages";
-import getRandomWord from "../../data/words";
+import { getRandomHangmanWord } from "../../data/words";
+import { GameContainer, GameHeading, NewGameButton } from "../../components";
 
 const Hangman = (): JSX.Element => {
   const [word, setWord] = useState<string>("");
@@ -26,7 +26,7 @@ const Hangman = (): JSX.Element => {
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
   const reset = (): void => {
-    setWord(getRandomWord());
+    setWord(getRandomHangmanWord());
     setLetterGuesses([]);
     setWordGuess("");
     setTries(0);
@@ -80,13 +80,10 @@ const Hangman = (): JSX.Element => {
         <title>Games - Hangman</title>
         <meta name="description" content="A hangman game." />
       </Head>
-      <Heading py={8}>
-        Hangman
-        <Button size="sm" variant="solid" onClick={onNewGameButtonClick} mx={4}>
-          New Game
-        </Button>
-      </Heading>
-      <Flex direction="column" align="center" justify="center" gridGap={8}>
+      <GameContainer>
+        <GameHeading text="Hangman">
+          <NewGameButton onClick={onNewGameButtonClick} text="New Game" />
+        </GameHeading>
         {gameState !== "playing" && (
           <Flex direction="column" align="center" justify="center" gridGap={6}>
             <Text fontSize="4xl">You have {gameState}!</Text>
@@ -117,18 +114,25 @@ const Hangman = (): JSX.Element => {
           </Text>
         </Flex>
         <Flex direction="row" align="center" justify="center" gridGap={4}>
-          {[...word].map((letter: string, index: number) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <Text key={index} fontSize="xl" fontWeight="700">
-              <Button
-                variant="solid"
-                textTransform="uppercase"
-                colorScheme="green"
-                disabled={!letterGuesses.includes(letter)}
-                cursor={!letterGuesses.includes(letter) ? "inherit" : "unset"}
-              >
-                {!letterGuesses.includes(letter) ? "" : letter}
-              </Button>
+          {[...word].map((letter: string) => (
+            <Text
+              key={`${Date.now() * Math.random()}${letter}`}
+              bg="green.200"
+              color="gray.800"
+              opacity={!letterGuesses.includes(letter) ? "0.4" : "1"}
+              h={10}
+              paddingInline={4}
+              w={10}
+              lineHeight={1.2}
+              rounded="md"
+              textTransform="uppercase"
+              fontWeight="semibold"
+              display="inline-flex"
+              alignItems="center"
+              justifyContent="center"
+              cursor="default"
+            >
+              {!letterGuesses.includes(letter) ? "" : letter}
             </Text>
           ))}
         </Flex>
@@ -177,7 +181,7 @@ const Hangman = (): JSX.Element => {
             </InputRightElement>
           </InputGroup>
         </Flex>
-      </Flex>
+      </GameContainer>
     </>
   );
 };

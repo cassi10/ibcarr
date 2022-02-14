@@ -7,7 +7,8 @@ import type { Game } from "../types";
 const Navbar = (): JSX.Element => {
   const games: Game[] = [
     { name: "Hangman", href: "/hangman" },
-    { name: "Card Match", href: "/cardmatch" }
+    { name: "Card Match", href: "/cardmatch" },
+    { name: "Werdle", href: "/werdle" }
     // { name: "Snake", href: "/snake", disabled: true },
     // { name: "Space Invaders", href: "/spaceinvaders", disabled: true },
   ];

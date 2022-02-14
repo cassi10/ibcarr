@@ -5,13 +5,13 @@ import {
   Button,
   Flex,
   Grid,
-  Heading,
   Image,
   Text,
   useMediaQuery
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
+import { GameContainer, GameHeading, NewGameButton } from "../../components";
 
 type Card = {
   src: string;
@@ -166,20 +166,10 @@ const CardMatch = (): JSX.Element => {
         <title>Games - Card Match</title>
         <meta name="description" content="A simple card match game." />
       </Head>
-      <Flex direction="column" align="center" justify="center" gridGap={4}>
-        <Flex
-          direction="row"
-          alignSelf="start"
-          align="center"
-          justify="center"
-          gridGap={4}
-          py={8}
-        >
-          <Heading>Card Match</Heading>
-          <Button size="sm" variant="solid" onClick={onNewGameButtonClick}>
-            New Game
-          </Button>
-        </Flex>
+      <GameContainer>
+        <GameHeading text="Card Match">
+          <NewGameButton onClick={onNewGameButtonClick} text="New Game" />
+        </GameHeading>
         {gameState !== "playing" && (
           <Flex
             direction="column"
@@ -238,7 +228,7 @@ const CardMatch = (): JSX.Element => {
             );
           })}
         </Grid>
-      </Flex>
+      </GameContainer>
     </>
   );
 };
