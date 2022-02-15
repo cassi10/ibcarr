@@ -19,7 +19,9 @@ import {
   MdPushPin,
   MdSettings,
   MdVisibility,
-  MdVisibilityOff
+  MdVisibilityOff,
+  MdHelpOutline,
+  MdInfoOutline
 } from "react-icons/md";
 import {
   HiOutlineChevronDoubleLeft,
@@ -57,7 +59,9 @@ const Icons = {
   more: MdMoreVert,
   label: MdLabelOutline,
   pin: MdPushPin,
-  outlinePin: MdOutlinePushPin
+  outlinePin: MdOutlinePushPin,
+  help: MdHelpOutline,
+  info: MdInfoOutline
 };
 
 type IconsType = keyof typeof Icons;
