@@ -11,7 +11,12 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
-import { GameContainer, GameHeading, NewGameButton } from "../../components";
+import {
+  GameContainer,
+  GameHeading,
+  GameInformationModal,
+  NewGameButton
+} from "../../components";
 
 type Card = {
   src: string;
@@ -169,6 +174,12 @@ const CardMatch = (): JSX.Element => {
       <GameContainer>
         <GameHeading text="Card Match">
           <NewGameButton onClick={onNewGameButtonClick} text="New Game" />
+          <GameInformationModal>
+            <Text>Below you are given 8 pairs of cards.</Text>
+            <Text>
+              Your job is to match them all in the least amount of tries.
+            </Text>
+          </GameInformationModal>
         </GameHeading>
         {gameState !== "playing" && (
           <Flex

@@ -46,7 +46,7 @@ C games -> D user_uid     -> F game_name (map): maps timestamp to score
 
 - [ ] Add leaderboards to games.
 - [ ] Add graphs to users to show progression over time.
-- [ ] Add `Information` button to games to show how to play etc...
+- [x] Add `Information` button to games to show how to play etc...
 - [ ] Make Wordle clone.
 - [ ] Allow keyboard to be used on hangman.
 

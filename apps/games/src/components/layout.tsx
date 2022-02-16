@@ -1,10 +1,19 @@
-import { Container, Box, Flex, Heading, Link } from "@chakra-ui/react";
+import {
+  Container,
+  Box,
+  Flex,
+  Heading,
+  Link,
+  useColorMode
+} from "@chakra-ui/react";
 import NextLink from "next/link";
-import { TopBar } from "@ibcarr/ui";
+import { TopBar, fromColorMode } from "@ibcarr/ui";
 import GameLink from "./game-link";
 import type { Game } from "../types";
 
 const Navbar = (): JSX.Element => {
+  const { colorMode } = useColorMode();
+
   const games: Game[] = [
     { name: "Hangman", href: "/hangman" },
     { name: "Card Match", href: "/cardmatch" },
@@ -14,7 +23,18 @@ const Navbar = (): JSX.Element => {
   ];
 
   return (
-    <Flex align="center" direction="row" justify="center" gridGap={16}>
+    <Flex
+      align="center"
+      justify="space-between"
+      direction="row"
+      h={16}
+      columnGap={12}
+      p={2}
+      px={4}
+      bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
+      rounded="md"
+      shadow="md"
+    >
       <NextLink href="/" passHref>
         {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
         <Link>
