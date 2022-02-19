@@ -22,7 +22,7 @@ const GameLink = ({ game, index }: GameLinkProperties): JSX.Element => {
   const buttonFontSize = useBreakpointValue({ base: "md", sm: "md" });
 
   return (
-    <NextLink href={game.href} key={game.name}>
+    <NextLink passHref href={game.href} key={game.name}>
       <Button
         shadow="md"
         variant="solid"
