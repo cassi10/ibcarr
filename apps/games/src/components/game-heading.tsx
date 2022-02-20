@@ -14,9 +14,10 @@ const GameHeading = ({
     direction="row"
     alignSelf="start"
     align="center"
-    justify="center"
+    justify="start"
     gridGap={4}
     py={8}
+    w="100%"
   >
     <Heading>{text}</Heading>
     {children}

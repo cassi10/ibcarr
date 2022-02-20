@@ -13,7 +13,12 @@ import Head from "next/head";
 import { getIconComponent } from "@ibcarr/ui";
 import stages from "../../data/hangman-stages";
 import { getRandomHangmanWord } from "../../data/words";
-import { GameContainer, GameHeading, NewGameButton } from "../../components";
+import {
+  GameContainer,
+  GameHeading,
+  GameInformationModal,
+  NewGameButton
+} from "../../components";
 
 const Hangman = (): JSX.Element => {
   const [word, setWord] = useState<string>("");
@@ -83,6 +88,15 @@ const Hangman = (): JSX.Element => {
       <GameContainer>
         <GameHeading text="Hangman">
           <NewGameButton onClick={onNewGameButtonClick} text="New Game" />
+          <GameInformationModal>
+            <Text>
+              You will be given a new word every time a new game is started.
+            </Text>
+            <Text>
+              Your job guess the word using the letters and input below before
+              the man is hung.
+            </Text>
+          </GameInformationModal>
         </GameHeading>
         {gameState !== "playing" && (
           <Flex direction="column" align="center" justify="center" gridGap={6}>
@@ -139,14 +153,15 @@ const Hangman = (): JSX.Element => {
         <Divider w="55%" />
         <Flex direction="column" align="center" justify="center" gridGap={8}>
           <Flex
-            flexFlow="wrap"
+            flexWrap="wrap"
             align="center"
             justify="center"
             gridGap={4}
-            w="lg"
+            w="xl"
           >
             {[...alphabet].map((letter: string, index: number) => (
               <Button
+                flex={1}
                 variant="solid"
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
