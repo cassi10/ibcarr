@@ -31,12 +31,6 @@ type BottomBarProperties = {
         menuPlacement: PlacementWithLogical;
       }
     | false;
-  togglePinned:
-    | {
-        pinned: boolean;
-        updatePinned: (pinned: boolean) => void;
-      }
-    | false;
   editTodo:
     | {
         handleSaveClick: () => void;
@@ -63,7 +57,6 @@ const BottomBar = ({
   flex,
   datePicker,
   colorPicker,
-  togglePinned,
   editTodo,
   moreOptions,
   todoDates,
@@ -74,8 +67,7 @@ const BottomBar = ({
 
   const colorPickerSizes = {
     itemW: small ? 10 : 12,
-    buttonW: small ? 8 : 10,
-    buttonH: small ? 8 : 10
+    buttonBoxSize: small ? 8 : 10
   };
 
   return (
@@ -131,8 +123,7 @@ const BottomBar = ({
                   <Button
                     size={size}
                     colorScheme={itemColor}
-                    w={colorPickerSizes.buttonW}
-                    h={colorPickerSizes.buttonH}
+                    boxSize={colorPickerSizes.buttonBoxSize}
                     textTransform="capitalize"
                   >
                     {itemColor.slice(0, 3)}
@@ -141,26 +132,6 @@ const BottomBar = ({
               ))}
             </MenuList>
           </Menu>
-        )}
-        {/* TOGGLE PINNED */}
-        {togglePinned && (
-          <Tooltip hasArrow label="Toggle pinned" placement="auto">
-            <IconButton
-              aria-label="Toggle pinned"
-              icon={
-                togglePinned.pinned
-                  ? getIconComponent("pin")
-                  : getIconComponent("outlinePin")
-              }
-              colorScheme="blue"
-              variant="outline"
-              rounded="full"
-              size={size}
-              onClick={(): void =>
-                togglePinned.updatePinned(togglePinned.pinned)
-              }
-            />
-          </Tooltip>
         )}
         {/* EDIT TODO */}
         {editTodo && (
@@ -239,7 +210,14 @@ const BottomBar = ({
                 day: "numeric"
               })}`}
           >
-            <Text fontSize={size}>
+            <Text
+              fontSize={size}
+              visibility="hidden"
+              opacity={0}
+              transition="opacity 150ms ease-in-out"
+              transitionDelay="150ms"
+              _groupHover={{ visibility: "visible", opacity: 1 }}
+            >
               Edited{" "}
               {todoDates.updatedAt.toDate().toLocaleDateString("en-GB", {
                 year: undefined,

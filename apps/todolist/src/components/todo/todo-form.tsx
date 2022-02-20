@@ -158,7 +158,6 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
         editTodo={false}
         moreOptions={false}
         todoDates={false}
-        togglePinned={false}
         saveTodo={handleAddTodoClick}
       />
     </Flex>

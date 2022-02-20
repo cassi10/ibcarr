@@ -1,11 +1,15 @@
 /**
  * FIXME Flashes when adding title
- * TODO Move pin/unpin button to far top right corner of todo
- *        probably using absolute positioning 1/2 button width/height
  */
 
-import { ListItem, Textarea, useBoolean, useColorMode } from "@chakra-ui/react";
-import { fromColorMode } from "@ibcarr/ui";
+import {
+  IconButton,
+  ListItem,
+  Textarea,
+  useBoolean,
+  useColorMode
+} from "@chakra-ui/react";
+import { fromColorMode, getIconComponent } from "@ibcarr/ui";
 import { type Colors } from "@ibcarr/utils";
 import {
   deleteDoc,
@@ -31,8 +35,8 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
 
   const [editing, setEditing] = useBoolean();
 
-  const titleReference = useRef<HTMLTextAreaElement | null>(null);
-  const bodyReference = useRef<HTMLTextAreaElement | null>(null);
+  const titleInputReference = useRef<HTMLTextAreaElement | null>(null);
+  const bodyInputReference = useRef<HTMLTextAreaElement | null>(null);
 
   const { title, body, color, pinned, dueDate, createdAt, updatedAt } =
     todo.data();
@@ -52,16 +56,16 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
   const [newBody, setNewBody] = useState<string>(body);
 
   useEffect(() => {
-    if (titleReference && titleReference.current) {
-      titleReference.current.style.height = `auto`;
-      titleReference.current.style.height = `${titleReference.current.scrollHeight.toString()}px`;
+    if (titleInputReference && titleInputReference.current) {
+      titleInputReference.current.style.height = `auto`;
+      titleInputReference.current.style.height = `${titleInputReference.current.scrollHeight.toString()}px`;
     }
   }, [newTitle]);
 
   useEffect(() => {
-    if (bodyReference && bodyReference.current) {
-      bodyReference.current.style.height = `auto`;
-      bodyReference.current.style.height = `${bodyReference.current.scrollHeight.toString()}px`;
+    if (bodyInputReference && bodyInputReference.current) {
+      bodyInputReference.current.style.height = `auto`;
+      bodyInputReference.current.style.height = `${bodyInputReference.current.scrollHeight.toString()}px`;
     }
   }, [newBody]);
 
@@ -125,7 +129,35 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
       bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
       color={fromColorMode("gray.800", "whiteAlpha.900", colorMode)}
       role="group"
+      position="relative"
     >
+      <IconButton
+        aria-label="Toggle pinned"
+        icon={
+          pinned
+            ? getIconComponent("pin", {
+                boxSize: 4
+              })
+            : getIconComponent("outlinePin", {
+                boxSize: 4
+              })
+        }
+        rounded="full"
+        onClick={(): void => handleTodoPinnedClicked()}
+        position="absolute"
+        top={-4}
+        right={-4}
+        colorScheme="cyan"
+        visibility="hidden"
+        size="sm"
+        opacity={0}
+        transition="opacity 300ms ease-in-out"
+        _groupHover={{
+          visibility: "visible",
+          opacity: 1
+        }}
+        shadow="md"
+      />
       {(title || editing) && (
         <Textarea
           fontSize="lg"
@@ -137,7 +169,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
           onChange={(event): void => setNewTitle(event.target.value)}
           minH={0}
           maxLength={1000}
-          ref={titleReference}
+          ref={titleInputReference}
           sx={scrollbar(colorMode)}
           overflow="hidden"
           variant="unstyled"
@@ -156,7 +188,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
         onChange={(event): void => setNewBody(event.target.value)}
         minH={0}
         maxLength={10_000}
-        ref={bodyReference}
+        ref={bodyInputReference}
         sx={scrollbar(colorMode)}
         overflow="hidden"
         variant="unstyled"
@@ -181,10 +213,6 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
           menuPlacement: "bottom-start",
           color,
           updateColor: handleTodoColorChange
-        }}
-        togglePinned={{
-          pinned,
-          updatePinned: handleTodoPinnedClicked
         }}
         editTodo={{
           handleSaveClick: (): void => {

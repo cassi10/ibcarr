@@ -26,8 +26,7 @@ const GameInformationModal = ({
         variant="solid"
         isRound
         icon={getIconComponent("help", {
-          w: 6,
-          h: 6
+          boxSize: 6
         })}
         aria-label="How to Play"
         onClick={onOpen}
