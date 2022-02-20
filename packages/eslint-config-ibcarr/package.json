@@ -26,6 +26,6 @@
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "eslint-plugin-unicorn": "^40.0.0"
+    "eslint-plugin-unicorn": "^41.0.0"
   }
 }
