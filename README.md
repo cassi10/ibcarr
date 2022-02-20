@@ -6,7 +6,7 @@ This repo houses all apps under the **ibcarr.com** domain and all external packa
 
 ## [Todolist](https://todolist.ibcarr.com)
 
-This is currently a basic todolist app made using [**NextJS**](https://nextjs.org/), [**ChakraUI Component Library**](https://chakra-ui.com/) and [**Google Firebase**](https://firebase.google.com/).
+This is currently a todolist app made using [**NextJS**](https://nextjs.org/), [**ChakraUI Component Library**](https://chakra-ui.com/) and [**Google Firebase**](https://firebase.google.com/).
 
 ### ✔️ Features
 
@@ -35,7 +35,7 @@ This is currently a basic todolist app made using [**NextJS**](https://nextjs.or
 
 ## [Games](https://games.ibcarr.com)
 
-This is currently a basic todolist app made using [**NextJS**](https://nextjs.org/) and [**ChakraUI Component Library**](https://chakra-ui.com/).
+This is an app containing a few games made using [**NextJS**](https://nextjs.org/) and [**ChakraUI Component Library**](https://chakra-ui.com/).
 
 ### ✔️ Features
 
