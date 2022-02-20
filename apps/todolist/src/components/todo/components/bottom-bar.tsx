@@ -39,7 +39,8 @@ type BottomBarProperties = {
     | false;
   editTodo:
     | {
-        handleClick: () => void;
+        handleSaveClick: () => void;
+        handleCancelClick: () => void;
         editing: boolean;
       }
     | false;
@@ -165,16 +166,28 @@ const BottomBar = ({
         {editTodo && (
           <Tooltip hasArrow label="Edit todo" placement="auto">
             {editTodo.editing ? (
-              <Button
-                leftIcon={getIconComponent("calendar")}
-                colorScheme="green"
-                variant="outline"
-                rounded="full"
-                size={size}
-                onClick={editTodo.handleClick}
-              >
-                Save Changes
-              </Button>
+              <>
+                <Button
+                  leftIcon={getIconComponent("close")}
+                  colorScheme="red"
+                  variant="outline"
+                  rounded="full"
+                  size={size}
+                  onClick={editTodo.handleCancelClick}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  leftIcon={getIconComponent("tick")}
+                  colorScheme="green"
+                  variant="outline"
+                  rounded="full"
+                  size={size}
+                  onClick={editTodo.handleSaveClick}
+                >
+                  Save
+                </Button>
+              </>
             ) : (
               <IconButton
                 aria-label="Edit todo"
@@ -183,7 +196,7 @@ const BottomBar = ({
                 variant="outline"
                 rounded="full"
                 size={size}
-                onClick={editTodo.handleClick}
+                onClick={editTodo.handleSaveClick}
               />
             )}
           </Tooltip>

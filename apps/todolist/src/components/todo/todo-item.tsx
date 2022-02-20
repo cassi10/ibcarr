@@ -1,5 +1,7 @@
 /**
- * Flashes when adding title
+ * FIXME Flashes when adding title
+ * TODO Move pin/unpin button to far top right corner of todo
+ *        probably using absolute positioning 1/2 button width/height
  */
 
 import { ListItem, Textarea, useBoolean, useColorMode } from "@chakra-ui/react";
@@ -77,6 +79,11 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
 
   const handleSaveTodoClick = (): void => {
     updateTodo({ body: newBody, title: newTitle || deleteField() }, true);
+  };
+
+  const handleCancelTodoClick = (): void => {
+    setNewTitle(title?.toString());
+    setNewBody(body);
   };
 
   const handleTodoPinnedClicked = (): void =>
@@ -180,8 +187,13 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
           updatePinned: handleTodoPinnedClicked
         }}
         editTodo={{
-          handleClick: (): void => {
+          handleSaveClick: (): void => {
             if (editing) handleSaveTodoClick();
+
+            setEditing.toggle();
+          },
+          handleCancelClick: (): void => {
+            if (editing) handleCancelTodoClick();
 
             setEditing.toggle();
           },
