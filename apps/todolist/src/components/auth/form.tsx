@@ -3,9 +3,9 @@ import { fromColorMode } from "@ibcarr/ui";
 import { AuthError } from "firebase/auth";
 import Router from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { auth } from "../../firebase";
-import ErrorAlert from "../error-alert";
-import { EmailForm, SignInForm, SignUpForm } from "./form-steps";
+import { auth } from "@firebase";
+import ErrorAlert from "@components/error-alert";
+import { EmailForm, SignInForm, SignUpForm } from "@components/auth/form-steps";
 
 const AuthForm = (): JSX.Element => {
   const { colorMode } = useColorMode();

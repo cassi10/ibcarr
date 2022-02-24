@@ -1,5 +1,15 @@
 {
   "extends": "@ibcarr/tsconfig/next.json",
   "exclude": ["node_modules", ".next", ".firebase", ".turbo", "out"],
-  "include": ["next-env.d.ts", "src/**/*", "next.config.mjs"]
+  "include": ["."],
+  "compilerOptions": {
+    "baseUrl": "./src/",
+    "paths": {
+      "@components": ["components/index.ts"],
+      "@reducers/*": ["hooks/reducers/*"],
+      "@hooks/*": ["hooks/*"],
+      "@data/*": ["data/*"],
+      "@types": ["types.d.ts"]
+    }
+  }
 }

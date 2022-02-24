@@ -5,7 +5,7 @@ import {
   GameHeading,
   GameInformationModal,
   NewGameButton
-} from "../../components";
+} from "@components";
 
 const Werdle = (): JSX.Element => {
   return (

@@ -1,7 +1,7 @@
 import { Grid, Icon, IconButton, useColorMode } from "@chakra-ui/react";
 import { getIcon } from "@ibcarr/ui";
 import Head from "next/head";
-import AuthForm from "../components/auth/form";
+import AuthForm from "@components/auth/form";
 
 const Auth = (): JSX.Element => {
   const { colorMode, toggleColorMode } = useColorMode();

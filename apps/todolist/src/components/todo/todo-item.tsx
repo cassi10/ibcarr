@@ -20,10 +20,10 @@ import {
   updateDoc
 } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { database } from "../../firebase";
-import { scrollbar } from "../../theme";
-import type { Toast, Todo } from "../../types";
-import BottomBar from "./components/bottom-bar";
+import { database } from "@firebase";
+import { scrollbar } from "@theme";
+import type { Toast, Todo } from "@types";
+import BottomBar from "@components/todo/components/bottom-bar";
 
 type TodoItemProperties = {
   todo: QueryDocumentSnapshot<Todo>;

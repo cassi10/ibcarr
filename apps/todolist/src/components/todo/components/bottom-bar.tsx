@@ -14,7 +14,7 @@ import {
 import { getIconComponent } from "@ibcarr/ui";
 import { colors, Colors } from "@ibcarr/utils";
 import { Timestamp } from "firebase/firestore";
-import DatePicker from "./date-picker";
+import DatePicker from "@components/todo/components/date-picker";
 
 type BottomBarProperties = {
   flex: FlexProps | undefined;

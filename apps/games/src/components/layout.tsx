@@ -8,8 +8,8 @@ import {
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { TopBar, fromColorMode } from "@ibcarr/ui";
-import GameLink from "./game-link";
-import type { Game } from "../types";
+import type { Game } from "@types";
+import { GameLink } from "@components";
 
 const Navbar = (): JSX.Element => {
   const { colorMode } = useColorMode();

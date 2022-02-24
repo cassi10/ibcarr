@@ -12,17 +12,25 @@ import {
 import { Formik, Form } from "formik";
 import Router from "next/router";
 import { Dispatch, SetStateAction } from "react";
-import { auth } from "../../firebase";
-import { SetStep } from "../../types";
-import { BackButton, FormHeading, NextButton } from "./components";
+import { auth } from "@firebase";
+import { SetStep } from "@types";
+import {
+  BackButton,
+  FormHeading,
+  NextButton
+} from "@components/auth/components";
+import {
+  EmailSchema,
+  SignInSchema,
+  SignUpSchema
+} from "@components/auth/validation";
 import {
   ChoosePasswordField,
   EmailField,
   PasswordField,
   RememberMeCheckbox,
   UsernameField
-} from "./form-field";
-import { EmailSchema, SignInSchema, SignUpSchema } from "./validation";
+} from "@components/auth/form-field";
 
 type FormStepProperties = {
   setStep: SetStep;

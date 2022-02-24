@@ -1,6 +1,6 @@
 import { Flex, Heading, useColorMode } from "@chakra-ui/react";
 import { fromColorMode } from "@ibcarr/ui";
-import UserMenu from "./user-menu";
+import UserMenu from "@components/layout/navbar/user-menu";
 
 type NavBarProperties = {
   displayName: string | null;

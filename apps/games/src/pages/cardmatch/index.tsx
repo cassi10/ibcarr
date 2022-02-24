@@ -2,7 +2,7 @@
 /* eslint-disable no-nested-ternary */
 import NextImage from "next/image";
 import { Box, Button, Flex, Grid, Text, useMediaQuery } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import Head from "next/head";
 import { nanoid } from "nanoid/non-secure";
 import {
@@ -10,24 +10,24 @@ import {
   GameHeading,
   GameInformationModal,
   NewGameButton
-} from "../../components";
-
-type State = {
-  cards: Card[];
-  choiceOne: Card | undefined;
-  choiceTwo: Card | undefined;
-  tries: number;
-  playing: boolean;
-  inputDisabled: boolean;
-};
-
-type Card = {
-  src: string;
-  matched: boolean;
-  id: string;
-};
+} from "@components";
+import {
+  useCardmatchReducer,
+  GameStateAction,
+  type Card
+} from "@reducers/use-cardmatch-reducer";
 
 const CardMatch = (): JSX.Element => {
+  const [
+    {
+      cards,
+      cardChoices: { choiceOne, choiceTwo },
+      inputsDisabled,
+      playing,
+      tries
+    },
+    dispatch
+  ] = useCardmatchReducer();
   /**
    * TODO Replace this jank with useWindowSize hook instead
    */
@@ -79,15 +79,6 @@ const CardMatch = (): JSX.Element => {
     ];
   }, []);
 
-  const initialState = {
-    cards: [],
-    choiceOne: undefined,
-    choiceTwo: undefined,
-    tries: 0,
-    playing: true,
-    inputDisabled: false
-  };
-
   const generateCardArray = (cardSet: string[]): Card[] => {
     return [...cardSet, ...cardSet]
       .map<Card>((card) => {
@@ -100,81 +91,70 @@ const CardMatch = (): JSX.Element => {
       .sort(() => Math.random() - 0.5);
   };
 
-  /**
-   * TODO Convert this to useReducer instead
-   */
-  const [cards, setCards] = useState<State["cards"]>(initialState.cards);
-  const [choiceOne, setChoiceOne] = useState<State["choiceOne"]>(
-    initialState.choiceOne
-  );
-  const [choiceTwo, setChoiceTwo] = useState<State["choiceTwo"]>(
-    initialState.choiceTwo
-  );
-  const [tries, setTries] = useState<State["tries"]>(initialState.tries);
-  const [playing, setPlaying] = useState<State["playing"]>(
-    initialState.playing
-  );
-  const [inputDisabled, setInputDisabled] = useState<State["inputDisabled"]>(
-    initialState.inputDisabled
-  );
-
   const reset = (): void => {
-    setCards(generateCardArray(cardSources));
-    setChoiceOne(initialState.choiceOne);
-    setChoiceTwo(initialState.choiceTwo);
-    setTries(initialState.tries);
-    setPlaying(initialState.playing);
-    setInputDisabled(initialState.inputDisabled);
+    dispatch({
+      type: GameStateAction.RESET_GAME
+    });
+    dispatch({
+      type: GameStateAction.SET_CARDS,
+      payload: generateCardArray(cardSources)
+    });
   };
 
-  const resetTurn = (): void => {
-    setChoiceOne(undefined);
-    setChoiceTwo(undefined);
-    setTries((previousTries) => previousTries + 1);
-    setInputDisabled(false);
-  };
+  const resetTurn = useCallback((): void => {
+    dispatch({
+      type: GameStateAction.RESET_TURN
+    });
+  }, [dispatch]);
 
   useEffect(() => {
-    setCards(generateCardArray(cardSources));
-  }, [cardSources]);
+    dispatch({
+      type: GameStateAction.SET_CARDS,
+      payload: generateCardArray(cardSources)
+    });
+  }, [cardSources, dispatch]);
 
   useEffect(() => {
-    if (cards === [] || cards.length === 0) return;
+    if (!cards || cards.length === 0) return;
 
     const notMatched = cards.filter((card) => !card.matched);
 
-    if (notMatched.length === 0) setPlaying(false);
-  }, [choiceOne, choiceTwo, cards]);
+    if (notMatched.length === 0)
+      dispatch({ type: GameStateAction.SET_PLAYING, payload: false });
+  }, [cards, dispatch]);
 
   useEffect(() => {
-    if (!choiceOne || !choiceTwo) return;
+    if (!choiceOne || !choiceTwo || !cards) return;
 
-    setInputDisabled(true);
-
+    dispatch({ type: GameStateAction.SET_INPUTS_DISABLED, payload: true });
     if (choiceOne.src === choiceTwo.src) {
-      setCards((previousCards) =>
-        previousCards.map((card) => {
-          if (card.src === choiceOne.src) {
-            return { ...card, matched: true };
-          }
+      dispatch({
+        type: GameStateAction.SET_CARDS,
+        payload: cards.map((card) => {
+          if (card.src === choiceOne.src) return { ...card, matched: true };
+
           return card;
         })
-      );
+      });
 
       resetTurn();
     } else {
       setTimeout(() => resetTurn(), 1000);
     }
-  }, [choiceOne, choiceTwo]);
+  }, [choiceOne, choiceTwo, cards, dispatch, resetTurn]);
 
   const onCardClick = (card: Card): void => {
     if (card.matched) return;
     if (card.id === choiceOne?.id || card.id === choiceTwo?.id) return;
-    if (inputDisabled) return;
+    if (inputsDisabled) return;
 
-    if (choiceOne) {
-      setChoiceTwo(card);
-    } else setChoiceOne(card);
+    dispatch({
+      type: GameStateAction.SET_CHOICES,
+      payload: {
+        choice: choiceOne ? "choiceTwo" : "choiceOne",
+        card
+      }
+    });
   };
 
   const onNewGameButtonClick = (): void => reset();
@@ -224,7 +204,7 @@ const CardMatch = (): JSX.Element => {
         )}
         <Text fontSize="xl">Tries: {tries}</Text>
         <Grid gridTemplateColumns="repeat(4, 1fr)" placeItems="center" gap={2}>
-          {cards.map((card) => {
+          {cards?.map((card) => {
             let imageSource = cover;
             if (card.matched) imageSource = card.src;
             if (choiceOne?.src === card.src && choiceOne?.id === card.id)

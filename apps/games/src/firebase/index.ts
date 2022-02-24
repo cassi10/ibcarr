@@ -1,5 +1,4 @@
 import { FirebaseOptions, initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 
 const clientCredentials: FirebaseOptions = {
   apiKey: "AIzaSyBehraLx56BzqHr0gH_70ulwrvRR6ZKyFA",
@@ -12,6 +11,6 @@ const clientCredentials: FirebaseOptions = {
 };
 
 const app = initializeApp(clientCredentials);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 
-export { app, analytics };
+export default app;

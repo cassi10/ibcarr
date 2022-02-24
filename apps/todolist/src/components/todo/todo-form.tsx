@@ -3,10 +3,10 @@ import { User } from "firebase/auth";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { type Colors } from "@ibcarr/utils";
-import { database } from "../../firebase";
-import type { Toast, Todo } from "../../types";
-import { scrollbar } from "../../theme";
-import BottomBar from "./components/bottom-bar";
+import { database } from "@firebase";
+import type { Toast, Todo } from "@types";
+import { scrollbar } from "@theme";
+import BottomBar from "@components/todo/components/bottom-bar";
 
 type TodoFormProperties = {
   user: User;

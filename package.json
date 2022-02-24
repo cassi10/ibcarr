@@ -18,7 +18,8 @@
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "lint": "turbo run lint --continue",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start": "turbo run start"
   },
   "devDependencies": {
     "eslint": "^8.8.0",

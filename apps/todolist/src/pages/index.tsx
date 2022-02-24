@@ -4,9 +4,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import Head from "next/head";
 import { TopBar } from "@ibcarr/ui";
 import { useRouter } from "next/router";
-import { TodoList, TodoForm } from "../components/todo";
-import { auth } from "../firebase";
-import NavBar from "../components/layout/navbar";
+import NavBar from "@components/layout/navbar";
+import { auth } from "@firebase";
+import { TodoList, TodoForm } from "@components/todo";
 
 const Home = (): JSX.Element => {
   const router = useRouter();
