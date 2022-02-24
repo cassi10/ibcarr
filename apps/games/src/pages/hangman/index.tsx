@@ -35,7 +35,7 @@ const Hangman = (): JSX.Element => {
   const [wordGuess, setWordGuess] = useState<string>("");
   const [tries, setTries] = useState<number>(0);
   const [gameState, setGameState] = useState<"won" | "lost" | "playing">(
-    "lost"
+    "playing"
   );
 
   /**
