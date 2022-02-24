@@ -23,7 +23,7 @@ const Werdle = (): JSX.Element => {
               Your job is to guess the word in 6 tries by guessing other valid 5
               letter words.
             </Text>
-            <Text>After each guess the colour of the tile will change.</Text>
+            <Text>After each guess the colour of the tiles will change.</Text>
             <Text>
               A green letter means that the letter and position are correct.
             </Text>

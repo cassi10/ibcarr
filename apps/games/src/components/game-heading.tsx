@@ -11,13 +11,12 @@ const GameHeading = ({
   text
 }: GameHeadingProperties): JSX.Element => (
   <Flex
-    direction="row"
-    alignSelf="start"
+    alignSelf="center"
     align="center"
-    justify="start"
+    justify="center"
     gridGap={4}
     py={8}
-    w="100%"
+    w="75%"
   >
     <Heading>{text}</Heading>
     {children}

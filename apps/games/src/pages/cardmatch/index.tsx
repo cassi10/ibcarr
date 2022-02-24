@@ -1,16 +1,10 @@
 // eslint-disable-next-line eslint-comments/disable-enable-pair
 /* eslint-disable no-nested-ternary */
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  Image,
-  Text,
-  useMediaQuery
-} from "@chakra-ui/react";
+import NextImage from "next/image";
+import { Box, Button, Flex, Grid, Text, useMediaQuery } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
+import { nanoid } from "nanoid/non-secure";
 import {
   GameContainer,
   GameHeading,
@@ -18,13 +12,25 @@ import {
   NewGameButton
 } from "../../components";
 
+type State = {
+  cards: Card[];
+  choiceOne: Card | undefined;
+  choiceTwo: Card | undefined;
+  tries: number;
+  playing: boolean;
+  inputDisabled: boolean;
+};
+
 type Card = {
   src: string;
   matched: boolean;
-  id: number;
+  id: string;
 };
 
 const CardMatch = (): JSX.Element => {
+  /**
+   * TODO Replace this jank with useWindowSize hook instead
+   */
   const [
     minHeight1050,
     minHeight950,
@@ -57,87 +63,94 @@ const CardMatch = (): JSX.Element => {
 
   const cover = "/cardmatch_images/cover.png";
 
-  const baseCards = useMemo(
-    () => [
-      {
-        src: "/cardmatch_images/270-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/373-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/381-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/452-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/485-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/566-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/660-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/721-200x200.jpg",
-        matched: false
-      }
-    ],
-    []
+  /**
+   * TODO Make images dynamic from some API, maybe Google Images or Unsplash or something. use these as fallback
+   */
+  const cardSources = useMemo(() => {
+    return [
+      "/cardmatch_images/270-200x200.jpg",
+      "/cardmatch_images/373-200x200.jpg",
+      "/cardmatch_images/381-200x200.jpg",
+      "/cardmatch_images/452-200x200.jpg",
+      "/cardmatch_images/485-200x200.jpg",
+      "/cardmatch_images/566-200x200.jpg",
+      "/cardmatch_images/660-200x200.jpg",
+      "/cardmatch_images/721-200x200.jpg"
+    ];
+  }, []);
+
+  const initialState = {
+    cards: [],
+    choiceOne: undefined,
+    choiceTwo: undefined,
+    tries: 0,
+    playing: true,
+    inputDisabled: false
+  };
+
+  const generateCardArray = (cardSet: string[]): Card[] => {
+    return [...cardSet, ...cardSet]
+      .map<Card>((card) => {
+        return {
+          src: card,
+          matched: false,
+          id: nanoid()
+        };
+      })
+      .sort(() => Math.random() - 0.5);
+  };
+
+  /**
+   * TODO Convert this to useReducer instead
+   */
+  const [cards, setCards] = useState<State["cards"]>(initialState.cards);
+  const [choiceOne, setChoiceOne] = useState<State["choiceOne"]>(
+    initialState.choiceOne
+  );
+  const [choiceTwo, setChoiceTwo] = useState<State["choiceTwo"]>(
+    initialState.choiceTwo
+  );
+  const [tries, setTries] = useState<State["tries"]>(initialState.tries);
+  const [playing, setPlaying] = useState<State["playing"]>(
+    initialState.playing
+  );
+  const [inputDisabled, setInputDisabled] = useState<State["inputDisabled"]>(
+    initialState.inputDisabled
   );
 
-  const [cards, setCards] = useState<Card[]>([]);
-  const [choiceOne, setChoiceOne] = useState<Card | undefined>(undefined);
-  const [choiceTwo, setChoiceTwo] = useState<Card | undefined>(undefined);
-  const [tries, setTries] = useState<number>(0);
-  const [gameState, setGameState] = useState<"won" | "playing">("playing");
-  const [disabled, setDisabled] = useState<boolean>(false);
-
-  const reset = (cardSet: Omit<Card, "id">[]): void => {
-    setCards([]);
-    setGameState("playing");
-    setChoiceOne(undefined);
-    setChoiceTwo(undefined);
-    setTries(0);
-
-    const newCards = [...cardSet, ...cardSet]
-      .sort(() => Math.random() - 0.5)
-      .map((card) => ({ ...card, id: Math.random() }));
-
-    setCards(newCards);
+  const reset = (): void => {
+    setCards(generateCardArray(cardSources));
+    setChoiceOne(initialState.choiceOne);
+    setChoiceTwo(initialState.choiceTwo);
+    setTries(initialState.tries);
+    setPlaying(initialState.playing);
+    setInputDisabled(initialState.inputDisabled);
   };
 
   const resetTurn = (): void => {
     setChoiceOne(undefined);
     setChoiceTwo(undefined);
     setTries((previousTries) => previousTries + 1);
-    setDisabled(false);
+    setInputDisabled(false);
   };
 
   useEffect(() => {
-    reset(baseCards);
-  }, [baseCards]);
+    setCards(generateCardArray(cardSources));
+  }, [cardSources]);
 
   useEffect(() => {
     if (cards === [] || cards.length === 0) return;
 
     const notMatched = cards.filter((card) => !card.matched);
-    if (notMatched.length === 0) setGameState("won");
+
+    if (notMatched.length === 0) setPlaying(false);
   }, [choiceOne, choiceTwo, cards]);
 
   useEffect(() => {
     if (!choiceOne || !choiceTwo) return;
 
-    setDisabled(true);
+    setInputDisabled(true);
+
     if (choiceOne.src === choiceTwo.src) {
       setCards((previousCards) =>
         previousCards.map((card) => {
@@ -147,6 +160,7 @@ const CardMatch = (): JSX.Element => {
           return card;
         })
       );
+
       resetTurn();
     } else {
       setTimeout(() => resetTurn(), 1000);
@@ -155,15 +169,15 @@ const CardMatch = (): JSX.Element => {
 
   const onCardClick = (card: Card): void => {
     if (card.matched) return;
-    if (card.id === choiceOne?.id) return;
-    if (card.id === choiceTwo?.id) return;
-    if (disabled) return;
+    if (card.id === choiceOne?.id || card.id === choiceTwo?.id) return;
+    if (inputDisabled) return;
+
     if (choiceOne) {
       setChoiceTwo(card);
     } else setChoiceOne(card);
   };
 
-  const onNewGameButtonClick = (): void => reset(baseCards);
+  const onNewGameButtonClick = (): void => reset();
 
   return (
     <>
@@ -181,7 +195,7 @@ const CardMatch = (): JSX.Element => {
             </Text>
           </GameInformationModal>
         </GameHeading>
-        {gameState !== "playing" && (
+        {!playing && (
           <Flex
             direction="column"
             align="center"
@@ -209,13 +223,7 @@ const CardMatch = (): JSX.Element => {
           </Flex>
         )}
         <Text fontSize="xl">Tries: {tries}</Text>
-        <Grid
-          gridTemplateColumns="repeat(4, 1fr)"
-          alignContent="center"
-          alignItems="center"
-          justifyContent="center"
-          justifyItems="center"
-        >
+        <Grid gridTemplateColumns="repeat(4, 1fr)" placeItems="center" gap={2}>
           {cards.map((card) => {
             let imageSource = cover;
             if (card.matched) imageSource = card.src;
@@ -228,13 +236,19 @@ const CardMatch = (): JSX.Element => {
               <Box
                 key={card.id}
                 background="whiteAlpha.100"
-                maxW={imageSize}
-                maxH={imageSize}
+                boxSize={imageSize}
                 onClick={(): void => onCardClick(card)}
-                filter={gameState === "won" ? "grayscale(100%)" : "unset"}
-                cursor={gameState === "won" ? "not-allowed" : "pointer"}
+                filter={!playing ? "grayscale(100%)" : "unset"}
+                cursor={!playing ? "not-allowed" : "pointer"}
+                rounded="md"
+                shadow="md"
+                overflow="hidden"
               >
-                <Image src={imageSource} alt="" objectFit="fill" />
+                <NextImage
+                  src={imageSource}
+                  width={imageSize}
+                  height={imageSize}
+                />
               </Box>
             );
           })}

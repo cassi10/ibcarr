@@ -1,5 +1,5 @@
 import {
-  IconButton,
+  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -8,7 +8,6 @@ import {
   ModalOverlay,
   useDisclosure
 } from "@chakra-ui/react";
-import { getIconComponent } from "@ibcarr/ui";
 import { ReactNode } from "react";
 
 type GameInformationModalProperties = {
@@ -22,24 +21,21 @@ const GameInformationModal = ({
 
   return (
     <>
-      <IconButton
-        variant="solid"
-        isRound
-        icon={getIconComponent("help", {
-          boxSize: 6
-        })}
-        aria-label="How to Play"
-        onClick={onOpen}
-        size="sm"
-        ml="auto"
-      />
+      <Button onClick={onOpen} size="sm" ml="auto" colorScheme="green">
+        How to play
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent pb={4}>
           <ModalHeader>How to Play</ModalHeader>
           <ModalCloseButton />
-          <ModalBody display="flex" flexDirection="column" rowGap={4}>
+          <ModalBody
+            display="flex"
+            flexDirection="column"
+            rowGap={4}
+            fontSize="lg"
+          >
             {children}
           </ModalBody>
         </ModalContent>

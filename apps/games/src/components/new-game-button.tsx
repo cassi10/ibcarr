@@ -9,7 +9,7 @@ const NewGameButton = ({
   onClick,
   text
 }: NewGameButtonProperties): JSX.Element => (
-  <Button size="sm" variant="solid" onClick={onClick}>
+  <Button size="sm" onClick={onClick} colorScheme="purple">
     {text}
   </Button>
 );

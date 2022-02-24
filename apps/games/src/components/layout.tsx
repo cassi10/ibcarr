@@ -18,8 +18,6 @@ const Navbar = (): JSX.Element => {
     { name: "Hangman", href: "/hangman" },
     { name: "Card Match", href: "/cardmatch" },
     { name: "Werdle", href: "/werdle" }
-    // { name: "Snake", href: "/snake", disabled: true },
-    // { name: "Space Invaders", href: "/spaceinvaders", disabled: true },
   ];
 
   return (

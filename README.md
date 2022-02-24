@@ -32,6 +32,7 @@ This is a todolist app made using [**NextJS**](https://nextjs.org/), [**ChakraUI
 - Add password reset functionality.
 - ❔ Allow tasks to be reordered.
 - ❔ Add some form of formatting to todos. Maybe markdown.
+- ❔ Add command palette.
 
 ## [Games](https://games.ibcarr.com)
 
