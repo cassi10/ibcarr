@@ -13,7 +13,7 @@ import {
 import { getIconComponent } from "@ibcarr/ui";
 import { useField } from "formik";
 import { HTMLInputTypeAttribute, LegacyRef, useState } from "react";
-import { SetStep } from "../../types";
+import { SetStep } from "@types";
 
 type FormFieldProperties = {
   name: "email" | "username" | "password" | "rememberMe";

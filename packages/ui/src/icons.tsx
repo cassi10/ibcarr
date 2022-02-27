@@ -27,8 +27,9 @@ import {
   HiOutlineChevronLeft,
   HiOutlineChevronRight
 } from "react-icons/hi";
+import { IoHelp } from "react-icons/io5";
 import { GoMarkGithub } from "react-icons/go";
-import { Icon } from "@chakra-ui/react";
+import { Icon, IconProps } from "@chakra-ui/react";
 import { IconType } from "react-icons";
 
 const Icons = {
@@ -57,17 +58,18 @@ const Icons = {
   more: MdMoreVert,
   label: MdLabelOutline,
   pin: MdPushPin,
-  outlinePin: MdOutlinePushPin
+  outlinePin: MdOutlinePushPin,
+  help: IoHelp
 };
 
 type IconsType = keyof typeof Icons;
 
-// const getIcon = (icon: keyof typeof Icons, props?: unknown) => (
-//   <Icon as={Icons[icon]} {...props} />
-// );
-
-const getIconComponent = (icon: IconsType): JSX.Element => (
-  <Icon as={Icons[icon]} />
+const getIconComponent = (
+  icon: IconsType,
+  properties?: Omit<IconProps, "as">
+): JSX.Element => (
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  <Icon as={Icons[icon]} {...properties} />
 );
 
 const getIcon = (icon: IconsType): IconType => Icons[icon];

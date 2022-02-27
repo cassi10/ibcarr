@@ -59,5 +59,3 @@ const TopBar = (): JSX.Element => {
 };
 
 export default TopBar;
-
-TopBar.displayName = "TopBar";

@@ -1,89 +1,52 @@
-# ibcarr monorepo
+# \*.ibcarr.com Monorepo
 
-## TODO
+This repo houses all apps under the **ibcarr.com** domain and all external packages used internally.
 
-### General
+> ❔ means that whatever comes after is not final and could be changed or removed.
 
-- [x] Add precommit script to lint project using Husky or something like that.
+## [Todolist](https://todolist.ibcarr.com)
 
-- [ ] Alot of functionality can be pulled out into Cloud Functions or NextJS API things... so do that.
+This is a todolist app made using [**NextJS**](https://nextjs.org/), [**ChakraUI Component Library**](https://chakra-ui.com/) and [**Google Firebase**](https://firebase.google.com/).
 
-- [x] Convert data to below schema... again.
+### ✔️ Features
 
-```text
-C = Collection
-D = Document
-F = Field
+- Title your todos.
+- Ability to update and delete todos.
+- Add due date to todos.
+- Change the colour of your todos.
+- Ability to pin todos to the top of the list.
+- Light or dark theme support.
 
-C todolist -> D user_uid -> C todos -> D todo_uid
-                         -> F todo_labels (array): list of todos with that label
+### 🔜 Features to Add
 
-C games -> D user_uid     -> F game_name (map): maps timestamp to score
-        -> D leaderboards -> F game_name (map): maps user_uid to their highest score
-        -> D data         -> F game_name (map): maps global game data
-```
+- Ability to add custom labels to todos.
+- Add search function so you can search by:
+  - Label,
+  - Colour,
+  - Due date,
+  - Title/body content.
+- Add custom lists instead of everything being in one list.
+  - Along with option to move todos to other lists.
+- Add other providers for logging in.
+- Add the ability to change account info or delete the account.
+- Add password reset functionality.
+- ❔ Allow tasks to be reordered.
+- ❔ Add some form of formatting to todos. Maybe markdown.
+- ❔ Add command palette.
 
-### Todolist
+## [Games](https://games.ibcarr.com)
 
-- [x] ADD TODO WITH ALL FIELDS BUT MAKE OPTIONAL ONES FIREBASE.NULL (just allowed undefined values but still using deleteField())
-- [ ] Add settings page to change data:
-  - [ ] Change password,
-  - [ ] Change email,
-  - [ ] Change display name,
-  - [ ] Delete account.
-- [x] Date picker:
-  - [x] Add previous months days to start of next month,
-  - [x] Change how state is handled interally,
-  - [x] Don't allow to user go back before current date,
-- [ ] Add labels to todo's.
-- [ ] Add `Forgot Password` feature on auth form.
-- [ ] Make tasks draggable.
-- [ ] Fix that annoying flashing when adding a title to a todo.
+This is an app containing a few games made using [**NextJS**](https://nextjs.org/) and [**ChakraUI Component Library**](https://chakra-ui.com/).
 
-### Games
+### ✔️ Features
 
-- [ ] Add leaderboards to games.
-- [ ] Add graphs to users to show progression over time.
-- [ ] Add `Information` button to games to show how to play etc...
-- [ ] Make Wordle clone.
-- [ ] Allow keyboard to be used on hangman.
+- Currently has hangman and card matching game.
 
-## Info
+### 🔜 Features to Add
 
-## Scrap code but still useful
-
-```tsx
-sx={{
-  "&::-webkit-scrollbar": {
-    width: "0.5rem",
-    borderRadius: "0.5rem",
-    backgroundColor: fromColorMode(
-      `rgba(0, 0, 0, 0.15)`,
-      `rgba(255, 255, 255, 0.1)`,
-      colorMode
-    )
-  },
-  "&::-webkit-scrollbar-thumb": {
-    borderRadius: "0.5rem",
-    backgroundColor: fromColorMode(
-      `rgba(0, 0, 0, 0.15)`,
-      `rgba(255, 255, 255, 0.1)`,
-      colorMode
-    )
-  }
-}}
-```
-
-## Scrap stuff
-
-`find . -type d -name "folder_name" -exec -rc {} +`
-
-To (re)generate ChakraUI theme types run `npx @chakra-ui/cli tokens ./path/to/theme.(ts,js)`
-
-When in doubt:
-
-```bash
-npm run clean
-npm ci
-npm run build
-```
+- Add leaderboards.
+- Add authentication flow.
+- Add more games:
+  - Singleplayer,
+  - and multiplayer games.
+- ❔ Add friends so users can easily play with each other.

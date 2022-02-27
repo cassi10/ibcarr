@@ -4,10 +4,10 @@ module.exports = {
     "airbnb-typescript",
     "airbnb/hooks",
     "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
     "./base-typescript.cjs"
   ],
   rules: {
-    "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
     "react/require-default-props": "off",
     "react/function-component-definition": [

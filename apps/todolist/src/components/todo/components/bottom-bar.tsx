@@ -14,7 +14,7 @@ import {
 import { getIconComponent } from "@ibcarr/ui";
 import { colors, Colors } from "@ibcarr/utils";
 import { Timestamp } from "firebase/firestore";
-import DatePicker from "./date-picker";
+import DatePicker from "@components/todo/components/date-picker";
 
 type BottomBarProperties = {
   flex: FlexProps | undefined;
@@ -31,15 +31,10 @@ type BottomBarProperties = {
         menuPlacement: PlacementWithLogical;
       }
     | false;
-  togglePinned:
-    | {
-        pinned: boolean;
-        updatePinned: (pinned: boolean) => void;
-      }
-    | false;
   editTodo:
     | {
-        handleClick: () => void;
+        handleSaveClick: () => void;
+        handleCancelClick: () => void;
         editing: boolean;
       }
     | false;
@@ -62,7 +57,6 @@ const BottomBar = ({
   flex,
   datePicker,
   colorPicker,
-  togglePinned,
   editTodo,
   moreOptions,
   todoDates,
@@ -73,8 +67,7 @@ const BottomBar = ({
 
   const colorPickerSizes = {
     itemW: small ? 10 : 12,
-    buttonW: small ? 8 : 10,
-    buttonH: small ? 8 : 10
+    buttonBoxSize: small ? 8 : 10
   };
 
   return (
@@ -130,8 +123,7 @@ const BottomBar = ({
                   <Button
                     size={size}
                     colorScheme={itemColor}
-                    w={colorPickerSizes.buttonW}
-                    h={colorPickerSizes.buttonH}
+                    boxSize={colorPickerSizes.buttonBoxSize}
                     textTransform="capitalize"
                   >
                     {itemColor.slice(0, 3)}
@@ -141,40 +133,32 @@ const BottomBar = ({
             </MenuList>
           </Menu>
         )}
-        {/* TOGGLE PINNED */}
-        {togglePinned && (
-          <Tooltip hasArrow label="Toggle pinned" placement="auto">
-            <IconButton
-              aria-label="Toggle pinned"
-              icon={
-                togglePinned.pinned
-                  ? getIconComponent("pin")
-                  : getIconComponent("outlinePin")
-              }
-              colorScheme="blue"
-              variant="outline"
-              rounded="full"
-              size={size}
-              onClick={(): void =>
-                togglePinned.updatePinned(togglePinned.pinned)
-              }
-            />
-          </Tooltip>
-        )}
         {/* EDIT TODO */}
         {editTodo && (
           <Tooltip hasArrow label="Edit todo" placement="auto">
             {editTodo.editing ? (
-              <Button
-                leftIcon={getIconComponent("calendar")}
-                colorScheme="green"
-                variant="outline"
-                rounded="full"
-                size={size}
-                onClick={editTodo.handleClick}
-              >
-                Save Changes
-              </Button>
+              <>
+                <Button
+                  leftIcon={getIconComponent("close")}
+                  colorScheme="red"
+                  variant="outline"
+                  rounded="full"
+                  size={size}
+                  onClick={editTodo.handleCancelClick}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  leftIcon={getIconComponent("tick")}
+                  colorScheme="green"
+                  variant="outline"
+                  rounded="full"
+                  size={size}
+                  onClick={editTodo.handleSaveClick}
+                >
+                  Save
+                </Button>
+              </>
             ) : (
               <IconButton
                 aria-label="Edit todo"
@@ -183,7 +167,7 @@ const BottomBar = ({
                 variant="outline"
                 rounded="full"
                 size={size}
-                onClick={editTodo.handleClick}
+                onClick={editTodo.handleSaveClick}
               />
             )}
           </Tooltip>
@@ -226,7 +210,14 @@ const BottomBar = ({
                 day: "numeric"
               })}`}
           >
-            <Text fontSize={size}>
+            <Text
+              fontSize={size}
+              visibility="hidden"
+              opacity={0}
+              transition="opacity 150ms ease-in-out"
+              transitionDelay="150ms"
+              _groupHover={{ visibility: "visible", opacity: 1 }}
+            >
               Edited{" "}
               {todoDates.updatedAt.toDate().toLocaleDateString("en-GB", {
                 year: undefined,

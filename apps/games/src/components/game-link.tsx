@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import NextLink from "next/link";
 import { Button, useBreakpointValue } from "@chakra-ui/react";
 import { colors } from "@ibcarr/utils";
-import type { Game } from "../types";
+import type { Game } from "@types";
 
 type GameLinkProperties = {
   game: Game;
@@ -22,7 +22,7 @@ const GameLink = ({ game, index }: GameLinkProperties): JSX.Element => {
   const buttonFontSize = useBreakpointValue({ base: "md", sm: "md" });
 
   return (
-    <NextLink href={game.href} key={game.name}>
+    <NextLink passHref href={game.href} key={game.name}>
       <Button
         shadow="md"
         variant="solid"

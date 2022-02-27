@@ -10,10 +10,10 @@ import {
 } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { useMemo } from "react";
-import { database } from "../../firebase";
-import type { Todo, Toast } from "../../types";
-import TodoItem from "./todo-item";
-import ErrorAlert from "../error-alert";
+import { database } from "@firebase";
+import type { Todo, Toast } from "@types";
+import ErrorAlert from "@components/error-alert";
+import TodoItem from "@components/todo/todo-item";
 
 const TodoConverter = {
   toFirestore(todo: Todo): DocumentData {

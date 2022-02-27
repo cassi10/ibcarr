@@ -1,25 +1,17 @@
-import { Container, Box, Flex, Heading, Link } from "@chakra-ui/react";
-import NextLink from "next/link";
-import { TopBar } from "@ibcarr/ui";
-import GameLink from "./game-link";
-import type { Game } from "../types";
+import { Container, Box, Flex } from "@chakra-ui/react";
+import { TopBar, BasicNavBar } from "@ibcarr/ui";
+import type { Game } from "@types";
+import { GameLink } from "@components";
 
-const Navbar = (): JSX.Element => {
+const NavBar = (): JSX.Element => {
   const games: Game[] = [
     { name: "Hangman", href: "/hangman" },
-    { name: "Card Match", href: "/cardmatch" }
-    // { name: "Snake", href: "/snake", disabled: true },
-    // { name: "Space Invaders", href: "/spaceinvaders", disabled: true },
+    { name: "Card Match", href: "/cardmatch" },
+    { name: "Werdle", href: "/werdle" }
   ];
 
   return (
-    <Flex align="center" direction="row" justify="center" gridGap={16}>
-      <NextLink href="/" passHref>
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <Link>
-          <Heading>Games</Heading>
-        </Link>
-      </NextLink>
+    <BasicNavBar heading="Games">
       <Flex
         rounded="md"
         flex={1}
@@ -33,7 +25,7 @@ const Navbar = (): JSX.Element => {
           <GameLink key={game.name} game={game} index={index} />
         ))}
       </Flex>
-    </Flex>
+    </BasicNavBar>
   );
 };
 
@@ -48,7 +40,7 @@ const Layout = ({ children }: LayoutProperties): JSX.Element => {
       <Container maxW="8xl" pb={4}>
         <Flex direction="column" justify="center" align="center">
           <Box flex={1} w="100%">
-            <Navbar />
+            <NavBar />
             <main>{children}</main>
           </Box>
         </Flex>

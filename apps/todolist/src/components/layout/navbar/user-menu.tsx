@@ -11,7 +11,7 @@ import {
 import { getIcon, type IconsType } from "@ibcarr/ui";
 import { deleteUser, signOut } from "firebase/auth";
 import { MouseEventHandler } from "react";
-import { auth } from "../../../firebase";
+import { auth } from "@firebase";
 
 type UserMenuItemProperties = {
   children: string | string[];

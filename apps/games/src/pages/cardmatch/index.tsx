@@ -1,25 +1,36 @@
 // eslint-disable-next-line eslint-comments/disable-enable-pair
 /* eslint-disable no-nested-ternary */
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  Heading,
-  Image,
-  Text,
-  useMediaQuery
-} from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import NextImage from "next/image";
+import { Box, Button, Flex, Grid, Text, useMediaQuery } from "@chakra-ui/react";
+import { useCallback, useEffect, useMemo } from "react";
 import Head from "next/head";
-
-type Card = {
-  src: string;
-  matched: boolean;
-  id: number;
-};
+import { nanoid } from "nanoid/non-secure";
+import {
+  GameContainer,
+  GameHeading,
+  GameInformationModal,
+  NewGameButton
+} from "@components";
+import {
+  useCardmatchReducer,
+  GameStateAction,
+  type Card
+} from "@reducers/use-cardmatch-reducer";
 
 const CardMatch = (): JSX.Element => {
+  const [
+    {
+      cards,
+      cardChoices: { choiceOne, choiceTwo },
+      inputsDisabled,
+      playing,
+      tries
+    },
+    dispatch
+  ] = useCardmatchReducer();
+  /**
+   * TODO Replace this jank with useWindowSize hook instead
+   */
   const [
     minHeight1050,
     minHeight950,
@@ -52,113 +63,99 @@ const CardMatch = (): JSX.Element => {
 
   const cover = "/cardmatch_images/cover.png";
 
-  const baseCards = useMemo(
-    () => [
-      {
-        src: "/cardmatch_images/270-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/373-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/381-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/452-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/485-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/566-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/660-200x200.jpg",
-        matched: false
-      },
-      {
-        src: "/cardmatch_images/721-200x200.jpg",
-        matched: false
-      }
-    ],
-    []
-  );
+  /**
+   * TODO Make images dynamic from some API, maybe Google Images or Unsplash or something. use these as fallback
+   */
+  const cardSources = useMemo(() => {
+    return [
+      "/cardmatch_images/270-200x200.jpg",
+      "/cardmatch_images/373-200x200.jpg",
+      "/cardmatch_images/381-200x200.jpg",
+      "/cardmatch_images/452-200x200.jpg",
+      "/cardmatch_images/485-200x200.jpg",
+      "/cardmatch_images/566-200x200.jpg",
+      "/cardmatch_images/660-200x200.jpg",
+      "/cardmatch_images/721-200x200.jpg"
+    ];
+  }, []);
 
-  const [cards, setCards] = useState<Card[]>([]);
-  const [choiceOne, setChoiceOne] = useState<Card | undefined>(undefined);
-  const [choiceTwo, setChoiceTwo] = useState<Card | undefined>(undefined);
-  const [tries, setTries] = useState<number>(0);
-  const [gameState, setGameState] = useState<"won" | "playing">("playing");
-  const [disabled, setDisabled] = useState<boolean>(false);
-
-  const reset = (cardSet: Omit<Card, "id">[]): void => {
-    setCards([]);
-    setGameState("playing");
-    setChoiceOne(undefined);
-    setChoiceTwo(undefined);
-    setTries(0);
-
-    const newCards = [...cardSet, ...cardSet]
-      .sort(() => Math.random() - 0.5)
-      .map((card) => ({ ...card, id: Math.random() }));
-
-    setCards(newCards);
+  const generateCardArray = (cardSet: string[]): Card[] => {
+    return [...cardSet, ...cardSet]
+      .map<Card>((card) => {
+        return {
+          src: card,
+          matched: false,
+          id: nanoid()
+        };
+      })
+      .sort(() => Math.random() - 0.5);
   };
 
-  const resetTurn = (): void => {
-    setChoiceOne(undefined);
-    setChoiceTwo(undefined);
-    setTries((previousTries) => previousTries + 1);
-    setDisabled(false);
-  };
+  const resetTurn = useCallback((): void => {
+    dispatch({
+      type: GameStateAction.NEXT_TURN
+    });
+  }, [dispatch]);
 
   useEffect(() => {
-    reset(baseCards);
-  }, [baseCards]);
+    dispatch({
+      type: GameStateAction.SET_CARDS,
+      payload: generateCardArray(cardSources)
+    });
+  }, [cardSources, dispatch]);
 
   useEffect(() => {
-    if (cards === [] || cards.length === 0) return;
+    if (!cards || cards.length === 0) return;
 
     const notMatched = cards.filter((card) => !card.matched);
-    if (notMatched.length === 0) setGameState("won");
-  }, [choiceOne, choiceTwo, cards]);
+
+    if (notMatched.length === 0)
+      dispatch({ type: GameStateAction.SET_PLAYING, payload: false });
+  }, [cards, dispatch]);
 
   useEffect(() => {
-    if (!choiceOne || !choiceTwo) return;
+    if (!choiceOne || !choiceTwo || !cards) return;
 
-    setDisabled(true);
+    dispatch({ type: GameStateAction.SET_INPUTS_DISABLED, payload: true });
     if (choiceOne.src === choiceTwo.src) {
-      setCards((previousCards) =>
-        previousCards.map((card) => {
-          if (card.src === choiceOne.src) {
-            return { ...card, matched: true };
-          }
+      dispatch({
+        type: GameStateAction.SET_CARDS,
+        payload: cards.map((card) => {
+          if (card.src === choiceOne.src) return { ...card, matched: true };
+
           return card;
         })
-      );
+      });
+
       resetTurn();
     } else {
       setTimeout(() => resetTurn(), 1000);
     }
-  }, [choiceOne, choiceTwo]);
+  }, [choiceOne, choiceTwo, cards, dispatch, resetTurn]);
 
   const onCardClick = (card: Card): void => {
     if (card.matched) return;
-    if (card.id === choiceOne?.id) return;
-    if (card.id === choiceTwo?.id) return;
-    if (disabled) return;
-    if (choiceOne) {
-      setChoiceTwo(card);
-    } else setChoiceOne(card);
+    if (card.id === choiceOne?.id || card.id === choiceTwo?.id) return;
+    if (inputsDisabled) return;
+
+    dispatch({
+      type: GameStateAction.SET_CHOICES,
+      payload: {
+        choice: choiceOne ? "choiceTwo" : "choiceOne",
+        card
+      }
+    });
   };
 
-  const onNewGameButtonClick = (): void => reset(baseCards);
+  const onNewGameButtonClick = (): void => {
+    dispatch({
+      type: GameStateAction.RESET_GAME
+    });
+    dispatch({
+      type: GameStateAction.SET_CARDS,
+      payload: generateCardArray(cardSources)
+    });
+  };
 
   return (
     <>
@@ -166,21 +163,17 @@ const CardMatch = (): JSX.Element => {
         <title>Games - Card Match</title>
         <meta name="description" content="A simple card match game." />
       </Head>
-      <Flex direction="column" align="center" justify="center" gridGap={4}>
-        <Flex
-          direction="row"
-          alignSelf="start"
-          align="center"
-          justify="center"
-          gridGap={4}
-          py={8}
-        >
-          <Heading>Card Match</Heading>
-          <Button size="sm" variant="solid" onClick={onNewGameButtonClick}>
-            New Game
-          </Button>
-        </Flex>
-        {gameState !== "playing" && (
+      <GameContainer>
+        <GameHeading text="Card Match">
+          <NewGameButton onClick={onNewGameButtonClick} text="New Game" />
+          <GameInformationModal>
+            <Text>Below you are given 8 pairs of cards.</Text>
+            <Text>
+              Your job is to match them all in the least amount of tries.
+            </Text>
+          </GameInformationModal>
+        </GameHeading>
+        {!playing && (
           <Flex
             direction="column"
             align="center"
@@ -208,14 +201,8 @@ const CardMatch = (): JSX.Element => {
           </Flex>
         )}
         <Text fontSize="xl">Tries: {tries}</Text>
-        <Grid
-          gridTemplateColumns="repeat(4, 1fr)"
-          alignContent="center"
-          alignItems="center"
-          justifyContent="center"
-          justifyItems="center"
-        >
-          {cards.map((card) => {
+        <Grid gridTemplateColumns="repeat(4, 1fr)" placeItems="center" gap={2}>
+          {cards?.map((card) => {
             let imageSource = cover;
             if (card.matched) imageSource = card.src;
             if (choiceOne?.src === card.src && choiceOne?.id === card.id)
@@ -227,18 +214,24 @@ const CardMatch = (): JSX.Element => {
               <Box
                 key={card.id}
                 background="whiteAlpha.100"
-                maxW={imageSize}
-                maxH={imageSize}
+                boxSize={imageSize}
                 onClick={(): void => onCardClick(card)}
-                filter={gameState === "won" ? "grayscale(100%)" : "unset"}
-                cursor={gameState === "won" ? "not-allowed" : "pointer"}
+                filter={!playing ? "grayscale(100%)" : "unset"}
+                cursor={!playing ? "not-allowed" : "pointer"}
+                rounded="md"
+                shadow="md"
+                overflow="hidden"
               >
-                <Image src={imageSource} alt="" objectFit="fill" />
+                <NextImage
+                  src={imageSource}
+                  width={imageSize}
+                  height={imageSize}
+                />
               </Box>
             );
           })}
         </Grid>
-      </Flex>
+      </GameContainer>
     </>
   );
 };

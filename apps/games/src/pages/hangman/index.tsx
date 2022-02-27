@@ -1,5 +1,4 @@
 import {
-  Heading,
   Text,
   Flex,
   Button,
@@ -7,72 +6,130 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
-  Divider
+  Divider,
+  Tooltip,
+  Link
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { getIconComponent } from "@ibcarr/ui";
-import stages from "../../data/hangman-stages";
-import getRandomWord from "../../data/words";
+import stages from "@data/hangman-stages";
+import getRandomWord from "@data/hangman-words";
+import {
+  GameContainer,
+  GameHeading,
+  GameInformationModal,
+  NewGameButton
+} from "@components";
+import {
+  useHangmanReducer,
+  GameStateAction,
+  GameStatus
+} from "@reducers/use-hangman-reducer";
 
 const Hangman = (): JSX.Element => {
-  const [word, setWord] = useState<string>("");
-  const [letterGuesses, setLetterGuesses] = useState<string[]>([]);
+  const [{ solution, lettersGuesses, status, incorrectTries }, dispatch] =
+    useHangmanReducer();
   const [wordGuess, setWordGuess] = useState<string>("");
-  const [tries, setTries] = useState<number>(0);
-  const [gameState, setGameState] = useState<"won" | "lost" | "playing">(
-    "playing"
+
+  /**
+   * TODO Pull this out into a separate component
+   */
+  const keyboard = [
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+    ["z", "x", "c", "v", "b", "n", "m"]
+  ];
+
+  const isLetterGuessed = useCallback(
+    (letter: string): boolean | undefined => lettersGuesses?.includes(letter),
+    [lettersGuesses]
   );
-  const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
-  const reset = (): void => {
-    setWord(getRandomWord());
-    setLetterGuesses([]);
-    setWordGuess("");
-    setTries(0);
-    setGameState("playing");
-  };
+  const isPlaying = status === GameStatus.PLAYING;
 
-  useEffect(() => {
-    reset();
-  }, []);
+  useEffect(
+    () =>
+      dispatch({
+        type: GameStateAction.SET_SOLUTION,
+        payload: getRandomWord()
+      }),
+    [dispatch]
+  );
 
   useEffect(() => {
-    if (word === "") return;
+    if (!solution) return;
 
     const isWordValid = (): boolean =>
-      [...word].every((letter: string) => letterGuesses.includes(letter));
+      [...solution].every((letter: string) => isLetterGuessed(letter));
 
-    if (tries === stages.length - 1) {
-      setGameState("lost");
-    }
+    if (incorrectTries === stages.length - 1)
+      dispatch({
+        type: GameStateAction.SET_STATUS,
+        payload: GameStatus.LOST
+      });
 
-    if (isWordValid()) {
-      setGameState("won");
-    }
-  }, [tries, letterGuesses, word]);
+    if (isWordValid())
+      dispatch({
+        type: GameStateAction.SET_STATUS,
+        payload: GameStatus.WON
+      });
+  }, [dispatch, isLetterGuessed, solution, incorrectTries]);
 
-  const onNewGameButtonClick = (): void => reset();
+  const onNewGameButtonClick = (): void => {
+    dispatch({
+      type: GameStateAction.RESET_GAME
+    });
+    dispatch({
+      type: GameStateAction.SET_SOLUTION,
+      payload: getRandomWord()
+    });
+    setWordGuess("");
+  };
 
   const onWordGuessChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => setWordGuess(event.target.value);
 
   const onWordGuessSubmit = (): void => {
-    if (wordGuess === "") return;
-    if (wordGuess.trim().toLowerCase() === word) {
-      setGameState("won");
+    if (!wordGuess) return;
+    if (wordGuess.trim().toLowerCase() === solution) {
+      dispatch({
+        type: GameStateAction.SET_STATUS,
+        payload: GameStatus.WON
+      });
     } else {
-      setTries((previousTries) => previousTries + 1);
+      dispatch({ type: GameStateAction.INCREMENT_INCORRECT_TRIES });
       setWordGuess("");
     }
   };
 
-  const onLetterClick = (letter: string): void => {
-    setLetterGuesses((previousGuesses) => [...previousGuesses, letter]);
-    if (!word.includes(letter)) setTries((previousTries) => previousTries + 1);
-    setWordGuess("");
-  };
+  const onLetterClick = useCallback(
+    (letter: string): void => {
+      if (!isPlaying) return;
+      if (!/^[a-z]$/i.test(letter)) return;
+      if (isLetterGuessed(letter)) return;
+      dispatch({ type: GameStateAction.ADD_GUESSED_LETTER, payload: letter });
+      if (!solution?.includes(letter))
+        dispatch({ type: GameStateAction.INCREMENT_INCORRECT_TRIES });
+      setWordGuess("");
+    },
+    [dispatch, isLetterGuessed, solution, isPlaying]
+  );
+
+  const handleKeyboardInput = useCallback(
+    (event: KeyboardEvent) =>
+      !(event.target instanceof HTMLInputElement) && onLetterClick(event.key),
+    [onLetterClick]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keyup", handleKeyboardInput);
+
+    return () => {
+      window.removeEventListener("keyup", handleKeyboardInput);
+    };
+  }, [handleKeyboardInput]);
 
   return (
     <>
@@ -80,90 +137,123 @@ const Hangman = (): JSX.Element => {
         <title>Games - Hangman</title>
         <meta name="description" content="A hangman game." />
       </Head>
-      <Heading py={8}>
-        Hangman
-        <Button size="sm" variant="solid" onClick={onNewGameButtonClick} mx={4}>
-          New Game
-        </Button>
-      </Heading>
-      <Flex direction="column" align="center" justify="center" gridGap={8}>
-        {gameState !== "playing" && (
-          <Flex direction="column" align="center" justify="center" gridGap={6}>
-            <Text fontSize="4xl">You have {gameState}!</Text>
-            <Text fontSize="xl">
-              The word was{" "}
-              <Text as="span" fontWeight="600" textDecoration="underline">
-                <a
-                  href={`https://www.merriam-webster.com/dictionary/${word}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {word}
-                </a>
-              </Text>
+      <GameContainer>
+        <GameHeading text="Hangman">
+          <NewGameButton onClick={onNewGameButtonClick} text="New Game" />
+          <GameInformationModal>
+            <Text>
+              You will be given a new word every time a new game is started.
             </Text>
-            <Button
-              variant="solid"
-              colorScheme="green"
+            <Text>
+              Your job is to guess the word using the letters and input below
+              before the man is hung.
+            </Text>
+            <Text>
+              Guess letters using the keyboard below or your computers keyboard
+              and if you think you know the word guess it using the input below
+              the keyboard.
+            </Text>
+          </GameInformationModal>
+        </GameHeading>
+        {!isPlaying && (
+          <Flex direction="column" align="center" justify="center" gridGap={3}>
+            <Text fontSize="4xl">
+              You have {status === GameStatus.LOST ? "lost" : "won"}!
+            </Text>
+            <Tooltip label="Click for definition." placement="right" hasArrow>
+              <Text fontSize="xl">
+                The word was{" "}
+                <Link
+                  fontWeight={600}
+                  textDecoration="underline"
+                  href={`https://www.merriam-webster.com/dictionary/${
+                    solution || ""
+                  }`}
+                  isExternal
+                >
+                  {solution}
+                </Link>
+              </Text>
+            </Tooltip>
+            <NewGameButton
               onClick={onNewGameButtonClick}
-            >
-              New Game
-            </Button>
+              text="New Game"
+              button={{
+                mt: 2,
+                variant: "solid",
+                colorScheme: "green"
+              }}
+            />
           </Flex>
         )}
-        <Flex direction="column" align="center" justify="center" gridGap={4}>
+        <Flex direction="column" align="center" justify="center">
           <Text whiteSpace="break-spaces" fontFamily="monospace" fontSize="lg">
-            {stages[tries]}
+            {stages[incorrectTries]}
           </Text>
         </Flex>
-        <Flex direction="row" align="center" justify="center" gridGap={4}>
-          {[...word].map((letter: string, index: number) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <Text key={index} fontSize="xl" fontWeight="700">
-              <Button
-                variant="solid"
+        <Flex align="center" justify="center" columnGap={4}>
+          {solution &&
+            [...solution].map((letter: string) => (
+              <Text
+                key={`${Date.now() * Math.random()}${letter}`}
+                bg="green.200"
+                color="gray.800"
+                opacity={!isLetterGuessed(letter) || !isPlaying ? "0.4" : "1"}
+                h={10}
+                paddingInline={4}
+                w={10}
+                lineHeight={1.2}
+                rounded="md"
                 textTransform="uppercase"
-                colorScheme="green"
-                disabled={!letterGuesses.includes(letter)}
-                cursor={!letterGuesses.includes(letter) ? "inherit" : "unset"}
+                fontWeight="semibold"
+                display="inline-flex"
+                alignItems="center"
+                justifyContent="center"
+                cursor="default"
               >
-                {!letterGuesses.includes(letter) ? "" : letter}
-              </Button>
-            </Text>
-          ))}
+                {!isLetterGuessed(letter) ? "" : letter}
+              </Text>
+            ))}
         </Flex>
-        <Divider w="55%" />
+        <Divider w="50%" />
         <Flex direction="column" align="center" justify="center" gridGap={8}>
           <Flex
-            flexFlow="wrap"
+            flexDirection="column"
             align="center"
             justify="center"
-            gridGap={4}
-            w="lg"
+            rowGap={2}
           >
-            {[...alphabet].map((letter: string, index: number) => (
-              <Button
-                variant="solid"
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
-                textTransform="uppercase"
-                colorScheme="cyan"
-                disabled={
-                  gameState !== "playing" || letterGuesses.includes(letter)
-                }
-                onClick={(): void => onLetterClick(letter)}
+            {keyboard.map((row) => (
+              <Flex
+                key={row.length}
+                align="center"
+                justify="center"
+                columnGap={2}
               >
-                {letter}
-              </Button>
+                {row.map((key) => (
+                  <Button
+                    key={key}
+                    colorScheme="cyan"
+                    disabled={!isPlaying || isLetterGuessed(key)}
+                    onClick={(): void => onLetterClick(key)}
+                    boxSize={10}
+                  >
+                    {key.toUpperCase()}
+                  </Button>
+                ))}
+              </Flex>
             ))}
           </Flex>
           <InputGroup size="md" variant="filled">
             <Input
-              placeholder="What do you think the word is?"
+              placeholder="Do you want to guess the word?"
               variant="filled"
               value={wordGuess}
               onChange={onWordGuessChange}
-              disabled={gameState !== "playing"}
+              disabled={!isPlaying}
+              onKeyUp={(event): false | void =>
+                event.key.toLowerCase() === "enter" && onWordGuessSubmit()
+              }
             />
             <InputRightElement>
               <IconButton
@@ -172,12 +262,12 @@ const Hangman = (): JSX.Element => {
                 aria-label="Submit guess"
                 icon={getIconComponent("tick")}
                 onClick={onWordGuessSubmit}
-                disabled={gameState !== "playing"}
+                disabled={!isPlaying}
               />
             </InputRightElement>
           </InputGroup>
         </Flex>
-      </Flex>
+      </GameContainer>
     </>
   );
 };

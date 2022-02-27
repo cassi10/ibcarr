@@ -5,7 +5,6 @@ import {
   initializeFirestore
 } from "firebase/firestore";
 import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
-import { getAnalytics, isSupported } from "firebase/analytics";
 
 const clientCredentials: FirebaseOptions = {
   apiKey: "AIzaSyBehraLx56BzqHr0gH_70ulwrvRR6ZKyFA",
@@ -24,7 +23,7 @@ const database = initializeFirestore(app, {
 });
 const auth = getAuth(app);
 const functions = getFunctions(app);
-const analytics = (await isSupported()) && getAnalytics(app);
+// const analytics = getAnalytics(app);
 
 if (process.env.NODE_ENV === "development") {
   const HOST = "127.0.0.1";
@@ -34,4 +33,4 @@ if (process.env.NODE_ENV === "development") {
   connectFunctionsEmulator(functions, HOST, 5001);
 }
 
-export { app, database, auth, analytics };
+export { app, database, auth };

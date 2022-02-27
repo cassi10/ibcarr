@@ -38,7 +38,15 @@ const DatePicker = ({
   button,
   buttonText
 }: DatePickerProperties): JSX.Element => {
-  const todaysDate = useMemo(() => new Date(), []);
+  const todaysDate = useMemo(
+    () =>
+      new Date(
+        new Date().toLocaleDateString("en-GB", {
+          dateStyle: "full"
+        })
+      ),
+    []
+  );
 
   const months = [
     "January",
@@ -61,14 +69,14 @@ const DatePicker = ({
   );
 
   // This is the date the user has currently selected
-  const [currentDate, setCurrentDate] = useState<Date | undefined>(date);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(date);
 
-  // This is the date that is currently being shown
   const initialViewDate =
-    currentDate !== undefined
-      ? new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)
+    selectedDate !== undefined
+      ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
       : new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1);
 
+  // This is the date that is currently being shown
   const [viewDate, setViewDate] = useState<Date>(initialViewDate);
 
   const [daysToDisplay, setDaysToDisplay] = useState<DayButton[]>([]);
@@ -83,12 +91,9 @@ const DatePicker = ({
     todaysDate.getFullYear() === viewDate.getFullYear() &&
     todaysDate.getMonth() === viewDate.getMonth();
 
-  const previousDaysDisabled = useCallback(
+  const daysDisabled = useCallback(
     (fromDate: Date): boolean => {
-      return (
-        fromDate.getFullYear() === todaysDate.getFullYear() &&
-        fromDate.getMonth() < todaysDate.getMonth()
-      );
+      return fromDate.getTime() < todaysDate.getTime();
     },
     [todaysDate]
   );
@@ -131,7 +136,7 @@ const DatePicker = ({
                 shadow: "none",
                 variant: "ghost",
                 date: buttonDate,
-                disabled: previousDaysDisabled(buttonDate)
+                disabled: daysDisabled(buttonDate)
               };
             })
             .reverse()
@@ -140,11 +145,17 @@ const DatePicker = ({
     const currentMonthDays: DayButton[] = [
       ...Array.from({ length: getDaysInMonth(viewDate) }).keys()
     ].map((day) => {
+      const buttonDate = new Date(
+        viewDate.getFullYear(),
+        viewDate.getMonth(),
+        day + 1
+      );
+
       return {
         shadow: "md",
         variant: "solid",
-        date: new Date(viewDate.getFullYear(), viewDate.getMonth(), day + 1),
-        disabled: false
+        date: buttonDate,
+        disabled: daysDisabled(buttonDate)
       };
     });
 
@@ -171,7 +182,7 @@ const DatePicker = ({
       ...currentMonthDays,
       ...nextMonthDays
     ]);
-  }, [viewDate, daysShort, previousDaysDisabled]);
+  }, [viewDate, daysShort, daysDisabled]);
 
   const { isOpen, onOpen, onClose } = useDisclosure({
     onOpen: () => {
@@ -185,11 +196,11 @@ const DatePicker = ({
   }, [generateDays]);
 
   const onDayButtonClick = (wantedDate: Date): void =>
-    setCurrentDate(wantedDate);
+    setSelectedDate(wantedDate);
 
   const onTodayButtonClick = (): void => {
     const todayDate = new Date();
-    setCurrentDate(todayDate);
+    setSelectedDate(todayDate);
     setViewDate(new Date(todayDate.getFullYear(), todayDate.getMonth(), 1));
   };
 
@@ -200,28 +211,31 @@ const DatePicker = ({
     setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1));
 
   const onPreviousYearButtonClick = (): void => {
-    const tooFar = viewDate.getFullYear() - 1 < todaysDate.getFullYear();
-
-    const dateToSet = new Date(
-      tooFar ? todaysDate.getFullYear() : viewDate.getFullYear(),
-      tooFar ? todaysDate.getMonth() : viewDate.getMonth(),
+    const wantedDate = new Date(
+      viewDate.getFullYear() - 1,
+      viewDate.getMonth(),
       1
     );
-    setViewDate(dateToSet);
+
+    setViewDate(
+      wantedDate.getTime() < todaysDate.getTime()
+        ? new Date(todaysDate.getFullYear(), todaysDate.getMonth(), 1)
+        : wantedDate
+    );
   };
 
   const onNextYearButtonClick = (): void =>
     setViewDate(new Date(viewDate.getFullYear() + 1, viewDate.getMonth(), 1));
 
   const onClearButtonClick = (): void => {
-    setCurrentDate(undefined);
-    setViewDate(currentDate || todaysDate);
+    setSelectedDate(undefined);
+    setViewDate(todaysDate);
     updateDate(undefined);
     onClose();
   };
 
   const onSaveButtonClick = (): void => {
-    updateDate(currentDate);
+    updateDate(selectedDate);
     onClose();
   };
 
@@ -335,8 +349,8 @@ const DatePicker = ({
                     shadow={day.shadow}
                     // colorScheme="gray"
                     colorScheme={
-                      currentDate !== undefined &&
-                      currentDate.toLocaleDateString("en-GB") ===
+                      selectedDate !== undefined &&
+                      selectedDate.toLocaleDateString("en-GB") ===
                         day.date.toLocaleDateString("en-GB")
                         ? "blue"
                         : "gray"

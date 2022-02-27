@@ -3,10 +3,10 @@ import { User } from "firebase/auth";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { type Colors } from "@ibcarr/utils";
-import { database } from "../../firebase";
-import type { Toast, Todo } from "../../types";
-import { scrollbar } from "../../theme";
-import BottomBar from "./components/bottom-bar";
+import { database } from "@firebase";
+import type { Toast, Todo } from "@types";
+import { scrollbar } from "@theme";
+import BottomBar from "@components/todo/components/bottom-bar";
 
 type TodoFormProperties = {
   user: User;
@@ -22,7 +22,7 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
   const bodyReference = useRef<HTMLTextAreaElement | null>(null);
 
   const todoInitialValues: HalfTodo = {
-    title: undefined,
+    title: "",
     body: "",
     color: "gray",
     dueDate: undefined
@@ -158,7 +158,6 @@ const TodoForm = ({ user, toast }: TodoFormProperties): JSX.Element => {
         editTodo={false}
         moreOptions={false}
         todoDates={false}
-        togglePinned={false}
         saveTodo={handleAddTodoClick}
       />
     </Flex>

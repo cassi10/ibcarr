@@ -1,6 +1,6 @@
 import { Button } from "@chakra-ui/react";
 import { Dispatch, SetStateAction } from "react";
-import { SetStep } from "../../../types";
+import { SetStep } from "@types";
 
 type NextButtonProperties = {
   children: string;
