@@ -13,6 +13,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:functions": "turbo run build --scope=\"functions\" --include-dependencies --no-deps",
+    "build:libraries": "turbo run build --scope=\"@ibcarr/ui\" --scope=\"@ibcarr/utils\" --include-dependencies --no-deps",
     "clean": "rimraf .\\**\\node_modules .\\**\\.turbo .\\**\\out .\\**\\dist .\\**\\.next .\\**\\lib .\\**\\*.log .\\**\\.firebase",
     "dev": "turbo run dev --no-cache --continue",
     "export": "turbo run export",

@@ -9,7 +9,7 @@
     "build": "next build",
     "dev": "next dev",
     "export": "next export",
-    "lint": "next lint --format=pretty",
+    "lint": "next lint --format=pretty --no-cache",
     "start": "next start -p 3001"
   },
   "dependencies": {
