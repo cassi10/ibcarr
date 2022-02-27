@@ -15,7 +15,8 @@ const GameHeading = ({
     align="center"
     justify="center"
     gridGap={4}
-    py={8}
+    mt={6}
+    mb={2}
     w="75%"
   >
     <Heading>{text}</Heading>
