@@ -14,7 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { getIconComponent } from "@ibcarr/ui";
 import stages from "@data/hangman-stages";
-import { getRandomHangmanWord } from "@data/words";
+import getRandomWord from "@data/hangman-words";
 import {
   GameContainer,
   GameHeading,
@@ -23,7 +23,8 @@ import {
 } from "@components";
 import {
   useHangmanReducer,
-  GameStateAction
+  GameStateAction,
+  GameStatus
 } from "@reducers/use-hangman-reducer";
 
 const Hangman = (): JSX.Element => {
@@ -45,24 +46,13 @@ const Hangman = (): JSX.Element => {
     [lettersGuesses]
   );
 
-  const isPlaying = status === "playing";
-
-  const reset = (): void => {
-    dispatch({
-      type: GameStateAction.RESET_GAME
-    });
-    dispatch({
-      type: GameStateAction.SET_SOLUTION,
-      payload: getRandomHangmanWord()
-    });
-    setWordGuess("");
-  };
+  const isPlaying = status === GameStatus.PLAYING;
 
   useEffect(
     () =>
       dispatch({
         type: GameStateAction.SET_SOLUTION,
-        payload: getRandomHangmanWord()
+        payload: getRandomWord()
       }),
     [dispatch]
   );
@@ -76,17 +66,26 @@ const Hangman = (): JSX.Element => {
     if (incorrectTries === stages.length - 1)
       dispatch({
         type: GameStateAction.SET_STATUS,
-        payload: "lost"
+        payload: GameStatus.LOST
       });
 
     if (isWordValid())
       dispatch({
         type: GameStateAction.SET_STATUS,
-        payload: "won"
+        payload: GameStatus.WON
       });
   }, [dispatch, isLetterGuessed, solution, incorrectTries]);
 
-  const onNewGameButtonClick = (): void => reset();
+  const onNewGameButtonClick = (): void => {
+    dispatch({
+      type: GameStateAction.RESET_GAME
+    });
+    dispatch({
+      type: GameStateAction.SET_SOLUTION,
+      payload: getRandomWord()
+    });
+    setWordGuess("");
+  };
 
   const onWordGuessChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -97,7 +96,7 @@ const Hangman = (): JSX.Element => {
     if (wordGuess.trim().toLowerCase() === solution) {
       dispatch({
         type: GameStateAction.SET_STATUS,
-        payload: "won"
+        payload: GameStatus.WON
       });
     } else {
       dispatch({ type: GameStateAction.INCREMENT_INCORRECT_TRIES });
@@ -158,7 +157,9 @@ const Hangman = (): JSX.Element => {
         </GameHeading>
         {!isPlaying && (
           <Flex direction="column" align="center" justify="center" gridGap={3}>
-            <Text fontSize="4xl">You have {status}!</Text>
+            <Text fontSize="4xl">
+              You have {status === GameStatus.LOST ? "lost" : "won"}!
+            </Text>
             <Tooltip label="Click for definition." placement="right" hasArrow>
               <Text fontSize="xl">
                 The word was{" "}
@@ -174,14 +175,15 @@ const Hangman = (): JSX.Element => {
                 </Link>
               </Text>
             </Tooltip>
-            <Button
-              mt={2}
-              variant="solid"
-              colorScheme="green"
+            <NewGameButton
               onClick={onNewGameButtonClick}
-            >
-              New Game
-            </Button>
+              text="New Game"
+              button={{
+                mt: 2,
+                variant: "solid",
+                colorScheme: "green"
+              }}
+            />
           </Flex>
         )}
         <Flex direction="column" align="center" justify="center">
@@ -219,14 +221,14 @@ const Hangman = (): JSX.Element => {
             flexDirection="column"
             align="center"
             justify="center"
-            rowGap={3}
+            rowGap={2}
           >
             {keyboard.map((row) => (
               <Flex
                 key={row.length}
                 align="center"
                 justify="center"
-                columnGap={3}
+                columnGap={2}
               >
                 {row.map((key) => (
                   <Button
@@ -234,6 +236,7 @@ const Hangman = (): JSX.Element => {
                     colorScheme="cyan"
                     disabled={!isPlaying || isLetterGuessed(key)}
                     onClick={(): void => onLetterClick(key)}
+                    boxSize={10}
                   >
                     {key.toUpperCase()}
                   </Button>

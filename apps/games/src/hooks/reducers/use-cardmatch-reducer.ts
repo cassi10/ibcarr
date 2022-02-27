@@ -34,7 +34,7 @@ enum GameStateAction {
   SET_PLAYING,
   SET_INPUTS_DISABLED,
   INCREMENT_TRIES,
-  RESET_TURN,
+  NEXT_TURN,
   RESET_GAME
 }
 
@@ -58,7 +58,7 @@ type GameStateActions =
       type:
         | GameStateAction.INCREMENT_TRIES
         | GameStateAction.RESET_GAME
-        | GameStateAction.RESET_TURN;
+        | GameStateAction.NEXT_TURN;
     };
 
 const gameStateReducer = (
@@ -70,6 +70,7 @@ const gameStateReducer = (
   switch (type) {
     case GameStateAction.SET_CARDS: {
       const { payload } = action;
+
       return {
         ...state,
         cards: payload
@@ -77,6 +78,7 @@ const gameStateReducer = (
     }
     case GameStateAction.SET_CHOICES: {
       const { choice, card } = action.payload;
+
       return {
         ...state,
         cardChoices: {
@@ -87,6 +89,7 @@ const gameStateReducer = (
     }
     case GameStateAction.SET_PLAYING: {
       const { payload } = action;
+
       return {
         ...state,
         playing: payload
@@ -94,6 +97,7 @@ const gameStateReducer = (
     }
     case GameStateAction.SET_INPUTS_DISABLED: {
       const { payload } = action;
+
       return {
         ...state,
         inputsDisabled: payload
@@ -108,7 +112,7 @@ const gameStateReducer = (
     case GameStateAction.RESET_GAME: {
       return initialGameState;
     }
-    case GameStateAction.RESET_TURN: {
+    case GameStateAction.NEXT_TURN: {
       return {
         ...state,
         tries: state.tries + 1,

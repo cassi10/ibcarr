@@ -1,17 +1,23 @@
 import { Dispatch, useReducer } from "react";
 
+enum GameStatus {
+  PLAYING,
+  LOST,
+  WON
+}
+
 type GameState = {
   solution: string | undefined;
   lettersGuesses: string[] | undefined;
   incorrectTries: number;
-  status: "playing" | "won" | "lost";
+  status: GameStatus;
 };
 
 const initialGameState: GameState = {
   solution: undefined,
   lettersGuesses: undefined,
   incorrectTries: 0,
-  status: "playing"
+  status: GameStatus.PLAYING
 };
 
 enum GameStateAction {
@@ -43,6 +49,7 @@ const gameStateReducer = (
   switch (type) {
     case GameStateAction.SET_SOLUTION: {
       const { payload } = action;
+
       return {
         ...state,
         solution: payload
@@ -87,4 +94,4 @@ type GameStateDispatch = Dispatch<GameStateActions>;
 const useHangmanReducer = (): [GameState, GameStateDispatch] =>
   useReducer(gameStateReducer, initialGameState);
 
-export { useHangmanReducer, GameStateAction };
+export { useHangmanReducer, GameStateAction, GameStatus };

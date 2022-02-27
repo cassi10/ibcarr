@@ -91,19 +91,9 @@ const CardMatch = (): JSX.Element => {
       .sort(() => Math.random() - 0.5);
   };
 
-  const reset = (): void => {
-    dispatch({
-      type: GameStateAction.RESET_GAME
-    });
-    dispatch({
-      type: GameStateAction.SET_CARDS,
-      payload: generateCardArray(cardSources)
-    });
-  };
-
   const resetTurn = useCallback((): void => {
     dispatch({
-      type: GameStateAction.RESET_TURN
+      type: GameStateAction.NEXT_TURN
     });
   }, [dispatch]);
 
@@ -157,7 +147,15 @@ const CardMatch = (): JSX.Element => {
     });
   };
 
-  const onNewGameButtonClick = (): void => reset();
+  const onNewGameButtonClick = (): void => {
+    dispatch({
+      type: GameStateAction.RESET_GAME
+    });
+    dispatch({
+      type: GameStateAction.SET_CARDS,
+      payload: generateCardArray(cardSources)
+    });
+  };
 
   return (
     <>
