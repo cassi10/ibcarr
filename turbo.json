@@ -7,8 +7,8 @@
       "outputs": ["out/**"]
     },
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "dependsOn": ["lint", "^build"],
+      "outputs": [".next/**", "dist/**", "lib/**"]
     },
     "start": {
       "dependsOn": ["build"]
