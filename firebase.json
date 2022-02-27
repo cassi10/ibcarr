@@ -1,59 +1,26 @@
 {
-  "hosting": [
-    {
-      "target": "games",
-      "public": "apps/games/out",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "/robots.txt",
-          "destination": "/robots.txt"
-        },
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
-      "target": "todolist",
-      "public": "apps/todolist/out",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "/robots.txt",
-          "destination": "/robots.txt"
-        },
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    }
-  ],
   "emulators": {
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
+    },
     "firestore": {
-      "port": 8080,
-      "host": "127.0.0.1"
+      "host": "127.0.0.1",
+      "port": 8080
+    },
+    "functions": {
+      "host": "127.0.0.1",
+      "port": 5001
     },
     "ui": {
       "enabled": true
-    },
-    "auth": {
-      "port": 9099,
-      "host": "127.0.0.1"
-    },
-    "functions": {
-      "port": 5001,
-      "host": "127.0.0.1"
     }
   },
   "firestore": {
-    "rules": "./firebase/firestore/firestore.rules",
-    "indexes": "./firebase/firestore/firestore.indexes.json"
+    "indexes": "firebase/firestore/firestore.indexes.json",
+    "rules": "firebase/firestore/firestore.rules"
   },
   "functions": {
-    "source": "./firebase/functions/",
-    "predeploy": ["npm run build -w functions"]
+    "source": "firebase/functions"
   }
 }
