@@ -2,23 +2,23 @@ name: Lint
 on:
   push:
     branches:
-      - "next"
+      - next
   workflow_dispatch:
 
 jobs:
   lint:
-    name: "Lint"
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2
         with:
-          node-version: "16"
-          cache: "npm"
+          node-version: 16
+          cache: npm
       - name: Install Dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
+        run: npm install
+      - name: Build Libraries
+        run: npm run build:libraries
       - name: Prettier
         run: npm run format
       - name: Lint
