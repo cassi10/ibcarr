@@ -5,7 +5,6 @@ import { Layout } from "@components";
 const App = ({ Component, pageProps }: AppProps): JSX.Element => (
   <ChakraProvider resetCSS>
     <Layout>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <Component {...pageProps} />
     </Layout>
   </ChakraProvider>

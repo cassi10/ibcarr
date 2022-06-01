@@ -12,6 +12,7 @@ import { getIcon, type IconsType } from "@ibcarr/ui";
 import { deleteUser, signOut } from "firebase/auth";
 import { MouseEventHandler } from "react";
 import { auth } from "@firebase";
+import { useRouter } from "next/router";
 
 type UserMenuItemProperties = {
   children: string | string[];
@@ -41,24 +42,30 @@ type UserMenuProperties = {
 };
 
 const UserMenu = ({ displayName }: UserMenuProperties): JSX.Element => {
+  const router = useRouter();
+
   const { colorMode, toggleColorMode } = useColorMode();
 
-  const onSignOutClick = async (): Promise<void> => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      throw new Error(JSON.stringify(error));
-    }
+  const onSignOutClick = (): void => {
+    signOut(auth)
+      .then(() => {
+        return router.push("/auth");
+      })
+      .catch((error) => {
+        throw error;
+      });
   };
 
-  const onDeleteUserClick = async (): Promise<void> => {
+  const onDeleteUserClick = (): void => {
     const user = auth.currentUser;
     if (!user) return;
-    try {
-      await deleteUser(user);
-    } catch (error) {
-      throw new Error(JSON.stringify(error));
-    }
+    deleteUser(user)
+      .then(() => {
+        return router.push("/auth");
+      })
+      .catch((error) => {
+        throw error;
+      });
   };
 
   return (

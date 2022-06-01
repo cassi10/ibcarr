@@ -71,7 +71,6 @@ const BottomBar = ({
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
     <Flex align="center" justify="space-between" {...flex}>
       <Flex align="center" gap={flex?.gap}>
         {/* DATE PICKER */}

@@ -1,20 +1,18 @@
-import { Button, ButtonProps } from "@chakra-ui/react";
+import { Button, ButtonProps, useBreakpointValue } from "@chakra-ui/react";
 
-type NewGameButtonProperties = {
-  onClick: () => void;
-  text: string;
-  button?: ButtonProps;
+type NewGameButtonProperties = ButtonProps;
+
+const NewGameButton = (properties: NewGameButtonProperties): JSX.Element => {
+  const buttonSize = useBreakpointValue({
+    base: "xs",
+    sm: "sm"
+  });
+
+  return (
+    <Button size={buttonSize} colorScheme="purple" {...properties}>
+      New Game
+    </Button>
+  );
 };
-
-const NewGameButton = ({
-  onClick,
-  text,
-  button
-}: NewGameButtonProperties): JSX.Element => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <Button size="sm" onClick={onClick} colorScheme="purple" {...button}>
-    {text}
-  </Button>
-);
 
 export default NewGameButton;

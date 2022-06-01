@@ -12,7 +12,8 @@ const onUserCreate = functions
     });
     await admin.firestore().collection("games").doc(user.uid).create({
       hangman: {},
-      cardmatch: {}
+      cardmatch: {},
+      werdle: {}
     });
   });
 
@@ -23,7 +24,9 @@ const onUserDelete = functions
     await admin
       .firestore()
       .recursiveDelete(admin.firestore().collection("todolist").doc(user.uid));
-    await admin.firestore().collection("games").doc(user.uid).delete();
+    await admin
+      .firestore()
+      .recursiveDelete(admin.firestore().collection("games").doc(user.uid));
   });
 
 export { onUserCreate, onUserDelete };

@@ -1,12 +1,7 @@
-import Head from "next/head";
+import { GameList } from "@components";
 
 const Home = (): JSX.Element => {
-  return (
-    <Head>
-      <title>Games</title>
-      <meta name="description" content="Games." />
-    </Head>
-  );
+  return <GameList />;
 };
 
 export default Home;

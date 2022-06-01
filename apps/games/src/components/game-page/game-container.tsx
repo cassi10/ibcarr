@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Container } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
 type GameContainerProperties = {
@@ -6,9 +6,17 @@ type GameContainerProperties = {
 };
 
 const GameContainer = ({ children }: GameContainerProperties): JSX.Element => (
-  <Flex direction="column" align="center" justify="center" gridGap={4}>
+  <Container
+    display="flex"
+    alignItems="center"
+    justifyContent="center"
+    flexDirection="column"
+    gap={4}
+    maxW="container.lg"
+    paddingInline={[1, 4]}
+  >
     {children}
-  </Flex>
+  </Container>
 );
 
 export default GameContainer;

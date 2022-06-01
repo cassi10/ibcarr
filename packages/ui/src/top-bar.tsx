@@ -1,4 +1,13 @@
-import { Box, Flex, Icon, Link, Text, useColorMode } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Icon,
+  Link,
+  Text,
+  useBreakpointValue,
+  useColorMode
+} from "@chakra-ui/react";
+import { memo } from "react";
 import fromColorMode from "./from-color-mode";
 import { getIcon, type IconsType } from "./icons";
 
@@ -12,50 +21,70 @@ const TopBarItem = ({
   icon,
   link,
   linkText
-}: TopBarItemProperties): JSX.Element => (
-  <>
-    <Icon as={getIcon("dot")} p={0} h={6} w={6} />
-    <Icon as={getIcon(icon)} mr={1} />
-    <Link href={link} isExternal>
-      {linkText}
-    </Link>
-  </>
-);
+}: TopBarItemProperties): JSX.Element => {
+  const display = useBreakpointValue({ base: "none", md: "inline" });
+
+  return (
+    <Flex align="center" justify="center">
+      <Icon as={getIcon("dot")} boxSize={4} />
+      <Link
+        href={link}
+        isExternal
+        fontSize="md"
+        display="inline-flex"
+        alignItems="center"
+        justifyContent="center"
+        columnGap={[0, 1]}
+      >
+        <Icon as={getIcon(icon)} boxSize={4} />
+        <Text display={display}>{linkText}</Text>
+      </Link>
+    </Flex>
+  );
+};
 
 const TopBar = (): JSX.Element => {
   const { colorMode } = useColorMode();
 
+  const links: TopBarItemProperties[] = [
+    {
+      icon: "github",
+      link: "https://github.com/cassi10/",
+      linkText: "GitHub"
+    },
+    {
+      icon: "linkedIn",
+      link: "https://www.linkedin.com/in/isaac-barnes-carr/",
+      linkText: "LinkedIn"
+    },
+    {
+      icon: "listtask",
+      link: "https://todolist.ibcarr.com",
+      linkText: "TodoList"
+    },
+    {
+      icon: "games",
+      link: "https://games.ibcarr.com",
+      linkText: "Games"
+    }
+  ];
+
   return (
     <Box
-      mb={6}
+      mb={[4, 6]}
       p={1}
       bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
     >
-      <Flex align="center" direction="row" justify="start">
-        <Text>Made by Isaac Barnes-Carr</Text>
-        <TopBarItem
-          icon="github"
-          link="https://github.com/cassi10/"
-          linkText="GitHub"
-        />
-        <TopBarItem
-          icon="linkedIn"
-          link="https://www.linkedin.com/in/isaac-barnes-carr/"
-          linkText="LinkedIn"
-        />
-        <TopBarItem
-          icon="listtask"
-          link="https://todolist.ibcarr.com"
-          linkText="TodoList"
-        />
-        <TopBarItem
-          icon="games"
-          link="https://games.ibcarr.com"
-          linkText="Games"
-        />
+      <Flex align="center" direction="row" justify="start" flexWrap="wrap">
+        <Text fontSize={["sm", "md"]}>Made by Isaac Barnes-Carr</Text>
+        {links.map(({ icon, linkText, link }) => (
+          <TopBarItem key={link} icon={icon} linkText={linkText} link={link} />
+        ))}
       </Flex>
     </Box>
   );
 };
 
-export default TopBar;
+TopBar.displayName = "TopBar";
+
+export default memo(TopBar);

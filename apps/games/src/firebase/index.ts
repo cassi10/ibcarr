@@ -1,4 +1,4 @@
-import { FirebaseOptions, initializeApp } from "firebase/app";
+import { FirebaseOptions, getApp, getApps, initializeApp } from "firebase/app";
 
 const clientCredentials: FirebaseOptions = {
   apiKey: "AIzaSyBehraLx56BzqHr0gH_70ulwrvRR6ZKyFA",
@@ -10,7 +10,10 @@ const clientCredentials: FirebaseOptions = {
   measurementId: "G-J6F3G2E7KZ"
 };
 
-const app = initializeApp(clientCredentials);
-// const analytics = getAnalytics(app);
+if (getApps().length === 0) {
+  initializeApp(clientCredentials);
+}
+
+const app = getApp();
 
 export default app;

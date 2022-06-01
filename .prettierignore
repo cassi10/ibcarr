@@ -8,3 +8,4 @@ out/
 .firebase/
 dist/
 lib/
+firebase/emulators/

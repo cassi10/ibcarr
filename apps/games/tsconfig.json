@@ -1,15 +1,18 @@
 {
   "extends": "@ibcarr/tsconfig/next.json",
-  "exclude": ["node_modules", ".next", ".firebase", ".turbo", "out"],
+  "exclude": [".next", ".firebase", ".turbo", "out"],
   "include": ["."],
   "compilerOptions": {
-    "baseUrl": "./src/",
+    "baseUrl": "./",
     "paths": {
-      "@components": ["components/index.ts"],
-      "@reducers/*": ["hooks/reducers/*"],
-      "@hooks/*": ["hooks/*"],
-      "@data/*": ["data/*"],
-      "@types": ["types.d.ts"]
+      "@components": ["src/components/index.ts"],
+      "@enums/*": ["src/enums/*"],
+      "@games": ["src/games/index.ts"],
+      "@api/*": ["src/pages/api/*"],
+      "@types": ["src/types.d.ts"],
+      "@public/*": ["public/*"]
+      // "@hooks": ["hooks/index.ts"],
+      // "@data/*": ["data/*"],
     }
   }
 }

@@ -11,15 +11,15 @@ const GameHeading = ({
   text
 }: GameHeadingProperties): JSX.Element => (
   <Flex
+    w="full"
     alignSelf="center"
     align="center"
     justify="center"
-    gridGap={4}
-    mt={6}
-    mb={2}
-    w="75%"
+    gridGap={[2, 4]}
+    mt={[4, 6]}
+    mb={[0, 2]}
   >
-    <Heading>{text}</Heading>
+    <Heading fontSize={["2xl", "3xl"]}>{text}</Heading>
     {children}
   </Flex>
 );

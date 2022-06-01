@@ -1,6 +1,11 @@
 {
   "name": "functions",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cassi10/ibcarr.git",
+    "directory": "firebase/functions"
+  },
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",

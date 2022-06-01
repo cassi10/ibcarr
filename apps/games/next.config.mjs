@@ -4,16 +4,7 @@
  * @type {import("next").NextConfig}
  * */
 const nextConfig = {
-  reactStrictMode: true,
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/hangman",
-        permanent: false
-      }
-    ];
-  }
+  reactStrictMode: true
 };
 
 export default nextConfig;

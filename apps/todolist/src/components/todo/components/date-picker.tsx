@@ -247,7 +247,6 @@ const DatePicker = ({
             leftIcon={getIconComponent("calendar")}
             colorScheme="teal"
             onClick={onOpen}
-            // eslint-disable-next-line react/jsx-props-no-spreading
             {...button}
           >
             {buttonText}
@@ -258,7 +257,6 @@ const DatePicker = ({
             icon={getIconComponent("calendar")}
             colorScheme="teal"
             onClick={onOpen}
-            // eslint-disable-next-line react/jsx-props-no-spreading
             {...button}
           />
         )}

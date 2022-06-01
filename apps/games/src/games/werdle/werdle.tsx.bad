@@ -1,0 +1,534 @@
+import {
+  Button,
+  ButtonGroup,
+  Flex,
+  IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+  Text
+} from "@chakra-ui/react";
+import {
+  GameContainer,
+  GameHeading,
+  GameInformationModal,
+  GameStateDialog,
+  NewGameButton,
+  SEO
+} from "@components";
+import {
+  useWerdleReducer,
+  GameStateAction,
+  LetterState,
+  type Word,
+  type Letter,
+  GameErrors
+} from "@reducers/use-werdle-reducer";
+import { nanoid } from "nanoid/non-secure";
+import { useCallback, useEffect, useState } from "react";
+import GameStatus from "@enums/game-status";
+import { getIconComponent } from "@ibcarr/ui";
+import { GetStaticProps } from "next";
+import { getRandomWord } from "@api/words/word";
+import { getWordLengths } from "@api/words/word-lengths";
+
+type WerdleProperties = {
+  word: string;
+  wordLengths: string[];
+};
+
+const Werdle = ({ word, wordLengths }: WerdleProperties): JSX.Element => {
+  const defaultWordLength = 5;
+
+  const [{ gameError, guessedWords, currentRow, solution, status }, dispatch] =
+    useWerdleReducer();
+  const [currentColumn, setCurrentColumn] = useState<number>(0);
+  const [currentWordArray, setCurrentWordArray] = useState<string[]>([]);
+  const [wordLength, setWordLength] = useState<number>(defaultWordLength);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [wordLengthSliderValue, setWordLengthSliderValue] =
+    useState<number>(defaultWordLength);
+
+  const currentWord = currentWordArray.join("");
+
+  const updateLetterInCurrentWord = (column: number, letter: string): void => {
+    setCurrentWordArray((previousCurrentWord) => {
+      const currentWordCopy = [...previousCurrentWord];
+
+      currentWordCopy[column] = letter;
+
+      return currentWordCopy;
+    });
+  };
+
+  const isPlaying = status === GameStatus.PLAYING;
+
+  /**
+   * TODO Pull this out into a separate component
+   */
+  const keyboard = [
+    ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+    ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+    ["enter", "z", "x", "c", "v", "b", "n", "m", "back"]
+  ];
+
+  const generateEmptyGuessedWordsArray = useCallback(
+    (length: number): Word[] => {
+      return Array.from<Word>({ length: 6 }).fill(
+        Array.from<Letter>({ length }).fill({
+          char: "",
+          state: LetterState.UNKNOWN
+        })
+      );
+    },
+    []
+  );
+
+  const setNewRandomWord = useCallback(
+    (length: number): void => {
+      setLoading(true);
+      fetch(`api/words/word?length=${length}`)
+        .then((response) => response.json())
+        .then((data: { word: string }): void => {
+          return dispatch({
+            type: GameStateAction.SET_SOLUTION,
+            payload: data.word
+          });
+        })
+        .finally(() => setLoading(false))
+        .catch((error) => {
+          throw error;
+        });
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    dispatch({
+      type: GameStateAction.SET_SOLUTION,
+      payload: word
+    });
+  }, [dispatch, word]);
+
+  const getLetterVaraintFromState = (
+    state: LetterState
+  ): "outline" | "solid" => {
+    if (state === LetterState.UNKNOWN) return "outline";
+    return "solid";
+  };
+
+  const getLetterColorFromState = (
+    state: LetterState
+  ): "green" | "orange" | "gray" => {
+    if (state === LetterState.CORRECT) return "green";
+    if (state === LetterState.VALID) return "orange";
+    return "gray";
+  };
+
+  useEffect(() => {
+    dispatch({
+      type: GameStateAction.SET_GUESSED_WORDS,
+      payload: generateEmptyGuessedWordsArray(wordLength)
+    });
+
+    setCurrentWordArray(Array.from<string>({ length: wordLength }).fill(""));
+  }, [dispatch, generateEmptyGuessedWordsArray, wordLength]);
+
+  useEffect(() => {
+    if (
+      currentWord !== solution &&
+      currentRow === 6 &&
+      status !== GameStatus.WON
+    ) {
+      dispatch({
+        type: GameStateAction.SET_STATUS,
+        payload: GameStatus.LOST
+      });
+    }
+  }, [currentWord, currentRow, dispatch, solution, status]);
+
+  const onNewGameButtonClick = (): void => {
+    if (wordLengthSliderValue !== wordLength)
+      setWordLength(wordLengthSliderValue);
+
+    dispatch({
+      type: GameStateAction.RESET_GAME
+    });
+
+    setNewRandomWord(wordLengthSliderValue);
+
+    dispatch({
+      type: GameStateAction.SET_GUESSED_WORDS,
+      payload: generateEmptyGuessedWordsArray(wordLengthSliderValue)
+    });
+
+    setCurrentColumn(0);
+
+    setCurrentWordArray(
+      Array.from<string>({ length: wordLengthSliderValue }).fill("")
+    );
+  };
+
+  const isWordValid = async (_word: string): Promise<{ valid: boolean }> => {
+    const response = await fetch(`api/words/validate-word?word=${_word}`);
+    const data = (await response.json()) as { valid: boolean };
+
+    return data;
+  };
+
+  const checkCurrentWord = useCallback(
+    (_word: string): Word => {
+      if (!solution) return [];
+
+      const solutionArray = [...solution];
+
+      const initialCheck: Word = [..._word].map(
+        (letter: string, index: number) => {
+          if (letter === solutionArray[index])
+            return {
+              char: letter,
+              state: LetterState.CORRECT
+            };
+
+          if (solutionArray.includes(letter))
+            return {
+              char: letter,
+              state: LetterState.VALID
+            };
+
+          return {
+            char: letter,
+            state: LetterState.INCORRECT
+          };
+        }
+      );
+
+      const characterCounts = (
+        array: string[] | Word
+      ): { [key: string]: number } => {
+        const count: { [key: string]: number } = {};
+
+        for (const letter of array) {
+          const char = typeof letter === "string" ? letter : letter.char;
+
+          if (count[char]) {
+            count[char] += 1;
+          } else count[char] = 1;
+        }
+
+        return count;
+      };
+
+      const solutionCharacterCounts = characterCounts(solutionArray);
+      const guessCharacterCounts = characterCounts(initialCheck);
+
+      const result: Word = [...initialCheck.reverse()];
+
+      for (const [index, letter] of result.entries()) {
+        if (letter.state === LetterState.CORRECT) break;
+
+        if (
+          guessCharacterCounts[letter.char] >
+          solutionCharacterCounts[letter.char]
+        ) {
+          result[index].state = LetterState.VALID;
+          guessCharacterCounts[letter.char] -= 1;
+        }
+      }
+
+      return result.reverse();
+    },
+    [solution]
+  );
+
+  const onKeyClick = useCallback(
+    (key: string) => {
+      if (loading) return;
+      if (!isPlaying) return;
+
+      if (key === "enter") {
+        dispatch({
+          type: GameStateAction.SET_ERROR,
+          payload: undefined
+        });
+
+        if (currentWord.length < wordLength) {
+          dispatch({
+            type: GameStateAction.SET_ERROR,
+            payload: GameErrors.WORD_TOO_SHORT
+          });
+          return;
+        }
+
+        isWordValid(currentWord)
+          .then(({ valid }) => {
+            if (!valid) {
+              dispatch({
+                type: GameStateAction.SET_ERROR,
+                payload: GameErrors.INVALID_WORD
+              });
+            } else {
+              const checkedWord: Word = checkCurrentWord(currentWord);
+
+              dispatch({
+                type: GameStateAction.ADD_GUESSED_WORD,
+                payload: checkedWord
+              });
+
+              if (currentWord === solution) {
+                dispatch({
+                  type: GameStateAction.SET_STATUS,
+                  payload: GameStatus.WON
+                });
+              }
+
+              dispatch({
+                type: GameStateAction.INCREMENT_ROW
+              });
+
+              setCurrentColumn(0);
+
+              setCurrentWordArray(
+                Array.from<string>({ length: wordLength }).fill("")
+              );
+            }
+
+            return true;
+          })
+          .catch((error) => {
+            throw error;
+          });
+      }
+
+      if (key === "back" || key === "backspace") {
+        if (currentColumn === 0) return;
+
+        setCurrentColumn((previousCurrentColumn) => previousCurrentColumn - 1);
+
+        updateLetterInCurrentWord(currentColumn - 1, "");
+      }
+
+      if (/^[a-z]$/i.test(key)) {
+        if (currentColumn === wordLength) return;
+
+        updateLetterInCurrentWord(currentColumn, key);
+
+        setCurrentColumn((previousCurrentColumn) => previousCurrentColumn + 1);
+      }
+    },
+    [
+      currentColumn,
+      dispatch,
+      currentWord,
+      solution,
+      checkCurrentWord,
+      isPlaying,
+      loading,
+      wordLength
+    ]
+  );
+
+  return (
+    <>
+      <SEO title="Games - Werdle" description="A werdle game." />
+      <GameContainer>
+        <GameHeading text="Werdle">
+          <ButtonGroup isAttached size="sm">
+            <NewGameButton
+              onClick={onNewGameButtonClick}
+              isLoading={loading}
+              loadingText="New Game"
+            />
+            <Popover>
+              <PopoverTrigger>
+                <IconButton
+                  size="sm"
+                  icon={getIconComponent("settings")}
+                  aria-label="Change word length"
+                />
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader>Word Length</PopoverHeader>
+                <PopoverBody
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  columnGap={3}
+                >
+                  <Text>{wordLengthSliderValue}</Text>
+                  <Slider
+                    defaultValue={defaultWordLength}
+                    min={Number.parseInt(wordLengths[0], 10)}
+                    max={Number.parseInt(
+                      wordLengths[wordLengths.length - 1],
+                      10
+                    )}
+                    aria-label="word-length-slider"
+                    onChange={(value): void => setWordLengthSliderValue(value)}
+                  >
+                    <SliderTrack>
+                      <SliderFilledTrack />
+                    </SliderTrack>
+                    <SliderThumb />
+                  </Slider>
+                </PopoverBody>
+                <PopoverFooter>Make sure to start a new game.</PopoverFooter>
+              </PopoverContent>
+            </Popover>
+          </ButtonGroup>
+          <GameInformationModal>
+            <Text>A random 5 letter word will be selected.</Text>
+            <Text>
+              Your job is to guess the word in 6 tries by guessing other valid 5
+              letter words.
+            </Text>
+            <Text>After each guess the colour of the tiles will change.</Text>
+            <Text>
+              A green letter means that the letter and position are correct.
+            </Text>
+            <Text>
+              An orange letter means that the letter is correct but the position
+              is not.
+            </Text>
+            <Text>A gray letter means that the letter is not correct.</Text>
+            <Text fontStyle="italic">
+              NOTE: Each solution could be one or more words which contain
+              letters only and no spaces.
+            </Text>
+          </GameInformationModal>
+        </GameHeading>
+
+        <Text fontSize="lg">{gameError}</Text>
+
+        {!isPlaying && (
+          <GameStateDialog
+            gameStatus={status}
+            newGameButtonClick={onNewGameButtonClick}
+          >
+            <Text fontSize="lg">The word was {solution}.</Text>
+          </GameStateDialog>
+        )}
+
+        {/* Game board */}
+        <Flex
+          position="relative"
+          flexDirection="column"
+          align="center"
+          justify="center"
+          rowGap={[1, 2]}
+          w="100%"
+        >
+          {guessedWords.map((_word, index) => (
+            <Flex
+              key={nanoid()}
+              align="center"
+              justify="center"
+              columnGap={[1, 2]}
+              w="100%"
+            >
+              {(currentRow === index && currentWordArray.length > 0
+                ? currentWordArray
+                : _word
+              ).map((_letter, _index) => {
+                const isLetterString = typeof _letter === "string";
+
+                const letter: Letter = {
+                  char: isLetterString ? _letter : _letter.char,
+                  state: isLetterString ? LetterState.UNKNOWN : _letter.state
+                };
+
+                const isCellActive =
+                  currentRow === index && currentColumn >= _index;
+
+                return (
+                  <Button
+                    flex={1}
+                    disabled={!isPlaying}
+                    paddingInline={0}
+                    key={nanoid()}
+                    variant={getLetterVaraintFromState(letter.state)}
+                    colorScheme={getLetterColorFromState(letter.state)}
+                    fontSize={["md", "lg"]}
+                    maxWidth={[10, 12]}
+                    height={[10, 12]}
+                    minWidth={3}
+                    cursor="default"
+                    outlineOffset={-1}
+                    outlineColor={
+                      isCellActive ? "whiteAlpha.300" : "transparent"
+                    }
+                    _focus={{}}
+                    _active={{}}
+                    onClick={(event): void => event.preventDefault()}
+                  >
+                    {letter.char.toUpperCase()}
+                  </Button>
+                );
+              })}
+            </Flex>
+          ))}
+        </Flex>
+
+        {/* Keyboard */}
+        <Flex
+          flexDirection="column"
+          align="center"
+          justify="center"
+          rowGap={[1, 2]}
+          mt={[0, 4]}
+        >
+          {keyboard.map((row) => (
+            <Flex
+              key={nanoid()}
+              align="center"
+              justify="center"
+              columnGap={[1, 2]}
+              w="100%"
+            >
+              {row.map((key) => (
+                <Button
+                  fontSize={["sm", "md"]}
+                  key={key}
+                  height={10}
+                  width={[8, 10]}
+                  minWidth={0}
+                  onClick={(): void => onKeyClick(key)}
+                  disabled={!isPlaying}
+                  flex={/^[a-z]$/i.test(key) ? "unset" : 1}
+                >
+                  {key.toUpperCase()}
+                </Button>
+              ))}
+            </Flex>
+          ))}
+        </Flex>
+      </GameContainer>
+    </>
+  );
+};
+
+const getStaticProperties: GetStaticProps = () => {
+  const word = getRandomWord("5");
+  const wordLengths = getWordLengths(false);
+
+  return {
+    props: {
+      word,
+      wordLengths
+    }
+  };
+};
+
+export { getStaticProperties as getStaticProps };
+export default Werdle;

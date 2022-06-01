@@ -1,5 +1,5 @@
 import { Flex, Heading, useColorMode } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { memo, ReactNode } from "react";
 import fromColorMode from "./from-color-mode";
 
 type BasicNavBarProperties = {
@@ -19,17 +19,19 @@ const BasicNavBar = ({
       justify="space-between"
       direction="row"
       h={16}
-      columnGap={12}
+      columnGap={[4, 10]}
       p={2}
       px={4}
       bg={fromColorMode("gray.100", "whiteAlpha.100", colorMode)}
-      rounded="md"
+      rounded={["none", "md"]}
       shadow="md"
     >
-      <Heading>{heading}</Heading>
+      <Heading fontSize={["2xl", "3xl"]}>{heading}</Heading>
       {children}
     </Flex>
   );
 };
 
-export default BasicNavBar;
+BasicNavBar.displayName = "BasicNavBar";
+
+export default memo(BasicNavBar);

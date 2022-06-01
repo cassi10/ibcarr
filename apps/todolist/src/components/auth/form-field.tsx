@@ -62,7 +62,6 @@ const FormField = ({
       <FormLabel htmlFor={id}>{label}</FormLabel>
       <InputGroup>
         <Input
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...field}
           id={id}
           placeholder={placeholder}

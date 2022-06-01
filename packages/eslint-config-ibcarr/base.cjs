@@ -8,6 +8,7 @@ module.exports = {
   ],
   rules: {
     "unicorn/no-useless-undefined": "off",
-    "unicorn/prefer-export-from": ["error", { ignoreUsedVariables: true }]
+    "unicorn/prefer-export-from": ["error", { ignoreUsedVariables: true }],
+    "eslint-comments/disable-enable-pair": ["error", { allowWholeFile: true }]
   }
 };

@@ -19,7 +19,9 @@ import {
   MdPushPin,
   MdSettings,
   MdVisibility,
-  MdVisibilityOff
+  MdVisibilityOff,
+  MdOutlineBackspace,
+  MdOutlineKeyboardReturn
 } from "react-icons/md";
 import {
   HiOutlineChevronDoubleLeft,
@@ -59,7 +61,9 @@ const Icons = {
   label: MdLabelOutline,
   pin: MdPushPin,
   outlinePin: MdOutlinePushPin,
-  help: IoHelp
+  help: IoHelp,
+  backspace: MdOutlineBackspace,
+  enter: MdOutlineKeyboardReturn
 };
 
 type IconsType = keyof typeof Icons;
@@ -67,10 +71,7 @@ type IconsType = keyof typeof Icons;
 const getIconComponent = (
   icon: IconsType,
   properties?: Omit<IconProps, "as">
-): JSX.Element => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <Icon as={Icons[icon]} {...properties} />
-);
+): JSX.Element => <Icon as={Icons[icon]} {...properties} />;
 
 const getIcon = (icon: IconsType): IconType => Icons[icon];
 

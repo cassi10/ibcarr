@@ -130,6 +130,7 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
       color={fromColorMode("gray.800", "whiteAlpha.900", colorMode)}
       role="group"
       position="relative"
+      gap={2}
     >
       <IconButton
         aria-label="Toggle pinned"
@@ -160,10 +161,9 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
       />
       {(title || editing) && (
         <Textarea
-          fontSize="lg"
+          fontSize="xl"
           fontWeight="semibold"
-          mb={4}
-          boxSizing="border-box"
+          // boxSizing="border-box"
           placeholder="Title"
           value={newTitle}
           onChange={(event): void => setNewTitle(event.target.value)}
@@ -177,12 +177,12 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
           spellCheck={false}
           disabled={!editing}
           p={2}
-          borderWidth={editing ? 2 : 0}
-          borderStyle="solid"
+          outlineColor={editing ? "blue.300" : "transparent"}
+          outline="solid 2px"
         />
       )}
       <Textarea
-        boxSizing="border-box"
+        // boxSizing="border-box"
         placeholder="What is the task..."
         value={newBody}
         onChange={(event): void => setNewBody(event.target.value)}
@@ -196,8 +196,8 @@ const TodoItem = ({ todo, toast }: TodoItemProperties): JSX.Element => {
         spellCheck={false}
         disabled={!editing}
         p={2}
-        borderWidth={editing ? 2 : 0}
-        borderStyle="solid"
+        outlineColor={editing ? "blue.300" : "transparent"}
+        outline="solid 2px"
       />
       <BottomBar
         flex={{
